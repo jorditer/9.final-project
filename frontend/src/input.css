@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+label {
+	@apply text-sm text-primary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
+}
+
+small {
+	@apply italic text-slate-700;
+}
