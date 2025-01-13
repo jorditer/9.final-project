@@ -1,6 +1,6 @@
 // import { useState } from 'react'
 // import pinIcon from "../assets/imgs/pin.svg";
-import MapMarker from './MapMarker'
+import MapMarker from "./MapMarker";
 import Map, { Marker, Popup } from "react-map-gl";
 import "../index.css";
 import { useState, useEffect } from "react";
@@ -15,7 +15,6 @@ function App() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({
-    
     latitude: 41.38879,
     longitude: 2.15899,
     zoom: 12,
@@ -24,7 +23,7 @@ function App() {
   useEffect(() => {
     const getPins = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/pins"); // Used proxy in package.json so no need for full url
+        const res = await axios.get("/api/pins"); // Used proxy in package.json so no need for full url
         setPins(res.data.data);
       } catch (err) {
         console.log(err);
@@ -32,13 +31,15 @@ function App() {
     };
     getPins();
   }, []);
-  const handleMarkerClick = (id:string, lat:number, long:number): void => {
+  const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
-    setViewport(prev => ({
-    ...prev,
-    latitude: lat,
-    longitude: long,
-  }));
+    console.log(showPopup);
+    setShowPopup((prev) => !prev);
+    setViewport((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: long,
+    }));
   };
 
   return (
@@ -47,14 +48,14 @@ function App() {
         // style={{ width: "100%", height: "100%" }}
         {...viewport}
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
-        onMove={evt => setViewport(evt.viewState)}
+        onMove={(evt) => setViewport(evt.viewState)}
         mapStyle="mapbox://styles/mapbox/streets-v9"
       >
         {pins.map((p: Pin) => (
           <div key={p._id}>
-            <Marker onClick={() => setShowPopup((prev) => !prev)} longitude={p.long} latitude={p.lat} anchor="bottom">
-              <MapMarker color='blue' zoom={viewport.zoom} onClick={() => handleMarkerClick(p._id, p.lat, p.long)} />
-              </Marker>
+            <Marker longitude={p.long} latitude={p.lat} anchor="bottom">
+              <MapMarker color="blue" zoom={viewport.zoom} onClick={() => handleMarkerClick(p._id, p.lat, p.long)} />
+            </Marker>
             {showPopup && (
               <Popup longitude={p.long} latitude={p.lat} className="" anchor="left" onClose={() => setShowPopup(false)}>
                 <div className="text-base -my-1 flex justify-end flex-col">
