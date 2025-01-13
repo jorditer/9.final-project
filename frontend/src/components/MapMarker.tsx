@@ -1,4 +1,4 @@
-const MapMarker = ({ color = '#FF0000', zoom }: { color?: string; zoom: number }) => {
+const MapMarker = ({ color = '#FF0000', zoom = 1 }: { color?: string; zoom: number }) => {
 	console.log(zoom);
 	return (
 		<svg 
@@ -7,8 +7,8 @@ const MapMarker = ({ color = '#FF0000', zoom }: { color?: string; zoom: number }
 			xmlns="http://www.w3.org/2000/svg"
 			className="h-6 w-8"
       style={{
-        width: `${zoom * 9}px`, //When you zoom it gets bigger
-        height: `${zoom * 9 }px`
+        width: `${zoom * 3}px`, //When you zoom it gets bigger
+        height: `${zoom * 3 }px`
       }}
 		>
 			<path 
