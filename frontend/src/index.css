@@ -571,6 +571,38 @@ video {
   height: 100lvh;
 }
 
+.h-full {
+  height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.h-\[102lvh\] {
+  height: 102lvh;
+}
+
+.h-\[101lvh\] {
+  height: 101lvh;
+}
+
+.h-\[100lvh\] {
+  height: 100lvh;
+}
+
+.h-\[100\.5lvh\] {
+  height: 100.5lvh;
+}
+
+.h-\[100\.7lvh\] {
+  height: 100.7lvh;
+}
+
+.h-\[101\.0lvh\] {
+  height: 101.0lvh;
+}
+
 .w-8 {
   width: 2rem;
 }
@@ -579,12 +611,28 @@ video {
   width: 100lvw;
 }
 
+.w-screen {
+  width: 100vw;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .flex-col {
   flex-direction: column;
 }
 
 .justify-end {
   justify-content: flex-end;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-clip {
+  overflow: clip;
 }
 
 .text-base {

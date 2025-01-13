@@ -11,7 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 function App() {
-  const [showPopup, setShowPopup] = useState<boolean>(true);
+  const thisUser = "Jordi";
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [viewport, setViewport] = useState({
@@ -33,8 +33,7 @@ function App() {
   }, []);
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
-    console.log(showPopup);
-    setShowPopup((prev) => !prev);
+    // console.log(currentPlaceId)
     setViewport((prev) => ({
       ...prev,
       latitude: lat,
@@ -45,8 +44,9 @@ function App() {
   return (
     <div className="h-lvh w-lvw">
       <Map
-        // style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%" }}
         {...viewport}
+        transitionDuration="200"
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
         onMove={(evt) => setViewport(evt.viewState)}
         mapStyle="mapbox://styles/mapbox/streets-v9"
@@ -54,11 +54,19 @@ function App() {
         {pins.map((p: Pin) => (
           <div key={p._id}>
             <Marker longitude={p.long} latitude={p.lat} anchor="bottom">
-              <MapMarker color="blue" zoom={viewport.zoom} onClick={() => handleMarkerClick(p._id, p.lat, p.long)} />
+              <MapMarker color = {p.username == thisUser ? "tomato" : "blue"} zoom={viewport.zoom} onClick={() => handleMarkerClick(p._id, p.lat, p.long)} />
             </Marker>
-            {showPopup && (
-              <Popup longitude={p.long} latitude={p.lat} className="" anchor="left" onClose={() => setShowPopup(false)}>
-                <div className="text-base -my-1 flex justify-end flex-col">
+            {currentPlaceId === p._id && (
+              <Popup
+                key={p._id}
+                latitude={p.lat}
+                longitude={p.long}
+                closeButton={true}
+                closeOnClick={false}
+                onClose={() => setCurrentPlaceId(null)}
+                anchor="left"
+              >
+                                <div className="text-base -my-1 flex justify-end flex-col">
                   <h2 className="text-xl font-extrabold">{p.title}</h2>
                   <label className="">Place</label>
                   <h3 className="text-md font-bold">{p.location}</h3>
@@ -77,7 +85,6 @@ function App() {
           </div>
         ))}
       </Map>
-      ;
     </div>
   );
 }

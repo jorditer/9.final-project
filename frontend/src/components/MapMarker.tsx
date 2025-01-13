@@ -5,7 +5,7 @@ const MapMarker = ({ color = "#FF0000", zoom = 1, onClick }: { color?: string; z
       viewBox="0 0 24 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-8"
+      className="cursor-pointer"
       style={{
         width: `${zoom * 3}px`, //When you zoom it gets bigger
         height: `${zoom * 3}px`,
