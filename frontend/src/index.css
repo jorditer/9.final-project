@@ -571,8 +571,8 @@ video {
   height: 100lvh;
 }
 
-.w-6 {
-  width: 1.5rem;
+.w-8 {
+  width: 2rem;
 }
 
 .w-lvw {
@@ -599,6 +599,10 @@ video {
 
 .font-extrabold {
   font-weight: 800;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 .text-slate-500 {

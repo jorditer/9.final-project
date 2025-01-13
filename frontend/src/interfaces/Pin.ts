@@ -3,6 +3,7 @@ export default interface Pin {
 	username: string;
 	title: string;
 	description: string;
+	location: string;
 	price: number;
 	lat: number;
 	long: number;
