@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 label {
-	@apply text-sm text-primary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
+  @apply text-sm text-primary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
 }
 
 small {
-	@apply italic text-slate-700;
+  @apply italic text-slate-700;
+}
+
+@layer components {
+  input,
+  textarea {
+    @apply focus:bg-white focus:outline-none active:border-gray-300 w-full focus:border-gray-700 mt-[0.4rem] border border-gray-400 rounded-sm;
+  }
+
 }
