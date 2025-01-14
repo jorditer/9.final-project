@@ -1,19 +1,21 @@
 // import { useState } from 'react'
 // import pinIcon from "../assets/imgs/pin.svg";
+import Form from './Form'
+import Pop_up from '../interfaces/Popup'
 import MapMarker from "./MapMarker";
 import Map, { Marker, Popup } from "react-map-gl";
 import "../index.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Pin from "../interfaces/Pin";
+
 import { formatDistanceToNow } from "date-fns";
-
 import "mapbox-gl/dist/mapbox-gl.css";
-
 function App() {
   const thisUser = "Jordi";
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
+  const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
@@ -41,15 +43,32 @@ function App() {
     }));
   };
 
+  const handleAddEvent = (e: mapboxgl.MapMouseEvent) => {
+    const lat = e.lngLat.lat;
+    const long = e.lngLat.lng;
+    setNewEvent({
+      lat,
+      long,
+    });
+    setViewport((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: long,
+    }));
+    console.log(newEvent);
+  };
+
   return (
     <div className="h-lvh w-lvw">
       <Map
         style={{ width: "100%", height: "100%" }}
         {...viewport}
-        transitionDuration="200"
+        // transitionDuration="200"
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
         onMove={(evt) => setViewport(evt.viewState)}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
+        doubleClickZoom={false}
+        mapStyle="mapbox://styles/mapbox/streets-v11"
+        onDblClick={handleAddEvent}
       >
         {pins.map((p: Pin) => (
           <div key={p._id}>
@@ -84,6 +103,8 @@ function App() {
             )}
           </div>
         ))}
+        
+        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form /></Popup>}
       </Map>
     </div>
   );
