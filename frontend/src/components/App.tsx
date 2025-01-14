@@ -8,9 +8,9 @@ import "../index.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Pin from "../interfaces/Pin";
-
 import { formatDistanceToNow } from "date-fns";
 import "mapbox-gl/dist/mapbox-gl.css";
+
 function App() {
   const thisUser = "Jordi";
   const [pins, setPins] = useState<Pin[]>([]);
