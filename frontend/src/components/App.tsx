@@ -33,6 +33,7 @@ function App() {
     };
     getPins();
   }, []);
+    
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
     // console.log(currentPlaceId)
@@ -55,7 +56,6 @@ function App() {
       latitude: lat,
       longitude: long,
     }));
-    console.log(newEvent);
   };
 
   return (
@@ -87,8 +87,10 @@ function App() {
               >
                                 <div className="text-base -my-1 flex justify-end flex-col">
                   <h2 className="text-xl font-extrabold">{p.title}</h2>
-                  <label className="">Place</label>
+                  <label className="">Location</label>
                   <h3 className="text-md font-bold">{p.location}</h3>
+                  <label className="">Happening at</label>
+                  <h3 className="text-md font-bold">{p.happening}</h3>
                   <label>Description</label>
                   <p>{p.description}</p>
                   {/* <label >Information</label> */}
@@ -104,7 +106,7 @@ function App() {
           </div>
         ))}
         
-        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form /></Popup>}
+        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form coordinates={{latitude: newEvent.lat, longitude: newEvent.long}} /></Popup>}
       </Map>
     </div>
   );

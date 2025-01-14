@@ -1,32 +1,59 @@
 // import Datetime from "react-datetime";
 // import "react-datetime/css/react-datetime.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
-import Datepicker from "react-datepicker";
+import { useState, ChangeEvent, FormEvent } from "react";
+import axios from "axios"
 
-const Form = () => {
+const Form = ({ coordinates }: { coordinates: { latitude: number; longitude: number } }) => {
   const initDate = new Date().toISOString().split("T")[0] + "T17:00"; //for datetime-local
+  // console.log(coordinates.longitude);
+  // console.log(coordinates.latitude);
   // const initDate = new Date();
-  const [selectedDate, setSelectedDate] = useState(initDate);
+  const [eventData, setEventData] = useState({
+    date: initDate,
+    title: "",
+    location: "",
+    description: "",
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEventData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("/api/pins", {...eventData});
+    } catch(err) {
+      console.log(err)
+    }
+  };
   return (
     <div className="text-base -my-1 flex justify-end flex-col">
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <label className="">Date</label>
         {/* <Datepicker showTimeSelect dateFormat="MMMM d, yyyy h:mm aa" selected={selectedDate} onChange={(date) => setSelectedDate(date)} /> */}
         <input
           className=""
           type="datetime-local"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          name=""
-          id=""
+          value={eventData.date}
+          onChange={handleChange}
         />
         <label className="">Title</label>
-        <input type="text" name="" id="" />
-        <label className="">Place</label>
-        <input type="text" name="" id="" />
+        <input type="text" onChange={handleChange} />
+        <label className="">Location</label>
+        <input type="text" onChange={handleChange} />
         <label>Description</label>
-        <textarea name="" placeholder="What is the plan?" id=""></textarea>
+        <textarea
+          name=""
+          placeholder="What is the plan?"
+          onChange={handleChange}
+        ></textarea>
+        <input className="w-full cursor-pointer transition-all bg-blue-500 text-white px-6 py-1 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]" type="submit" value="Create Event" />
       </form>
     </div>
   );

@@ -4,9 +4,10 @@ export default interface Pin {
 	title: string;
 	description: string;
 	location: string;
+	happening: Date;
 	price: number;
 	lat: number;
 	long: number;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
   }
