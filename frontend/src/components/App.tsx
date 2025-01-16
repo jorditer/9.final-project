@@ -39,8 +39,8 @@ function App() {
     // console.log(currentPlaceId)
     setViewport((prev) => ({
       ...prev,
-      latitude: lat,
-      longitude: long,
+      lat: lat,
+      long: long,
     }));
   };
 
@@ -53,8 +53,8 @@ function App() {
     });
     setViewport((prev) => ({
       ...prev,
-      latitude: lat,
-      longitude: long,
+      lat: lat,
+      long: long,
     }));
   };
 
@@ -106,7 +106,7 @@ function App() {
           </div>
         ))}
         
-        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form coordinates={{latitude: newEvent.lat, longitude: newEvent.long}} /></Popup>}
+        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form coordinates={{lat: newEvent.lat, long: newEvent.long}} /></Popup>}
       </Map>
     </div>
   );

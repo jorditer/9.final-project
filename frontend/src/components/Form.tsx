@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios"
 
-const Form = ({ coordinates }: { coordinates: { latitude: number; longitude: number } }) => {
+const Form = ({ coordinates: {lat, long} }: { coordinates: { lat:number , long: number } }) => {
   const initDate = new Date().toISOString().split("T")[0] + "T17:00"; //for datetime-local
   // console.log(coordinates.longitude);
   // console.log(coordinates.latitude);
@@ -27,7 +27,15 @@ const Form = ({ coordinates }: { coordinates: { latitude: number; longitude: num
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/pins", {...eventData});
+      const res = await axios.post("/api/pins", {...eventData, lat, long, username: "Jordi"});
+      console.log(res.data);
+      // setEventData(res.data)
+      setEventData({
+        date: initDate,
+        title: "",
+        location: "",
+        description: "",
+      });
     } catch(err) {
       console.log(err)
     }
@@ -42,14 +50,15 @@ const Form = ({ coordinates }: { coordinates: { latitude: number; longitude: num
           type="datetime-local"
           value={eventData.date}
           onChange={handleChange}
+          name="date"
         />
         <label className="">Title</label>
-        <input type="text" onChange={handleChange} />
+        <input name="title" type="text" onChange={handleChange} />
         <label className="">Location</label>
-        <input type="text" onChange={handleChange} />
+        <input name="location" type="text" onChange={handleChange} />
         <label>Description</label>
         <textarea
-          name=""
+          name="description"
           placeholder="What is the plan?"
           onChange={handleChange}
         ></textarea>

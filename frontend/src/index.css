@@ -593,12 +593,12 @@ input:not([type="submit"]):active,
   height: 100lvh;
 }
 
-.w-lvw {
-  width: 100lvw;
-}
-
 .w-full {
   width: 100%;
+}
+
+.w-lvw {
+  width: 100lvw;
 }
 
 .cursor-pointer {
