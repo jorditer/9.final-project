@@ -9,6 +9,7 @@ interface RegisterProps {
 const Register: FC<RegisterProps> = ({ setNoUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [newUser, setNewUser] = useState({
     username: "",
     email: "",
@@ -25,20 +26,23 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-      if (!validatePassword(newUser.password)) {
-        alert("Password must contain at least one number and one symbol")
-        return;
-      }
-    console.log(newUser);
+    if (!validatePassword(newUser.password)) {
+      alert("Password must contain at least one number and one symbol");
+      return;
+    }
+  
     try {
       const res = await axios.post("/api/users/register", newUser);
-			if (res.status === 201 || res.status === 200) {
-				setNoUser(false);
-				setError(false);
-				setSuccess(true);
-			}
+      setNoUser(true);
+      setError(false);
+      setSuccess(true);
     } catch (err) {
-			setError(true)
+      if (axios.isAxiosError(err) && err.response) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("An unexpected error occurred");
+      }
+      setError(true);
     }
   };
   return (
@@ -68,7 +72,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
             <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" required />
             <input className="mt-3 text-base" type="submit" value="Sign up" />
             {success && <span className="text-green-600 mt-3 text-center">Success!</span>}
-            {error && <span className="text-red-500 mt-3 text-center">Something is missing...</span>}
+            {error && <span className="text-red-500 mt-3 text-center">{errorMessage}</span>}
           </form>
         </div>
       </div>
