@@ -91,7 +91,7 @@ function App() {
         )}
         {noUser && <Register setNoUser={setNoUser} />}
         {/* <Login /> */}
-        {thisUser && <button className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">Log out</button>}
+        {!noUser && <button className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">Log out</button>}
       </Map>
     </div>
   );

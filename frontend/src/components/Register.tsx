@@ -10,7 +10,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [newUser, setNewUser] = useState({
-    user: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -33,7 +33,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
     try {
       const res = await axios.post("/api/users/register", newUser);
 			if (res.status === 201 || res.status === 200) {
-				setNoUser(true);
+				setNoUser(false);
 				setError(false);
 				setSuccess(true);
 			}
@@ -54,10 +54,10 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
             Already registered?  <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline">Login into your account</a>
           </figcaption>
           <form className="flex flex-col" onSubmit={handleSubmit}>
-            <label className="" htmlFor="user">
+            <label className="" htmlFor="username">
               Username
             </label>
-            <input className="mb-1 py-1" name="user" id="user" onChange={handleChange} type="text" required />
+            <input className="mb-1 py-1" name="username" id="username" onChange={handleChange} type="text" required />
             <label className="" htmlFor="email">
               Email
             </label>
