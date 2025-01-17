@@ -4,6 +4,7 @@ import Form from './Form'
 import Pop_up from '../interfaces/Popup'
 import MapMarker from "./MapMarker";
 import Map, { Marker, Popup } from "react-map-gl";
+// import useDoubleTap from "../hooks/useDoubleTap";
 import "../index.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -34,30 +35,36 @@ function App() {
     getPins();
   }, []);
     
+  
+  const handleNewPin = (newPin: Pin) => {
+    setPins(prev => [...prev, newPin]);
+    setNewEvent(null); // Close popup after creation
+  };
+  
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
-    // console.log(currentPlaceId)
-    setViewport((prev) => ({
-      ...prev,
-      lat: lat,
-      long: long,
-    }));
+    // setViewport((prev) => ({
+    //   ...prev,
+    //   latitude: lat,
+    //   longitude: long,
+    // }));
   };
-
   const handleAddEvent = (e: mapboxgl.MapMouseEvent) => {
+    setCurrentPlaceId(null); // Close opened popup when creating a new Event
     const lat = e.lngLat.lat;
     const long = e.lngLat.lng;
     setNewEvent({
       lat,
       long,
     });
-    setViewport((prev) => ({
-      ...prev,
-      lat: lat,
-      long: long,
-    }));
-  };
-
+    // setViewport((prev) => ({  // For creating newEvents in mobile
+      //   ...prev,
+      //   latitude: lat,
+      //   longitude: long,
+      // }));
+      // const onTap = useDoubleTap(handleAddEvent)
+    };
+    
   return (
     <div className="h-lvh w-lvw">
       <Map
@@ -69,6 +76,7 @@ function App() {
         doubleClickZoom={false}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
+        // onTouchStart={onTap}
       >
         {pins.map((p: Pin) => (
           <div key={p._id}>
@@ -90,7 +98,7 @@ function App() {
                   <label className="">Location</label>
                   <h3 className="text-md font-bold">{p.location}</h3>
                   <label className="">Happening at</label>
-                  <h3 className="text-md font-bold">{p.happening}</h3>
+                  <h3 className="text-md font-bold">{p.date.toString()}</h3>
                   <label>Description</label>
                   <p>{p.description}</p>
                   {/* <label >Information</label> */}
@@ -106,7 +114,7 @@ function App() {
           </div>
         ))}
         
-        {newEvent && <Popup latitude={newEvent.lat} longitude={newEvent.long}><Form coordinates={{lat: newEvent.lat, long: newEvent.long}} /></Popup>}
+        {newEvent && <Popup latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}><Form coordinates={{lat: newEvent.lat, long: newEvent.long}} onSuccess={handleNewPin} /></Popup>}
       </Map>
     </div>
   );

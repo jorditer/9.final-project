@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios"
 
-const Form = ({ coordinates: {lat, long} }: { coordinates: { lat:number , long: number } }) => {
+const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:number , long: number }, onSuccess: (data: any) => void }) => {
   const initDate = new Date().toISOString().split("T")[0] + "T17:00"; //for datetime-local
   // console.log(coordinates.longitude);
   // console.log(coordinates.latitude);
@@ -28,7 +28,7 @@ const Form = ({ coordinates: {lat, long} }: { coordinates: { lat:number , long: 
     e.preventDefault();
     try {
       const res = await axios.post("/api/pins", {...eventData, lat, long, username: "Jordi"});
-      console.log(res.data);
+      onSuccess(res.data.data);
       // setEventData(res.data)
       setEventData({
         date: initDate,

@@ -15,7 +15,7 @@ const PinSchema = new mongoose.Schema(
       type: String,
       require: true
     },
-    happening: {
+    date: {
       type: Date,
       require: true
     },
