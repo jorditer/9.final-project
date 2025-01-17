@@ -1,5 +1,6 @@
 // import Datetime from "react-datetime";
 // import "react-datetime/css/react-datetime.css";
+import createChangeHandler from "../utils/form";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios"
@@ -16,17 +17,14 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
     description: "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEventData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+
+
+  const handleChange = createChangeHandler(setEventData)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+
       const res = await axios.post("/api/pins", {...eventData, lat, long, username: "Jordi"});
       onSuccess(res.data.data);
       // setEventData(res.data)
@@ -46,23 +44,23 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
         <label className="">Date</label>
         {/* <Datepicker showTimeSelect dateFormat="MMMM d, yyyy h:mm aa" selected={selectedDate} onChange={(date) => setSelectedDate(date)} /> */}
         <input
-          className=""
+          className="py-[2px]"
           type="datetime-local"
           value={eventData.date}
           onChange={handleChange}
           name="date"
         />
-        <label className="">Title</label>
-        <input name="title" type="text" onChange={handleChange} />
-        <label className="">Location</label>
-        <input name="location" type="text" onChange={handleChange} />
-        <label>Description</label>
+        <label htmlFor="title" className="">Title</label>
+        <input className="py-[2px]" name="title" id="title" type="text" onChange={handleChange} />
+        <label htmlFor="location" className="">Location</label>
+        <input className="py-[2px]" name="location" id="collection" type="text" onChange={handleChange} />
+        <label htmlFor="description">Description</label>
         <textarea
-          name="description"
+          name="description" id="description"
           placeholder="What is the plan?"
           onChange={handleChange}
         ></textarea>
-        <input className="w-full cursor-pointer transition-all bg-blue-500 text-white px-6 py-1 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]" type="submit" value="Create Event" />
+        <input className="" type="submit" value="Log in" />
       </form>
     </div>
   );

@@ -6,7 +6,7 @@ interface RegisterProps {
   setNoUser: (loggedIn: boolean) => void;
 }
 
-const Login: FC<RegisterProps> = ({ setNoUser }) => {
+const Register: FC<RegisterProps> = ({ setNoUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -31,8 +31,7 @@ const Login: FC<RegisterProps> = ({ setNoUser }) => {
       }
     console.log(newUser);
     try {
-      const res = await axios.post("/api/users", newUser);
-      console.log(res);
+      const res = await axios.post("/api/users/register", newUser);
 			if (res.status === 201 || res.status === 200) {
 				setNoUser(true);
 				setError(false);
@@ -50,16 +49,19 @@ const Login: FC<RegisterProps> = ({ setNoUser }) => {
       {/* Modal */}
       <div className="absolute top-1/2 left-1/2 p-2 -translate-x-1/2 -translate-y-1/2  bg-white w-2/3 sm:w-1/2 md:w-4/12">
         <div className="logo p-4 text-base">
-          <h1 className="text-4xl pb-2 font-bold">Log in</h1>
+          <h1 className="text-4xl pb-2 font-bold">Sign up</h1>
           <figcaption className="text-sm text-gray-500 pb-2">
-            Not registered?
-            <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline">Create an account</a>
+            Already registered?  <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline">Login into your account</a>
           </figcaption>
           <form className="flex flex-col" onSubmit={handleSubmit}>
             <label className="" htmlFor="user">
               Username
             </label>
             <input className="mb-1 py-1" name="user" id="user" onChange={handleChange} type="text" required />
+            <label className="" htmlFor="email">
+              Email
+            </label>
+            <input className="py-1" name="email" id="email" onChange={handleChange} type="email" required />
             <label className="mt-1" htmlFor="password">
               Password
             </label>
@@ -74,4 +76,4 @@ const Login: FC<RegisterProps> = ({ setNoUser }) => {
   );
 };
 
-export default Login;
+export default Register;
