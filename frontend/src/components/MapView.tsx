@@ -2,6 +2,7 @@ import Register from "./Register";
 import Form from "./Form";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
+import Events from "./Events"
 // import useDoubleTap from "../hooks/useDoubleTap";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -9,6 +10,7 @@ import Pin from "../interfaces/Pin";
 import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
+import { ReactComponent as ArrowIcon } from '../assets/imgs/arrow.svg?react'
 
 interface MapViewProps {
   thisUser: string | null;
@@ -19,7 +21,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
-  const [noUser, setNoUser] = useState(true);
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
@@ -103,6 +104,9 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
         <button onClick={handleLogout} className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">Log out</button>
+        <button className=" absolute bottom-2 left-1/2 cursor-pointer -translate-x-1/2"><ArrowIcon className="w-8 h-8 hover:text-gray-600" /></button>
+        <Events></Events>
+
       </Map>
     </div>
   );

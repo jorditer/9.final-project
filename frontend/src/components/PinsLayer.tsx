@@ -49,11 +49,11 @@ const PinsLayer = ({
                 <h2 className="text-xl font-extrabold">{p.title}</h2>
                 <label className="">Location</label>
                 <h3 className="text-md font-bold">{p.location}</h3>
-                <label className="">Event Time</label>
-                <h3 className="text-md ">{<Time date={p.date}/>}</h3>
                 <label>Description</label>
                 <p>{p.description}</p>
-                <small className=" text-nowrap">
+                <h3 className="text-md ">{<Time date={p.date}/>}</h3>
+                {/* <label className="">Time</label> */}
+                <small className="text-nowrap">
                   Created by <strong>{p.username}</strong>,{" "}
                   <em className="text-slate-500">
                     {formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}

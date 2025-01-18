@@ -19,19 +19,20 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
   const myStorage = window.localStorage
   const navigate = useNavigate();
   const handleChange = createChangeHandler(setNewUser);
-
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(newUser);
     try {
       const res = await axios.post("/api/users/login", newUser);
       myStorage.setItem("user", res.data.username);
-      
-      console.log(res);
+
+      console.log(res.data.username);
 			if (res.status === 201 || res.status === 200) {
 				setThisUser(res.data.username);
 				setError(false);
 				setSuccess(true);
+        navigate('/');
 			}
     } catch (err) {
 			setError(true)
