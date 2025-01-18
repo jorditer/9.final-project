@@ -1,7 +1,8 @@
 import { Marker, Popup } from "react-map-gl";
 import MapMarker from "./MapMarker";
 import Pin from "../interfaces/Pin";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import Time from "./Time";
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -48,8 +49,8 @@ const PinsLayer = ({
                 <h2 className="text-xl font-extrabold">{p.title}</h2>
                 <label className="">Location</label>
                 <h3 className="text-md font-bold">{p.location}</h3>
-                <label className="">Happening at</label>
-                <h3 className="text-md font-bold">{formatDistanceToNow(new Date (p.date), {addSuffix: true})}</h3>
+                <label className="">Event Time</label>
+                <h3 className="text-md ">{<Time date={p.date}/>}</h3>
                 <label>Description</label>
                 <p>{p.description}</p>
                 <small className=" text-nowrap">

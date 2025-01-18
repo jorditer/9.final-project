@@ -55,7 +55,7 @@ export const logUser = async (req, res) => {
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     !validPassword && res.status(400).json("Incorrect user or password!")
 
-    res.status(200).json({_id: user._id, username: user.username })
+    res.status(200).json({_id: user._id, username: user.username, email: user.email})
 
   } catch(error) {
     console.error(error)

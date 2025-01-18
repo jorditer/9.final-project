@@ -1,12 +1,14 @@
 import { FormEvent, useState, FC } from "react";
 import createChangeHandler from "../utils/form";
 import axios from "axios";
+import User from "../interfaces/User";
+import { useNavigate } from "react-router";
 
 interface RegisterProps {
-  setNoUser: (loggedIn: boolean) => void;
+  setThisUser: (user: string | null) => void;
 }
 
-const Register: FC<RegisterProps> = ({ setNoUser }) => {
+const Register: FC<RegisterProps> = ({ setThisUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -16,6 +18,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
     password: "",
   });
 
+  const navigate = useNavigate();
   const handleChange = createChangeHandler(setNewUser);
 
 	const validatePassword = (password: string): boolean => {
@@ -33,9 +36,12 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
   
     try {
       const res = await axios.post("/api/users/register", newUser);
-      setNoUser(true);
+      setThisUser(res.data.data.username);
+      console.log(res.data);
+      console.log(res.data.data.username);
       setError(false);
       setSuccess(true);
+      navigate('/');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         setErrorMessage(err.response.data.message);
@@ -55,7 +61,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
         <div className="logo p-4 text-base">
           <h1 className="text-4xl pb-2 font-bold">Sign up</h1>
           <figcaption className="text-sm text-gray-500 pb-2">
-            Already registered?  <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline">Login into your account</a>
+            Already registered?  <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline" onClick={() => navigate('/login')}>Log into your account</a>
           </figcaption>
           <form className="flex flex-col" onSubmit={handleSubmit}>
             <label className="" htmlFor="username">
@@ -69,7 +75,7 @@ const Register: FC<RegisterProps> = ({ setNoUser }) => {
             <label className="mt-1" htmlFor="password">
               Password
             </label>
-            <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" required />
+            <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" pattern="^(?=.*[0-9])(?=.*[!@#$%^&*<>'\\\/\]]).{7,}$" required />
             <input className="mt-3 text-base" type="submit" value="Sign up" />
             {success && <span className="text-green-600 mt-3 text-center">Success!</span>}
             {error && <span className="text-red-500 mt-3 text-center">{errorMessage}</span>}

@@ -1,40 +1,35 @@
 import { FormEvent, useState, FC } from "react";
 import createChangeHandler from "../utils/form";
 import axios from "axios";
+import User from "../interfaces/User";
+import { useNavigate } from "react-router";
 
-interface RegisterProps {
-  setNoUser: (loggedIn: boolean) => void;
+interface LoginProps {
+  setThisUser: (user: string | null) => void;
 }
 
-const Login: FC<RegisterProps> = ({ setNoUser }) => {
+const Login: FC<LoginProps> = ({ setThisUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [newUser, setNewUser] = useState({
-    user: "",
-    email: "",
+    username: "",
     password: "",
   });
 
+  const myStorage = window.localStorage
+  const navigate = useNavigate();
   const handleChange = createChangeHandler(setNewUser);
-
-	const validatePassword = (password: string): boolean => {
-    const hasNumber = /\d/.test(password);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return hasNumber && hasSymbol;
-  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-      if (!validatePassword(newUser.password)) {
-        alert("Password must contain at least one number and one symbol")
-        return;
-      }
     console.log(newUser);
     try {
-      const res = await axios.post("/api/users", newUser);
+      const res = await axios.post("/api/users/login", newUser);
+      myStorage.setItem("user", res.data.username);
+      
       console.log(res);
 			if (res.status === 201 || res.status === 200) {
-				setNoUser(true);
+				setThisUser(res.data.username);
 				setError(false);
 				setSuccess(true);
 			}
@@ -52,21 +47,20 @@ const Login: FC<RegisterProps> = ({ setNoUser }) => {
         <div className="logo p-4 text-base">
           <h1 className="text-4xl pb-2 font-bold">Log in</h1>
           <figcaption className="text-sm text-gray-500 pb-2">
-            Not registered?
-            <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline">Create an account</a>
+            Not registered? <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline" onClick={() => navigate("/signup")}>Create an account</a>
           </figcaption>
           <form className="flex flex-col" onSubmit={handleSubmit}>
-            <label className="" htmlFor="user">
+            <label className="" htmlFor="username">
               Username
             </label>
-            <input className="mb-1 py-1" name="user" id="user" onChange={handleChange} type="text" required />
+            <input className="mb-1 py-1" name="username" id="username" onChange={handleChange} type="text" required />
             <label className="mt-1" htmlFor="password">
               Password
             </label>
             <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" required />
-            <input className="mt-3 text-base" type="submit" value="Sign up" />
+            <input className="mt-3 text-base" type="submit" value="Log in" />
             {success && <span className="text-green-600 mt-3 text-center">Success!</span>}
-            {error && <span className="text-red-500 mt-3 text-center">Something is missing...</span>}
+            {error && <span className="text-red-500 mt-3 text-center">Something failed...</span>}
           </form>
         </div>
       </div>
