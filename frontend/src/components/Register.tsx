@@ -1,7 +1,6 @@
 import { FormEvent, useState, FC } from "react";
 import createChangeHandler from "../utils/form";
 import axios from "axios";
-import User from "../interfaces/User";
 import { useNavigate } from "react-router";
 
 interface RegisterProps {
@@ -37,8 +36,6 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
     try {
       const res = await axios.post("/api/users/register", newUser);
       setThisUser(res.data.data.username);
-      console.log(res.data);
-      console.log(res.data.data.username);
       setError(false);
       setSuccess(true);
       navigate('/');

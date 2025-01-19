@@ -11,6 +11,7 @@ interface LoginProps {
 const Login: FC<LoginProps> = ({ setThisUser }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [newUser, setNewUser] = useState({
     username: "",
     password: "",
@@ -35,7 +36,12 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
         navigate('/');
 			}
     } catch (err) {
-			setError(true)
+			if (axios.isAxiosError(err) && err.response) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("An unexpected error occurred");
+      }
+      setError(true)
     }
   };
   return (
@@ -61,7 +67,7 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
             <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" required />
             <input className="mt-3 text-base" type="submit" value="Log in" />
             {success && <span className="text-green-600 mt-3 text-center">Success!</span>}
-            {error && <span className="text-red-500 mt-3 text-center">Something failed...</span>}
+            {error && <span className="text-red-500 mt-3 text-center">{errorMessage}</span>}
           </form>
         </div>
       </div>
