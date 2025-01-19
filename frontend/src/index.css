@@ -696,6 +696,18 @@ input:user-invalid {
   left: 0.5rem;
 }
 
+.bottom-\[calc\(33\%_\+1\.5rem\)\] {
+  bottom: calc(33% + 1.5rem);
+}
+
+.bottom-\[calc\(33\%_\+1rem\)\] {
+  bottom: calc(33% + 1rem);
+}
+
+.bottom-\[calc\(33\%_\+0\.75rem\)\] {
+  bottom: calc(33% + 0.75rem);
+}
+
 .z-10 {
   z-index: 10;
 }

@@ -111,7 +111,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         <button
           onClick={() => setShowEvents(!showEvents)}
           className={`transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
-            showEvents ? "bottom-[calc(33%_+0.5rem)]" : "bottom-2"
+            showEvents ? "bottom-[calc(33%_+1rem)]" : "bottom-2"
           }`}
         >
           <ArrowIcon className={`w-8 h-8 transition-transform duration-700 hover:text-gray-600 ${!showEvents && 'rotate-180'}` }/>
