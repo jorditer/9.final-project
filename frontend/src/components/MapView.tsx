@@ -2,7 +2,7 @@ import Register from "./Register";
 import Form from "./Form";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
-import Events from "./Events"
+import Events from "./Events";
 // import useDoubleTap from "../hooks/useDoubleTap";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -10,7 +10,7 @@ import Pin from "../interfaces/Pin";
 import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
-import { ReactComponent as ArrowIcon } from '../assets/imgs/arrow.svg?react'
+import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
 
 interface MapViewProps {
   thisUser: string | null;
@@ -21,6 +21,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
+  const [showEvents, setShowEvents] = useState(false);
+
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
@@ -72,7 +74,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   const handleLogout = () => {
     onLogout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -103,10 +105,27 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         )}
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        <button onClick={handleLogout} className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">Log out</button>
-        <button className=" absolute bottom-2 left-1/2 cursor-pointer -translate-x-1/2"><ArrowIcon className="w-8 h-8 hover:text-gray-600" /></button>
-        <Events></Events>
+        <button onClick={handleLogout} className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">
+          Log out
+        </button>
+        <button
+          onClick={() => setShowEvents(!showEvents)}
+          className={`transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
+            showEvents ? "bottom-[calc(33%_+0.5rem)]" : "bottom-2"
+          }`}
+        >
+          <ArrowIcon className={`w-8 h-8 transition-transform duration-700 hover:text-gray-600 ${!showEvents && 'rotate-180'}` }/>
+        </button>
+        <div 
+        className={`fixed bottom-0 left-0 w-full h-1/3 bg-white transition-all duration-700 ease-in-out transform z-10 ${
+          showEvents 
+            ? "translate-y-0 opacity-100" 
+            : "translate-y-full opacity-0"
+        }`}
+      >
+        <Events />
 
+        </div>
       </Map>
     </div>
   );
