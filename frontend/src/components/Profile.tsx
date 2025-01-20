@@ -15,7 +15,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pins, setPins, setCurrentPlaceId }) => {
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
-
+  
   const handleDelete = async (pinId: string) => {
     try {
       await axios.delete(`/api/pins/${pinId}`);
@@ -32,16 +32,28 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
         showProfile ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
       } overflow-hidden rounded-t-lg`}
     >
-      <div className="h-full p-4 flex gap-4">
-        {/* Profile Section */}
-        <div className="flex flex-col items-center w-1/5">
-          <div className="size-20 mt-10 sm:size-32 lg:size-48 md:mt-0 md:size-40 bg-black rounded-full mb-2" />
+      <div className="h-full p-4 flex flex-col md:flex-row gap-4">
+        {/* Header section with title and profile on mobile */}
+        <div className="flex justify-between items-center md:hidden">
+          <h1 className="text-xl font-bold">
+            {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
+          </h1>
+          <div className="flex items-center gap-3">
+            <span className="font-semibold text-lg">{eventsUser || thisUser}</span>
+            <div className="size-12 bg-black rounded-full" />
+          </div>
+        </div>
+
+        {/* Profile Section - Hidden on mobile, shown on desktop */}
+        <div className="hidden md:flex md:flex-col items-center md:w-1/5 gap-2">
+          <div className="size-40 lg:size-48 bg-black rounded-full" />
           <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
         </div>
 
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2">
-          <h1 className="mb-3 top-0 bg-white py-2">
+          {/* Desktop title */}
+          <h1 className="hidden md:block mb-3 top-0 bg-white py-2 text-xl font-bold">
             {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
           </h1>
           <div className="flex flex-col gap-3">
@@ -57,22 +69,27 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                   </button>
                 )}
 
-                <div className="grid grid-cols-[2fr,1fr] gap-4">
-                  {/* Left side - Title and Description */}
-                  <div className="flex flex-col min-w-0">
-                    <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
-                    <p className="text-sm text-gray-600 mb-1">{event.location}</p>
-                    <p className="text-sm line-clamp-2 text-gray-700">{event.description}</p>
+                {/* Event Content */}
+                <div className="grid grid-cols-[2fr,1fr] md:grid-cols-[1.5fr,2fr,1fr] gap-4">
+                  {/* Mobile: Title, Location, and Description / Desktop: Title and Location */}
+                  <div className="flex flex-col min-w-0 md:contents">
+                    <div className="md:col-span-1">
+                      <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
+                      <p className="text-sm text-gray-600">{event.location}</p>
+                    </div>
+                    <p className="text-sm text-gray-700 line-clamp-2 mt-1 md:mt-0 md:col-span-1">{event.description}</p>
                   </div>
 
-                  {/* Right side - Time */}
-                  <div className="flex items-start justify-end">
+                  {/* Time - Always in second column on mobile, third column on desktop */}
+                  <div className="flex items-center justify-end md:justify-center">
                     <Time date={event.date} />
                   </div>
                 </div>
               </div>
             ))}
-            {userEvents.length === 0 && <p className="text-gray-500 text-center">No events created yet :(</p>}
+            {userEvents.length === 0 && (
+              <p className="text-gray-500 text-center">No events created yet :(</p>
+            )}
           </div>
         </div>
       </div>
