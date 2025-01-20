@@ -43,13 +43,11 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
             <div className="size-12 bg-black rounded-full" />
           </div>
         </div>
-
         {/* Profile Section - Hidden on mobile, shown on desktop */}
         <div className="hidden md:flex md:flex-col items-center md:w-1/5 gap-2">
           <div className="size-40 lg:size-48 bg-black rounded-full" />
           <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
         </div>
-
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2">
           {/* Desktop title */}
@@ -69,20 +67,32 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                   </button>
                 )}
                 {/* Event Content */}
-                <div className="grid grid-cols-5 gap-6">
-                  {/* Title and Location */}
-                  <div className="col-span-2 min-w-0">
-                    <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
-                    <p className="text-sm text-gray-600 truncate">{event.location}</p>
-                  </div>
-                  {/* Description */}
-                  <div className="col-span-2 min-w-0">
+                <div className="flex flex-col space-y-2">
+                  {/* Title always at top on mobile */}
+                  <h4 className="text-lg font-semibold truncate pr-8 md:hidden">{event.title}</h4>
+                  
+                  {/* Desktop layout */}
+                  <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,1fr] md:gap-4">
+                    <div>
+                      <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
+                      <p className="text-sm text-gray-600">{event.location}</p>
+                    </div>
                     <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
-                  </div>
-                  {/* Time with truncation */}
-                  <div className="col-span-1 flex items-start justify-end min-w-0">
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap w-full text-right">
+                    <div className="flex items-center justify-center">
                       <Time date={event.date} />
+                    </div>
+                  </div>
+                  
+                  {/* Mobile layout - two columns after title */}
+                  <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
+                    <div className="flex flex-col min-w-0">
+                      <p className="text-sm text-gray-600 truncate">{event.location}</p>
+                      <p className="text-sm text-gray-700 line-clamp-2 mt-1">{event.description}</p>
+                    </div>
+                    <div className="flex items-center justify-end">
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        <Time date={event.date} />
+                      </div>
                     </div>
                   </div>
                 </div>
