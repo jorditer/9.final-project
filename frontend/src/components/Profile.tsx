@@ -36,9 +36,6 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, pins }) => {
                 <p className="text-sm">{event.description}</p>
                 <div className="text-sm text-gray-500 mt-1">
                   <Time date={event.date} />
-                  <span className="ml-2">
-                    ({formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })})
-                  </span>
                 </div>
               </div>
             ))}
