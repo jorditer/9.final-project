@@ -2,7 +2,7 @@ import SearchBar from "./SearchBar";
 import Form from "./Form";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
-import Events from "./Events";
+import Events from "./Profile";
 // import useDoubleTap from "../hooks/useDoubleTap";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -21,7 +21,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
-  const [showEvents, setShowEvents] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
@@ -42,6 +42,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     };
     getPins();
   }, []);
+
+  console.log(thisUser);
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
@@ -105,19 +107,19 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         )}
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        {thisUser && <button onClick={handleLogout} className="opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-2 right-2 p-2 text-nowrap login">
+        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-3 right-4 text-nowrap login">
           Log out
         </button>}
         <button
-          onClick={() => setShowEvents(!showEvents)}
+          onClick={() => setShowProfile(!showProfile)}
           className={`transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
-            showEvents ? "bottom-[calc(33%_+1rem)]" : "bottom-2"
+            showProfile ? "bottom-[calc(33%_+1rem)]" : "bottom-2"
           }`}
         >
-          <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showEvents && 'rotate-180'}` }/>
+          <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>
         </button>
         <SearchBar />
-        <Events showEvents={showEvents}/>
+        <Events showProfile={showProfile}/>
       </Map>
     </div>
   );

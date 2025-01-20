@@ -23,7 +23,7 @@ small {
     @apply px-[7px] m-1;
   }
   button[class~=login] {
-    @apply w-16 rounded-xl text-sm border border-gray-700;
+    @apply rounded-xl border hover:border-white border-gray-700;
   }
   input:user-invalid {
     @apply bg-red-100 border-red-900;

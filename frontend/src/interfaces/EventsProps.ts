@@ -1,5 +1,5 @@
 interface EventsProps {
-	showEvents: boolean;
+	showProfile: boolean;
 }
 
 export default EventsProps

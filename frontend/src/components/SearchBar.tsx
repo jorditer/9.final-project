@@ -17,7 +17,7 @@ const SearchBar = () => {
     setInputValue(e.target.value);
   };
 
-  return (
+  return ( 
     <div className="relative">
       {/* Hidden span to measure text width */}
       <span
@@ -34,7 +34,7 @@ const SearchBar = () => {
         value={inputValue}
         onChange={handleInputChange}
         placeholder="Search..."
-        className="border p-2 border-black text-base rounded-md fixed top-4 left-4 transition-all duration-200"
+        className="opacity-90 border px-2 py-2 border-black text-base rounded-md fixed top-4 left-4 transition-all duration-200"
         style={{ width: `${inputWidth}px` }}
       />
     </div>
