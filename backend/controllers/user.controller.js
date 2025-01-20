@@ -49,7 +49,14 @@ export const postUser = async (req, res) => {
 
 export const logUser = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    if (!req.body.username || !req.body.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required"
+      });
+    }
+
+    const user = await User.findOne({ username: req.body.username }).select('+password');
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -70,7 +77,7 @@ export const logUser = async (req, res) => {
       username: user.username,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Login error:', error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

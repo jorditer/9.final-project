@@ -55,7 +55,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
           name="date"
         />
         <label htmlFor="title" className="">Title</label>
-        <input className="py-[2px]" name="title" id="title" type="text" onChange={handleChange} maxLength={15} required />
+        <input className="py-[2px]" name="title" id="title" type="text" onChange={handleChange} maxLength={22} required />
         <label htmlFor="location" className="">Location</label>
         <input className="py-[2px]" name="location" id="collection" type="text" onChange={handleChange} maxLength={20} required />
         <label htmlFor="description">Description</label>

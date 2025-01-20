@@ -45,9 +45,9 @@ UserSchema.pre('find', function() {
   this.select('-password');
 });
 
-UserSchema.pre('findOne', function() {
-  this.select('-password');
-});
+// UserSchema.pre('findOne', function() {
+//   this.select('-password');
+// });
 
 const User = mongoose.model("User", UserSchema); // Create a model from the schema
 

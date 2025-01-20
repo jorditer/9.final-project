@@ -68,21 +68,22 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 )}
-
                 {/* Event Content */}
-                <div className="grid grid-cols-[2fr,1fr] md:grid-cols-[1.5fr,2fr,1fr] gap-4">
-                  {/* Mobile: Title, Location, and Description / Desktop: Title and Location */}
-                  <div className="flex flex-col min-w-0 md:contents">
-                    <div className="md:col-span-1">
-                      <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
-                      <p className="text-sm text-gray-600">{event.location}</p>
-                    </div>
-                    <p className="text-sm text-gray-700 line-clamp-2 mt-1 md:mt-0 md:col-span-1">{event.description}</p>
+                <div className="grid grid-cols-5 gap-6">
+                  {/* Title and Location */}
+                  <div className="col-span-2 min-w-0">
+                    <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
+                    <p className="text-sm text-gray-600 truncate">{event.location}</p>
                   </div>
-
-                  {/* Time - Always in second column on mobile, third column on desktop */}
-                  <div className="flex items-center justify-end md:justify-center">
-                    <Time date={event.date} />
+                  {/* Description */}
+                  <div className="col-span-2 min-w-0">
+                    <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
+                  </div>
+                  {/* Time with truncation */}
+                  <div className="col-span-1 flex items-start justify-end min-w-0">
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap w-full text-right">
+                      <Time date={event.date} />
+                    </div>
                   </div>
                 </div>
               </div>
