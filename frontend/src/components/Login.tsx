@@ -47,7 +47,7 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
   return (
     <>
       {/* Dark overlay */}
-      <div className="fixed inset-0 bg-yellow-950 bg-opacity-70" />
+      <div className="fixed inset-0 bg-yellow-800 bg-opacity-40" />
 
       {/* Modal */}
       <div className="absolute top-1/2 left-1/2 p-2 -translate-x-1/2 -translate-y-1/2  bg-white w-2/3 sm:w-1/2 md:w-4/12">

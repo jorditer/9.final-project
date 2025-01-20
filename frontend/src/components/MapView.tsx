@@ -1,4 +1,4 @@
-import Register from "./Register";
+import SearchBar from "./SearchBar";
 import Form from "./Form";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
@@ -105,17 +105,18 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         )}
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        <button onClick={handleLogout} className="bg-red-500 absolute top-2 right-2 p-2 text-nowrap login">
+        {thisUser && <button onClick={handleLogout} className="opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-2 right-2 p-2 text-nowrap login">
           Log out
-        </button>
+        </button>}
         <button
           onClick={() => setShowEvents(!showEvents)}
           className={`transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
             showEvents ? "bottom-[calc(33%_+1rem)]" : "bottom-2"
           }`}
         >
-          <ArrowIcon className={`w-8 h-8 transition-transform duration-700 hover:text-gray-600 ${!showEvents && 'rotate-180'}` }/>
+          <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showEvents && 'rotate-180'}` }/>
         </button>
+        <SearchBar />
         <Events showEvents={showEvents}/>
       </Map>
     </div>
