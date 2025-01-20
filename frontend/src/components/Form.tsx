@@ -17,8 +17,6 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
     description: "",
   });
 
-
-
   const handleChange = createChangeHandler(setEventData)
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,6 +36,10 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
       console.log(err)
     }
   };
+
+  const now = new Date();
+  const formattedDateTime = now.toISOString().slice(0, 16); // Keep up to 'YYYY-MM-DDTHH:mm'
+  // document.querySelector('input[type="datetime-local"]')?.setAttribute("min", formattedDateTime);
   return (
     <div className="text-base -my-1 flex justify-end flex-col">
       <form onSubmit={handleSubmit}>
@@ -45,20 +47,23 @@ const Form = ({ coordinates: {lat, long}, onSuccess }: { coordinates: { lat:numb
         {/* <Datepicker showTimeSelect dateFormat="MMMM d, yyyy h:mm aa" selected={selectedDate} onChange={(date) => setSelectedDate(date)} /> */}
         <input
           className="py-[2px]"
+          min={formattedDateTime}
           type="datetime-local"
+          title="Please select a future date"
           value={eventData.date}
           onChange={handleChange}
           name="date"
         />
         <label htmlFor="title" className="">Title</label>
-        <input className="py-[2px]" name="title" id="title" type="text" onChange={handleChange} />
+        <input className="py-[2px]" name="title" id="title" type="text" onChange={handleChange} maxLength={15} required />
         <label htmlFor="location" className="">Location</label>
-        <input className="py-[2px]" name="location" id="collection" type="text" onChange={handleChange} />
+        <input className="py-[2px]" name="location" id="collection" type="text" onChange={handleChange} maxLength={20} required />
         <label htmlFor="description">Description</label>
         <textarea
           name="description" id="description"
           placeholder="What is the plan?"
-          onChange={handleChange}
+          maxLength={60}
+          onChange={handleChange} className="max-h-20"
         ></textarea>
         <input className="" type="submit" value="Log in" />
       </form>

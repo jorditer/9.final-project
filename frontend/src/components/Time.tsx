@@ -5,10 +5,6 @@ import { format, formatDistanceToNow } from "date-fns";
 // First style: Visual timeline with icon and colored urgency indicator
 const Time = ({ date }) => {
   const now = new Date();
-  // const diffInHours = (new Date(date) - now) / (1000 * 60 * 60);
-
-  // Determine urgency color based on how soon the event is
-
   return (
     <>
       <div className="flex items-center space-x-2 pt-2 rounded-lg ">

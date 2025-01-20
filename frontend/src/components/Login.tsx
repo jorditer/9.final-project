@@ -47,12 +47,12 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
   return (
     <>
       {/* Dark overlay */}
-      <div className="fixed inset-0 bg-yellow-800 bg-opacity-40" />
+      <div className="z-20 fixed inset-0 bg-yellow-800 bg-opacity-40" />
 
       {/* Modal */}
-      <div className="absolute top-1/2 left-1/2 p-2 -translate-x-1/2 -translate-y-1/2  bg-white w-2/3 sm:w-1/2 md:w-4/12">
+      <div className="z-20 absolute top-1/2 left-1/2 p-2 -translate-x-1/2 -translate-y-1/2  bg-white w-2/3 sm:w-1/2 md:w-4/12">
         <div className="logo p-4 text-base">
-          <h1 className="text-4xl pb-2 font-bold">Log in</h1>
+          <h2 className="text-4xl pb-2 font-bold">Log in</h2>
           <figcaption className="text-sm text-gray-500 pb-2">
             Not registered? <a className="text-blue-600 hover:text-blue-400 cursor-pointer underline" onClick={() => navigate("/signup")}>Create an account</a>
           </figcaption>

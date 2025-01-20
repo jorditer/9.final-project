@@ -45,3 +45,22 @@ export const deletePin = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const getPinId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!moongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid pin ID" });
+    }
+
+    const pin = await Pin.findById(id);
+    if (!pin) {
+      return res.status(404).json({ success: false, message: "Pin not found" });
+    }
+
+    res.status(200).json({ success: true, data: pin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const SearchBar = () => {
+const SearchBar = (setEventsUser) => {
   const [inputValue, setInputValue] = useState('');
   const [inputWidth, setInputWidth] = useState(60); // minimum width
   const hiddenSpanRef = useRef<HTMLSpanElement>(null);

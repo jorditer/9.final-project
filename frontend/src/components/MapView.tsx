@@ -22,6 +22,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [eventsUser, setEventsUser] = useState(thisUser);
 
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
@@ -91,7 +92,9 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
         // onTouchStart={onTap}
       >
+      <Profile setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
         <PinsLayer
+          setPins={setPins}
           pins={pins}
           currentPlaceId={currentPlaceId}
           thisUser={thisUser}
@@ -118,8 +121,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         >
           <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>
         </button>
-        <SearchBar />
-        <Profile thisUser={thisUser} pins={pins} showProfile={showProfile}/>
+        <SearchBar setEventsUser={setEventsUser} />
       </Map>
     </div>
   );
