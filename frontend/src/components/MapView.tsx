@@ -2,7 +2,7 @@ import SearchBar from "./SearchBar";
 import Form from "./Form";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
-import Events from "./Profile";
+import Profile from "./Profile";
 // import useDoubleTap from "../hooks/useDoubleTap";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -119,7 +119,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>
         </button>
         <SearchBar />
-        <Events showProfile={showProfile}/>
+        <Profile thisUser={thisUser} pins={pins} showProfile={showProfile}/>
       </Map>
     </div>
   );
