@@ -30,6 +30,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     zoom: 12,
   });
 
+  // console.log(thisUser);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,8 +45,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     };
     getPins();
   }, []);
-
-  console.log(thisUser);
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);

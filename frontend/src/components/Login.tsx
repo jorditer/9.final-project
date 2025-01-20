@@ -23,12 +23,10 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(newUser);
     try {
       const res = await axios.post("/api/users/login", newUser);
       myStorage.setItem("user", res.data.username);
 
-      console.log(res.data.username);
 			if (res.status === 201 || res.status === 200) {
 				setThisUser(res.data.username);
 				setError(false);

@@ -2,7 +2,7 @@ import User from "../models/users.model.js";
 import moongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-export const getUser = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const user = await User.find({});
     res.status(200).json({ success: true, data: user });

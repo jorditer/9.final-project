@@ -35,13 +35,15 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
       <div className="h-full p-4 flex gap-4">
         {/* Profile Section */}
         <div className="flex flex-col items-center w-1/5">
-          <div className="size-20 mt-20 sm:size-32 lg:size-48 md:mt-0 md:size-40 bg-black rounded-full mb-2" />
-          <span className="font-semibold text-center text-3xl">{eventsUser}</span>
+          <div className="size-20 mt-10 sm:size-32 lg:size-48 md:mt-0 md:size-40 bg-black rounded-full mb-2" />
+          <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
         </div>
 
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2">
-          <h1 className="mb-3 top-0 bg-white py-2">My Events</h1>
+          <h1 className="mb-3 top-0 bg-white py-2">
+            {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
+          </h1>
           <div className="flex flex-col gap-3">
             {userEvents.map((event) => (
               <div key={event._id} className="bg-gray-50 p-4 rounded-lg relative group">

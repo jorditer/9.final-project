@@ -1,45 +1,68 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const SearchBar = (setEventsUser) => {
+interface SearchBarProps {
+  setEventsUser: (username: string) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser }) => {
   const [inputValue, setInputValue] = useState('');
-  const [inputWidth, setInputWidth] = useState(60); // minimum width
-  const hiddenSpanRef = useRef<HTMLSpanElement>(null);
+  const [users, setUsers] = useState<string[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    if (hiddenSpanRef.current) {
-      // Add a small buffer (20px) to prevent text from touching the edges
-      const newWidth = Math.max(60, hiddenSpanRef.current.offsetWidth + 20);
-      setInputWidth(newWidth);
-    }
-  }, [inputValue]);
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get('/api/users');
+        // Update this line to match the response structure
+        const usernames = res.data.data.map((user: { username: string }) => user.username);
+        setUsers(usernames);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+      }
+    };
+    fetchUsers();
+  }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+  const filteredUsers = users.filter(user => 
+    user.toLowerCase().includes(inputValue.toLowerCase())
+  );
+
+  const handleUserSelect = (username: string) => {
+    setEventsUser(username);
+    setInputValue(username);
+    setShowResults(false);
   };
 
-  return ( 
-    <div className="relative">
-      {/* Hidden span to measure text width */}
-      <span
-        ref={hiddenSpanRef}
-        className="absolute invisible whitespace-pre px-2"
-        aria-hidden="true"
-      >
-        {inputValue || 'Search...'}
-      </span>
-      
-      {/* Actual input that grows */}
+  return (
+    <div className="fixed top-2 left-4 z-10">
       <input
         type="text"
         value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Search..."
-        className="opacity-90 border px-2 py-2 border-black text-base rounded-md fixed top-4 left-4 transition-all duration-200"
-        style={{ width: `${inputWidth}px` }}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+          setShowResults(true);
+        }}
+        onFocus={() => setShowResults(true)}
+        placeholder="Search users..."
+        className="px-3 py-2 border border-black text-base rounded-md bg-white/90"
       />
+      
+      {showResults && inputValue && filteredUsers.length > 0 && (
+        <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg">
+          {filteredUsers.map((username) => (
+            <button
+              key={username}
+              onClick={() => handleUserSelect(username)}
+              className="w-full px-3 py-2 text-left hover:bg-gray-100"
+            >
+              {username}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-	// <input className="outline-none  border border-black fixed top-4 left-4 text-base w-1/3 p-1 rounded-md opacity-70 focus:opacity-90 active:opacity-100" type="search" name="search" id="search" />
 export default SearchBar;
