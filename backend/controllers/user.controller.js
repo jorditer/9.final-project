@@ -228,3 +228,140 @@ export const getFriendsList = async (req, res) => {
     });
   }
 };
+
+// Replace addFriend with these new functions:
+
+export const sendFriendRequest = async (req, res) => {
+  try {
+    const { username, friendUsername } = req.params;
+
+    if (username === friendUsername) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot send friend request to yourself"
+      });
+    }
+
+    const user = await User.findOne({ username });
+    const friend = await User.findOne({ username: friendUsername });
+
+    if (!user || !friend) {
+      return res.status(404).json({
+        success: false,
+        message: "User or friend not found"
+      });
+    }
+
+    // Check if already friends
+    if (user.friends.includes(friendUsername)) {
+      return res.status(400).json({
+        success: false,
+        message: "Already friends with this user"
+      });
+    }
+
+    // Check if request already sent
+    if (user.sentFriendRequests.includes(friendUsername)) {
+      return res.status(400).json({
+        success: false,
+        message: "Friend request already sent"
+      });
+    }
+
+    // Add to sent requests for sender
+    user.sentFriendRequests.push(friendUsername);
+    await user.save();
+
+    // Add to pending requests for receiver
+    friend.pendingFriendRequests.push(username);
+    await friend.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Friend request sent successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+export const acceptFriendRequest = async (req, res) => {
+  try {
+    const { username, friendUsername } = req.params;
+    
+    const user = await User.findOne({ username });
+    const friend = await User.findOne({ username: friendUsername });
+
+    if (!user || !friend) {
+      return res.status(404).json({
+        success: false,
+        message: "User or friend not found"
+      });
+    }
+
+    // Verify request exists
+    if (!user.pendingFriendRequests.includes(friendUsername)) {
+      return res.status(400).json({
+        success: false,
+        message: "No pending request from this user"
+      });
+    }
+
+    // Remove from pending/sent lists
+    user.pendingFriendRequests = user.pendingFriendRequests.filter(u => u !== friendUsername);
+    friend.sentFriendRequests = friend.sentFriendRequests.filter(u => u !== username);
+
+    // Add to friends lists
+    user.friends.push(friendUsername);
+    friend.friends.push(username);
+
+    await user.save();
+    await friend.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Friend request accepted"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+export const rejectFriendRequest = async (req, res) => {
+  try {
+    const { username, friendUsername } = req.params;
+    
+    const user = await User.findOne({ username });
+    const friend = await User.findOne({ username: friendUsername });
+
+    if (!user || !friend) {
+      return res.status(404).json({
+        success: false,
+        message: "User or friend not found"
+      });
+    }
+
+    // Remove from pending/sent lists
+    user.pendingFriendRequests = user.pendingFriendRequests.filter(u => u !== friendUsername);
+    friend.sentFriendRequests = friend.sentFriendRequests.filter(u => u !== username);
+
+    await user.save();
+    await friend.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Friend request rejected"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error" 
+    });
+  }
+};

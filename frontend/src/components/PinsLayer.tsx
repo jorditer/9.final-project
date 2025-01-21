@@ -1,7 +1,7 @@
 import { Marker, Popup } from "react-map-gl";
 import MapMarker from "./MapMarker";
 import Pin from "../interfaces/Pin";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
@@ -69,12 +69,12 @@ const PinsLayer = ({
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 )}
-                <h2 className="text-xl font-extrabold pr-8">{p.title}</h2>
+                <h2 className="text-xl font-extrabold pr-8 text-nowrap">{p.title}</h2>
                 <label className="">Location</label>
                 <h3 className="text-md font-bold">{p.location}</h3>
                 <label>Description</label>
                 <p>{p.description}</p>
-                <h3 className="text-md ">{<Time date={p.date}/>}</h3>
+                <h3 className="text-md mt-1">{<Time date={p.date}/>}</h3>
                 <small className="text-nowrap">
                   Created by <strong>{p.username}</strong>,{" "}
                   <em className="text-slate-500">

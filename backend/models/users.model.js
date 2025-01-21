@@ -31,7 +31,23 @@ const UserSchema =  new mongoose.Schema({
       },
       message: props => `Username ${props.value} does not exist!`
     }
-  }]
+  }],
+  pendingFriendRequests: [{
+    type: String,
+    ref: 'User',
+    validate: {
+      validator: async function(username) {
+        const User = mongoose.model('User');
+        const user = await User.findOne({ username: username });
+        return user != null;
+      },
+      message: props => `Username ${props.value} does not exist!`
+    }
+  }],
+  sentFriendRequests: [{
+    type: String,
+    ref: 'User'
+  }],
 }, {
   timestamps: true
 });
