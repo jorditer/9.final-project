@@ -8,7 +8,7 @@ router.get('/', getAllUsers);
 router.get('/:username', getUserByUsername);
 router.post('/register', postUser);
 router.post('/login', logUser);
-router.post('/:username/friends', addFriend);
+router.post('/:username/friends/:friendUsername', addFriend);
 router.delete('/:username/friends/:friendUsername', removeFriend);
 router.get('/:username/friends', getFriendsList);
 // router.delete('/:id', deletePin);

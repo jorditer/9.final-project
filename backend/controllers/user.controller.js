@@ -112,8 +112,7 @@ export const getUserByUsername = async (req, res) => {
 
 export const addFriend = async (req, res) => {
   try {
-    const { username } = req.params;
-    const { friendUsername } = req.body;
+    const { username, friendUsername } = req.params;
 
     // Check if trying to add self as friend
     if (username === friendUsername) {

@@ -15,7 +15,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pins, setPins, setCurrentPlaceId }) => {
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
-  
+
   const handleDelete = async (pinId: string) => {
     try {
       await axios.delete(`/api/pins/${pinId}`);
@@ -35,16 +35,14 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
       <div className="h-full p-4 flex flex-col md:flex-row gap-4">
         {/* Header section with title and profile on mobile */}
         <div className="flex justify-between items-center md:hidden">
-          <h1 className="text-xl font-bold">
-            {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
-          </h1>
+          <h1 className="">{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
           <div className="flex items-center gap-3">
             <span className="font-semibold text-lg">{eventsUser || thisUser}</span>
             <div className="size-12 bg-black rounded-full min-h-10" />
           </div>
         </div>
         {/* Profile Section - Hidden on mobile, shown on desktop */}
-        <div className="hidden md:flex md:flex-col items-center md:w-1/5 gap-2">
+        <div className="hidden md:flex md:flex-col items-center gap-2">
           <div className="size-40 lg:size-42 bg-black rounded-full" />
           <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
         </div>
@@ -69,21 +67,23 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                 {/* Event Content */}
                 <div className="flex flex-col space-y-2">
                   {/* Title always at top on mobile */}
-                  
+
                   {/* Desktop layout */}
-                  <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,1fr] md:gap-4 items-center">
+                  <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
                     <div>
                       <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
                       <p className="text-sm text-gray-600">{event.location}</p>
                     </div>
                     <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
+                    <div className="w-full ">
                       <Time date={event.date} />
+                    </div>
                   </div>
-                  
+
                   {/* Mobile layout - two columns after title */}
                   <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
                     <div className="flex flex-col min-w-0">
-                  <h4 className="text-lg font-semibold truncate pr-8 md:hidden">{event.title}</h4>
+                      <h4 className="text-lg font-semibold truncate pr-8 md:hidden">{event.title}</h4>
                       <p className="text-sm text-gray-600 truncate">{event.location}</p>
                       <p className="text-sm text-gray-700 line-clamp-2 mt-1">{event.description}</p>
                     </div>
@@ -96,9 +96,7 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                 </div>
               </div>
             ))}
-            {userEvents.length === 0 && (
-              <p className="text-gray-500 text-center">No events created yet :(</p>
-            )}
+            {userEvents.length === 0 && <p className="text-gray-500 text-center">No events created yet :(</p>}
           </div>
         </div>
       </div>
