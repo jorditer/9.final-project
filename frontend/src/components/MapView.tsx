@@ -110,13 +110,13 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         )}
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-3 right-4 text-nowrap login">
+        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-1 sm:top-3 right-2 sm:right-4 text-nowrap login">
           Log out
         </button>}
         <button
           onClick={() => setShowProfile(!showProfile)}
-          className={`transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
-            showProfile ? "bottom-[calc(33%_+1rem)]" : "bottom-2"
+          className={`z-10 transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
+            showProfile ? "bottom-[calc(40%_+1rem)]" : "bottom-2"
           }`}
         >
           <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>

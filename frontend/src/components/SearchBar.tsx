@@ -35,7 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser }) => {
   };
 
   return (
-    <div className="fixed top-2 left-4 z-10">
+    <div className="fixed top-[0.1rem] sm:top-2 left-2 sm:left-4 z-10">
       <input
         type="text"
         value={inputValue}
