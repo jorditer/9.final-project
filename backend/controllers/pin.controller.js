@@ -64,3 +64,85 @@ export const getPinId = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 }
+
+export const addAssistant = async (req, res) => {
+  try {
+    const { id, username } = req.params;
+    
+    if (!moongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid pin ID" 
+      });
+    }
+
+    const pin = await Pin.findById(id);
+    if (!pin) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Event not found" 
+      });
+    }
+
+    if (pin.assistants.includes(username)) {
+      return res.status(400).json({
+        success: false,
+        message: "User is already an assistant"
+      });
+    }
+
+    pin.assistants.push(username);
+    await pin.save();
+
+    res.status(200).json({
+      success: true,
+      data: pin
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error"
+    });
+  }
+};
+
+export const removeAssistant = async (req, res) => {
+  try {
+    const { id, username } = req.params;
+
+    if (!moongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid pin ID" 
+      });
+    }
+
+    const pin = await Pin.findById(id);
+    if (!pin) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Event not found" 
+      });
+    }
+
+    if (!pin.assistants.includes(username)) {
+      return res.status(400).json({
+        success: false,
+        message: "User is not an assistant"
+      });
+    }
+
+    pin.assistants = pin.assistants.filter(assistant => assistant !== username);
+    await pin.save();
+
+    res.status(200).json({
+      success: true,
+      data: pin
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false, 
+      message: error.message || "Internal server error"
+    });
+  }
+};
