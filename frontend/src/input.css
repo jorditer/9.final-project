@@ -29,7 +29,7 @@ small {
     @apply bg-red-100 border-red-900;
   }
   h1 {
-    @apply text-3xl font-black text-transparent bg-clip-text max-w-max bg-gradient-to-r to-blue-700 from-emerald-500 md:text-5xl lg:text-6xl;
+    @apply text-4xl font-black text-transparent bg-clip-text max-w-max bg-gradient-to-r to-blue-700 from-emerald-500 md:text-5xl lg:text-6xl;
   }
 
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import Connect from "./Connect";
 import Pin from "../interfaces/Pin";
 import Time from "./Time";
 import { Trash2 } from "lucide-react";
@@ -39,12 +39,16 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
           <div className="flex items-center gap-3">
             <span className="font-semibold text-lg">{eventsUser || thisUser}</span>
             <div className="size-12 bg-black rounded-full min-h-10" />
+            {thisUser && eventsUser && thisUser !== eventsUser && (
+              <Connect thisUser={thisUser} eventsUser={eventsUser} />
+            )}
           </div>
         </div>
         {/* Profile Section - Hidden on mobile, shown on desktop */}
-        <div className="hidden md:flex md:flex-col items-center gap-2">
+        <div className="hidden md:flex md:flex-col items-center ">
           <div className="size-40 lg:size-42 bg-black rounded-full" />
           <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
+          {thisUser && eventsUser && thisUser !== eventsUser && <Connect thisUser={thisUser} eventsUser={eventsUser} />}
         </div>
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">

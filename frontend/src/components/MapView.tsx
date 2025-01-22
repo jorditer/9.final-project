@@ -1,5 +1,6 @@
 import SearchBar from "./SearchBar";
 import Form from "./Form";
+import Request from "./Request"
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
 import Profile from "./Profile";
@@ -11,6 +12,7 @@ import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
 import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
+
 
 interface MapViewProps {
   thisUser: string | null;
@@ -92,6 +94,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
         // onTouchStart={onTap}
       >
+        <Request thisUser={thisUser} />
       <Profile setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
         <PinsLayer
           setPins={setPins}
@@ -110,7 +113,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         )}
         {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-1 sm:top-3 right-2 sm:right-4 text-nowrap login">
+        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-1 sm:top-2 right-2 sm:right-4 text-nowrap login">
           Log out
         </button>}
         <button
