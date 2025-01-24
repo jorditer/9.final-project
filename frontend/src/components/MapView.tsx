@@ -37,14 +37,16 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   useEffect(() => {
     const getPins = async () => {
       try {
-        const res = await axios.get("/api/pins"); // Used proxy in package.json so no need for full url
+        const res = await axios.get(`/api/pins?username=${thisUser}`);
         setPins(res.data.data);
       } catch (err) {
         console.log(err);
       }
     };
-    getPins();
-  }, []);
+    if (thisUser) {
+      getPins();
+    }
+  }, [thisUser]);
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
@@ -99,11 +101,11 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
         {newEvent && (
           <Popup latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}>
-            <Form coordinates={{ lat: newEvent.lat, long: newEvent.long }} onSuccess={handleNewPin} />
+            <Form thisUser={thisUser} coordinates={{ lat: newEvent.lat, long: newEvent.long }} onSuccess={handleNewPin} />
           </Popup>
         )}
         {/* <Login /> */}
-        <User thisUser={thisUser} handleLogout={handleLogout} />
+        <User thisUser={thisUser} setEventsUser={setEventsUser} setShowProfile={setShowProfile} handleLogout={handleLogout} />
         <button
           onClick={() => setShowProfile(!showProfile)}
           className={`z-10 transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
