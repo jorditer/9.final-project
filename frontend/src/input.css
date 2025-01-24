@@ -11,10 +11,13 @@ small {
 }
 
 @layer components {
-  input:not([type="submit"]):not([placeholder="Search..."]),
+  input:not([type="submit"]):not([placeholder="Search..."]):not([type="datetime-local"]),
   textarea {
     @apply px-2 focus:outline-none active:border-gray-950 w-full focus:border-gray-600 mt-[0.4rem] border border-gray-400 rounded-sm;
 
+  }
+  input[type="datetime-local"] {
+    @apply ps-1 focus:outline-none active:border-gray-950 w-full focus:border-gray-600 mt-[0.4rem] border border-gray-400 rounded-sm;
   }
   input[type="submit"] {
     @apply w-full cursor-pointer transition-all bg-blue-500 text-white px-6 py-1 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px];
@@ -23,7 +26,7 @@ small {
     @apply px-[7px] m-1;
   }
   button[class~=login] {
-    @apply rounded-xl border hover:border-white border-gray-700;
+    @apply rounded-xl border hover:border-gray-400 border-gray-400;
   }
   input:user-invalid {
     @apply bg-red-100 border-red-900;

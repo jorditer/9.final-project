@@ -45,9 +45,9 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
           </div>
         </div>
         {/* Profile Section - Hidden on mobile, shown on desktop */}
-        <div className="hidden md:flex md:flex-col items-center ">
-          <div className="size-40 lg:size-42 bg-black rounded-full" />
-          <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
+        <div className="hidden md:flex md:flex-col items-center">
+          <div className="size-40 -mt-1 aspect-square lg:size-42 bg-black rounded-full" />
+          <span className="font-semibold text-center text-3xl ">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && <Connect thisUser={thisUser} eventsUser={eventsUser} />}
         </div>
         {/* Events Section */}

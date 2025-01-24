@@ -37,6 +37,11 @@ const PinsLayer = ({
     }
   };
 
+  const openInGoogleMaps = (lat: number, long: number) => {
+    const url = `https://www.google.com/maps?q=${lat},${long}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="">
       {pins.map((p: Pin) => (
@@ -69,9 +74,9 @@ const PinsLayer = ({
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 )}
-                <h2 className="text-xl font-extrabold pr-8 text-nowrap">{p.title}</h2>
-                <label className="">Location</label>
-                <h3 className="text-md font-bold">{p.location}</h3>
+                <h2 className="text-xl font-extrabold pr-8 text-nowrap" >{p.title}</h2>
+                <label className="" >Location</label>
+                <h3 className="text-md font-bold hover:cursor-pointer hover:underline" onClick={() => openInGoogleMaps(p.lat, p.long)}>{p.location}</h3>
                 <label>Description</label>
                 <p>{p.description}</p>
                 <h3 className="text-md mt-1">{<Time date={p.date}/>}</h3>

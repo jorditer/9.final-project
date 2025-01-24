@@ -1,10 +1,10 @@
 import SearchBar from "./SearchBar";
+import User from "./User";
 import Form from "./Form";
 import Request from "./Request"
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
 import Profile from "./Profile";
-// import useDoubleTap from "../hooks/useDoubleTap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Pin from "../interfaces/Pin";
@@ -31,8 +31,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     longitude: 2.15899,
     zoom: 12,
   });
-
-  // console.log(thisUser);
 
   const navigate = useNavigate();
 
@@ -69,12 +67,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
       lat,
       long,
     });
-    // setViewport((prev) => ({  // For creating newEvents in mobile
-    //   ...prev,
-    //   latitude: lat,
-    //   longitude: long,
-    // }));
-    // const onTap = useDoubleTap(handleAddEvent)
   };
 
   const handleLogout = () => {
@@ -92,7 +84,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         doubleClickZoom={false}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
-        // onTouchStart={onTap}
       >
         <Request thisUser={thisUser} />
       <Profile setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
@@ -111,11 +102,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
             <Form coordinates={{ lat: newEvent.lat, long: newEvent.long }} onSuccess={handleNewPin} />
           </Popup>
         )}
-        {/* {noUser && <Register setNoUser={setNoUser} />} */}
         {/* <Login /> */}
-        {thisUser && <button onClick={handleLogout} className="p-2 text-base opacity-90 flex items-center justify-center text-white font-semibold text-center bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 absolute top-1 sm:top-2 right-2 sm:right-4 text-nowrap login">
-          Log out
-        </button>}
+        <User thisUser={thisUser} handleLogout={handleLogout} />
         <button
           onClick={() => setShowProfile(!showProfile)}
           className={`z-10 transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
@@ -124,7 +112,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         >
           <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>
         </button>
-        <SearchBar setEventsUser={setEventsUser} />
+        <SearchBar setShowProfile={setShowProfile} setEventsUser={setEventsUser} />
       </Map>
     </div>
   );

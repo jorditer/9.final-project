@@ -3,9 +3,10 @@ import axios from 'axios';
 
 interface SearchBarProps {
   setEventsUser: (username: string) => void;
+  setShowProfile: (showProfile: boolean) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile }) => {
   const [inputValue, setInputValue] = useState('');
   const [users, setUsers] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -31,6 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser }) => {
   const handleUserSelect = (username: string) => {
     setEventsUser(username);
     setInputValue(username);
+    setShowProfile(true);
     setShowResults(false);
   };
 
