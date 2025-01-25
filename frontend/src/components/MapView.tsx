@@ -26,6 +26,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [showProfile, setShowProfile] = useState(false);
   const [eventsUser, setEventsUser] = useState(thisUser);
 
+
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
@@ -46,7 +47,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     if (thisUser) {
       getPins();
     }
-  }, [thisUser]);
+  }, [thisUser, eventsUser]);
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
