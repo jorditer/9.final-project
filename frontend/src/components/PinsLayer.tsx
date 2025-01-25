@@ -6,6 +6,7 @@ import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useEventAssistant } from "../hooks/useEventAssistant";
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -16,20 +17,20 @@ interface PinsLayerProps {
   };
   onMarkerClick: (id: string, lat: number, long: number) => void;
   onPopupClose: () => void;
-  setPins: (pins: Pin[]) => void;
+  setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
 }
 
-const PinsLayer = ({ 
-  pins, 
-  currentPlaceId, 
-  thisUser, 
-  viewport, 
-  onMarkerClick, 
+const PinsLayer = ({
+  pins,
+  currentPlaceId,
+  thisUser,
+  viewport,
+  onMarkerClick,
   onPopupClose,
-  setPins
+  setPins,
 }: PinsLayerProps) => {
-  // State to store friends list
   const [friendsList, setFriendsList] = useState<string[]>([]);
+  const { addAssistant } = useEventAssistant(setPins);
 
   // Fetch friends list when component mounts
   useEffect(() => {
@@ -39,7 +40,7 @@ const PinsLayer = ({
           const response = await axios.get(`/api/users/${thisUser}`);
           setFriendsList(response.data.data.friends);
         } catch (err) {
-          console.error('Error fetching friends list:', err);
+          console.error("Error fetching friends list:", err);
         }
       }
     };
@@ -48,17 +49,15 @@ const PinsLayer = ({
   }, [thisUser]);
 
   // Filter pins to show only those from friends and the current user
-  const filteredPins = pins.filter(pin => 
-    pin.username === thisUser || friendsList.includes(pin.username)
-  );
+  const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
 
   const handleDelete = async (pinId: string) => {
     try {
       await axios.delete(`/api/pins/${pinId}`);
-      setPins(pins.filter(pin => pin._id !== pinId));
+      setPins(pins.filter((pin) => pin._id !== pinId));
       onPopupClose();
     } catch (err) {
-      console.error('Error deleting pin:', err);
+      console.error("Error deleting pin:", err);
     }
   };
 
@@ -72,13 +71,13 @@ const PinsLayer = ({
       {filteredPins.map((p: Pin) => (
         <div key={p._id}>
           <Marker longitude={p.long} latitude={p.lat} anchor="bottom">
-            <MapMarker 
-              color={p.username === thisUser ? "tomato" : "blue"} 
-              zoom={viewport.zoom} 
-              onClick={() => onMarkerClick(p._id, p.lat, p.long)} 
+            <MapMarker
+              color={p.username === thisUser ? "tomato" : "blue"}
+              zoom={viewport.zoom}
+              onClick={() => onMarkerClick(p._id, p.lat, p.long)}
             />
           </Marker>
-          
+
           {currentPlaceId === p._id && (
             <Popup
               key={p._id}
@@ -99,22 +98,27 @@ const PinsLayer = ({
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 )}
-                <h2 className="text-xl font-extrabold pr-8 text-nowrap">{p.title}</h2>
+                <h2
+                  className={`text-xl font-extrabold me-4 ${
+                    thisUser !== p.username ? "cursor-pointer hover:text-blue-600" : ""
+                  }`}
+                  onClick={() => thisUser && addAssistant(p, thisUser)}
+                >
+                  {p.title}
+                </h2>
                 <label className="">Location</label>
-                <h3 
-                  className="text-md font-bold hover:cursor-pointer hover:underline" 
+                <h3
+                  className="text-md font-bold hover:cursor-pointer hover:underline"
                   onClick={() => openInGoogleMaps(p.lat, p.long)}
                 >
                   {p.location}
                 </h3>
                 {p.description && <label>Description</label>}
                 <p>{p.description}</p>
-                <h3 className="text-md mt-1">{<Time date={p.date}/>}</h3>
+                <h3 className="text-md mt-1">{<Time date={p.date} />}</h3>
                 <small className="text-nowrap">
                   Created by <strong>{p.username}</strong>,{" "}
-                  <em className="text-slate-500">
-                    {formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}
-                  </em>
+                  <em className="text-slate-500">{formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}</em>
                 </small>
               </div>
             </Popup>

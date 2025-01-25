@@ -50,12 +50,12 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
-    setNewEvent(null); // Close popup after creation
+    setNewEvent(null); // Close popup when created
   };
 
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
-    // setViewport((prev) => ({
+    // setViewport((prev) => ({ // To transport the display onto the pin TODO
     //   ...prev,
     //   latitude: lat,
     //   longitude: long,

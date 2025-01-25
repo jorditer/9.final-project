@@ -10,4 +10,5 @@ export default interface Pin {
 	long: number;
 	createdAt: Date;
 	updatedAt: Date;
+	assistants: string[];
   }

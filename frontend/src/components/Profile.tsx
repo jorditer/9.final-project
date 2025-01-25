@@ -1,3 +1,5 @@
+import { useEventAssistant } from "../hooks/useEventAssistant";
+import noImage from "../assets/imgs/no-image.jpg"
 import Connect from "./Connect";
 import Pin from "../interfaces/Pin";
 import Time from "./Time";
@@ -9,12 +11,13 @@ interface ProfileProps {
   thisUser: string | null;
   eventsUser: string | null;
   pins: Pin[];
-  setPins: (pins: Pin[]) => void;
+  setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setCurrentPlaceId: (id: string | null) => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pins, setPins, setCurrentPlaceId }) => {
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
+  const { addAssistant } = useEventAssistant(setPins);
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -38,7 +41,7 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
           <h1 className="">{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
           <div className="flex items-center gap-3">
             <span className="font-semibold text-lg">{eventsUser || thisUser}</span>
-            <div className="size-12 bg-black rounded-full min-h-10" />
+            <img className="size-12 bg-black rounded-full min-h-10" src={noImage} alt="user-image" />
             {thisUser && eventsUser && thisUser !== eventsUser && (
               <Connect thisUser={thisUser} eventsUser={eventsUser} />
             )}
@@ -46,7 +49,8 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
         </div>
         {/* Profile Section - Hidden on mobile, shown on desktop */}
         <div className="hidden md:flex md:flex-col items-center">
-          <div className="size-40 -mt-1 aspect-square lg:size-42 bg-black rounded-full" />
+          <img className="size-40 -mt-1 aspect-square lg:size-42 rounded-full" src={noImage} alt="user image" />
+          {/* <div className="size-40 -mt-1 aspect-square lg:size-42 bg-black rounded-full" /> */}
           <span className="font-semibold text-center text-3xl ">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && <Connect thisUser={thisUser} eventsUser={eventsUser} />}
         </div>
@@ -75,7 +79,14 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                   {/* Desktop layout */}
                   <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
                     <div>
-                      <h4 className="text-lg font-semibold truncate pr-8">{event.title}</h4>
+                      <h4
+                        className={`text-lg font-semibold ${
+                          thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
+                        }`}
+                        onClick={() => thisUser && addAssistant(event, thisUser)}
+                      >
+                        {event.title}
+                      </h4>
                       <p className="text-sm text-gray-600">{event.location}</p>
                     </div>
                     <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
@@ -87,7 +98,14 @@ const Profile: React.FC<ProfileProps> = ({ showProfile, thisUser, eventsUser, pi
                   {/* Mobile layout - two columns after title */}
                   <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
                     <div className="flex flex-col min-w-0">
-                      <h4 className="text-lg font-semibold truncate pr-8 md:hidden">{event.title}</h4>
+                      <h4
+                        className={`text-lg font-semibold ${
+                          thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
+                        }`}
+                        onClick={() => thisUser && addAssistant(event, thisUser)}
+                      >
+                        {event.title}
+                      </h4>
                       <p className="text-sm text-gray-600 truncate">{event.location}</p>
                       <p className="text-sm text-gray-700 line-clamp-2 mt-1">{event.description}</p>
                     </div>

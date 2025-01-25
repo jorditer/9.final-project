@@ -6,6 +6,13 @@ interface TimeProps {
 }
 
 const Time: React.FC<TimeProps> = ({ date }) => {
+  // This helper function removes the word "about" from the formatted distance
+  const formatTimeDistance = (date: Date) => {
+    const distance = formatDistanceToNow(new Date(date), { addSuffix: true });
+    // The "about" looks pretty ugly and makes it hard to be responsive
+    return distance.replace(/about /, '');
+  };
+
   return (
     <div className="flex items-center space-x-2 rounded-lg w-full">
       <Calendar className="w-5 h-5 text-gray-600 flex-shrink-0" />
@@ -19,7 +26,7 @@ const Time: React.FC<TimeProps> = ({ date }) => {
             {format(new Date(date), "h:mm a")}
           </span>
           <em className="text-gray-500 hidden text-nowrap sm:inline">
-            ({formatDistanceToNow(new Date(date), { addSuffix: true })})
+            ({formatTimeDistance(date)})
           </em>
         </div>
       </div>
