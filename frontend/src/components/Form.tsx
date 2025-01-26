@@ -97,6 +97,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
         ></textarea>
         <input className="cursor-pointer" type="submit" value="Create Event" />
       </form>
+
     </div>
   );
 };

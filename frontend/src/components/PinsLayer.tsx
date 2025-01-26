@@ -7,6 +7,7 @@ import { Trash2 } from "lucide-react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useEventAssistant } from "../hooks/useEventAssistant";
+import AssistantsDisplay from "./AssistantsDisplay";
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -21,8 +22,15 @@ interface PinsLayerProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
 }
 
-const PinsLayer = ({ pins, currentPlaceId, thisUser, viewport, onMarkerClick,
-  onPopupClose, setPins, friendshipRefresh,
+const PinsLayer = ({
+  pins,
+  currentPlaceId,
+  thisUser,
+  viewport,
+  onMarkerClick,
+  onPopupClose,
+  setPins,
+  friendshipRefresh,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const { addAssistant } = useEventAssistant(setPins);
@@ -110,6 +118,7 @@ const PinsLayer = ({ pins, currentPlaceId, thisUser, viewport, onMarkerClick,
                 {p.description && <label>Description</label>}
                 <p>{p.description}</p>
                 <h3 className="text-md mt-1">{<Time date={p.date} />}</h3>
+                <AssistantsDisplay assistants={p.assistants } />
                 <small className="text-nowrap">
                   Created by <strong>{p.username}</strong>,{" "}
                   <em className="text-slate-500">{formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}</em>

@@ -12,7 +12,7 @@ import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
 import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
-
+import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
 
 interface MapViewProps {
   thisUser: string | null;
@@ -26,13 +26,12 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [showProfile, setShowProfile] = useState(false);
   const [eventsUser, setEventsUser] = useState(thisUser);
   const [friendshipRefresh, setFriendshipRefresh] = useState(0);  // Rerendering pins when friend added or deleted
-
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
     zoom: 12,
   });
-
+  const userImageUrl = useProfileImageUrl(thisUser);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,8 +88,9 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
       >
         <Request onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} thisUser={thisUser} />
-      <Profile onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
+      <Profile userImageUrl={userImageUrl} onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
         <PinsLayer
+          userImageUrl={userImageUrl}
           friendshipRefresh={friendshipRefresh}
           setPins={setPins}
           pins={pins}

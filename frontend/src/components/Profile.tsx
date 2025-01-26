@@ -15,6 +15,7 @@ interface ProfileProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
+  userImageUrl: string | null;
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -25,6 +26,7 @@ const Profile: React.FC<ProfileProps> = ({
   pins,
   setPins,
   setCurrentPlaceId,
+  userImageUrl,
 }) => {
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   const { addAssistant } = useEventAssistant(setPins);
@@ -39,6 +41,7 @@ const Profile: React.FC<ProfileProps> = ({
       console.error("Error deleting event:", err);
     }
   };
+  console.log("in Profile.tsx = " + userImageUrl);
 
   const handleImageClick = () => {
     // Only allow upload if user is viewing their own profile
@@ -62,6 +65,21 @@ const Profile: React.FC<ProfileProps> = ({
     input.click();
   };
 
+  const renderUserInfo = (isMobile = false) => (
+    <div className="flex items-center gap-3">
+      <img
+        className={`${isMobile ? 'size-12 min-h-10' : 'size-40 -mt-1 lg:size-42'} object-cover rounded-full`}
+        src={userImageUrl || noImage}
+        alt="user-image"
+        onClick={handleImageClick}
+        style={{ opacity: isUploading ? 0.5 : 1 }}
+      />
+      {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (
+        <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+      )}
+    </div>
+  );
+
   return (
     <div
       className={`z-10 fixed mx-2 bottom-2 w-[calc(100%-1rem)] h-2/5 bg-white transition-all duration-700 ease-in-out transform ${
@@ -69,36 +87,25 @@ const Profile: React.FC<ProfileProps> = ({
       } overflow-hidden rounded-t-lg`}
     >
       <div className="h-full p-4 flex flex-col md:flex-row gap-4">
-        {/* Header section with title and profile on mobile */}
+        {/* Mobile header */}
         <div className="flex justify-between items-center md:hidden">
-          <h1 className="">{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
-          <div className="flex items-center gap-3">
-            <span className="font-semibold text-lg">{eventsUser || thisUser}</span>
-            <img
-              className="size-12 bg-black rounded-full min-h-10"
-              src={noImage}
-              alt="user-image"
-              onClick={handleImageClick}
-              style={{ opacity: isUploading ? 0.5 : 1 }}
-            />
-            {thisUser && eventsUser && thisUser !== eventsUser && (
-              <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
-            )}
-          </div>
+          <h1>{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
+          {renderUserInfo(true)}
         </div>
-        {/* Profile Section - Hidden on mobile, shown on desktop */}
-        <div className="hidden md:flex md:flex-col items-center">
-          <img className="size-40 -mt-1 aspect-square lg:size-42 rounded-full" src={noImage} alt="user image" />
-          {/* <div className="size-40 -mt-1 aspect-square lg:size-42 bg-black rounded-full" /> */}
-          <span className="font-semibold text-center text-3xl ">{eventsUser || thisUser}</span>
-          {thisUser && eventsUser && thisUser !== eventsUser && (
-            <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
-          )}
-        </div>
+ 
+        {/* Desktop profile */}
+        <div className="hidden md:flex md:flex-col items-center gap-2">
+  {renderUserInfo()}
+  <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
+  {thisUser && eventsUser && thisUser !== eventsUser && (
+    <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+  )}
+</div>
+ 
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">
           {/* Desktop title */}
-          <h1 className="hidden md:block mb-3 top-0 bg-white py-2 ">
+          <h1 className="hidden md:block mb-3 top-0 bg-white py-2">
             {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
           </h1>
           <div className="flex flex-col gap-3">
@@ -114,9 +121,7 @@ const Profile: React.FC<ProfileProps> = ({
                   </button>
                 )}
                 {/* Event Content */}
-                  <div className="flex flex-col space-y-2">
-                  {/* Title always at top on mobile */}
-
+                <div className="flex flex-col space-y-2">
                   {/* Desktop layout */}
                   <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
                     <div>
@@ -131,12 +136,12 @@ const Profile: React.FC<ProfileProps> = ({
                       <p className="text-sm text-gray-600">{event.location}</p>
                     </div>
                     <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
-                    <div className="w-full ">
+                    <div className="w-full">
                       <Time date={event.date} />
                     </div>
                   </div>
-
-                  {/* Mobile layout - two columns after title */}
+ 
+                  {/* Mobile layout */}
                   <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
                     <div className="flex flex-col min-w-0">
                       <h4
@@ -151,7 +156,7 @@ const Profile: React.FC<ProfileProps> = ({
                       <p className="text-sm text-gray-700 line-clamp-2 mt-1">{event.description}</p>
                     </div>
                     <div className="self-center justify-self-start flex items-center justify-end truncate">
-                      <div className="overflow-hidden text-ellipsis ">
+                      <div className="overflow-hidden text-ellipsis">
                         <Time date={event.date} />
                       </div>
                     </div>
