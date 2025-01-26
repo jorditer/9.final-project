@@ -25,7 +25,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [eventsUser, setEventsUser] = useState(thisUser);
-
+  const [friendshipRefresh, setFriendshipRefresh] = useState(0);  // Rerendering pins when friend added or deleted
 
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
@@ -47,7 +47,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     if (thisUser) {
       getPins();
     }
-  }, [thisUser, eventsUser]);
+  }, [thisUser, friendshipRefresh]);
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
@@ -88,9 +88,10 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
       >
-        <Request thisUser={thisUser} />
-      <Profile setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
+        <Request onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} thisUser={thisUser} />
+      <Profile onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
         <PinsLayer
+          friendshipRefresh={friendshipRefresh}
           setPins={setPins}
           pins={pins}
           currentPlaceId={currentPlaceId}

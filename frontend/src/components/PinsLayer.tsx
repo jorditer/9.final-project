@@ -15,19 +15,14 @@ interface PinsLayerProps {
   viewport: {
     zoom: number;
   };
+  friendshipRefresh: number;
   onMarkerClick: (id: string, lat: number, long: number) => void;
   onPopupClose: () => void;
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
 }
 
-const PinsLayer = ({
-  pins,
-  currentPlaceId,
-  thisUser,
-  viewport,
-  onMarkerClick,
-  onPopupClose,
-  setPins,
+const PinsLayer = ({ pins, currentPlaceId, thisUser, viewport, onMarkerClick,
+  onPopupClose, setPins, friendshipRefresh,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const { addAssistant } = useEventAssistant(setPins);
@@ -46,7 +41,7 @@ const PinsLayer = ({
     };
 
     fetchFriends();
-  }, [thisUser]);
+  }, [thisUser, friendshipRefresh]); // firendship makes the effect trigger when a friend is added/deleted
 
   // Filter pins to show only those from friends and the current user
   const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
@@ -77,7 +72,6 @@ const PinsLayer = ({
               onClick={() => onMarkerClick(p._id, p.lat, p.long)}
             />
           </Marker>
-
           {currentPlaceId === p._id && (
             <Popup
               key={p._id}

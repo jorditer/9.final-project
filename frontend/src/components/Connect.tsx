@@ -4,9 +4,10 @@ import axios from "axios";
 interface ConnectProps {
   thisUser: string;
   eventsUser: string;
+  onFriendshipChange: () => void;
 }
 
-const Connect: React.FC<ConnectProps> = ({ thisUser, eventsUser }) => {
+const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsUser }) => {
   const [friendStatus, setFriendStatus] = useState<'connect' | 'connected' | 'pending'>('connect');
   const [hovering, setHovering] = useState(false);
 
@@ -40,6 +41,7 @@ const Connect: React.FC<ConnectProps> = ({ thisUser, eventsUser }) => {
         await axios.delete(`/api/users/${thisUser}/friends/${eventsUser}`);
         setFriendStatus('connect');
       }
+      onFriendshipChange();
     } catch (err) {
       console.error("Error updating friend status:", err);
     }

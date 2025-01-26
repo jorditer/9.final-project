@@ -3,9 +3,10 @@ import axios from "axios";
 
 interface RequestProps {
   thisUser: string | null;
+  onFriendshipChange: () => void;
 }
 
-const Request: React.FC<RequestProps> = ({ thisUser }) => {
+const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
   const [pendingRequests, setPendingRequests] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -30,6 +31,7 @@ const Request: React.FC<RequestProps> = ({ thisUser }) => {
       const updatedRequests = pendingRequests.filter(username => username !== friendUsername);
       setPendingRequests(updatedRequests);
       setShowPopup(updatedRequests.length > 0);
+      onFriendshipChange();
     } catch (err) {
       console.error("Error accepting friend request:", err);
     }

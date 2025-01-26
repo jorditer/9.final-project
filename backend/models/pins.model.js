@@ -51,6 +51,30 @@ const PinSchema = new mongoose.Schema(
     timestamps: true, // createdAt, updatedAt
   }
 );
+// Handle document creation
+PinSchema.pre("save", function(next) {
+  if (this.isNew) {
+    this.assistants = [this.username];
+  }
+  next();
+});
+
+// Handle updates
+PinSchema.pre("save", function(next) {
+  const uniqueAssistants = new Set(this.assistants);
+  uniqueAssistants.add(this.username);
+  this.assistants = Array.from(uniqueAssistants);
+  next();
+});
+
+// Protect against creator removal
+PinSchema.pre("save", function(next) {
+  if (!this.assistants.includes(this.username)) {
+    this.assistants.push(this.username);
+  }
+  next();
+});
+
 PinSchema.path("assistants").validate(function (assistants) {
   return new Set(assistants).size === assistants.length;
 }, "Assistants array contains duplicate usernames!");
