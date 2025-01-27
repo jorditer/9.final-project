@@ -1,39 +1,24 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../config/supabase.config';
+import { useProfileImages } from '../context/ProfileImagesContext';
 
-export const useProfileImageUrl = (username: string | null, refresh?: number) => {
- const [imageUrl, setImageUrl] = useState<string | null>(null);
+export const useProfileImageUrl = (username: string | null) => {
+  const { getImageUrl, imageUrls } = useProfileImages();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
- useEffect(() => {
-   const fetchImage = async () => {
-     if (!username) return;
+  useEffect(() => {
+    if (!username) return;
 
-     try {
-       const { data, error } = await supabase.storage
-         .from('profiles')
-         .list('avatars', { 
-           search: username + '.',
-           limit: 1
-         });
+    // If we already have the URL in cache, use it immediately
+    if (imageUrls[username]) {
+      setImageUrl(imageUrls[username]);
+      return;
+    }
 
-       if (error) throw error;
+    // Otherwise fetch it
+    getImageUrl(username).then(url => {
+      setImageUrl(url);
+    });
+  }, [username, imageUrls]);
 
-       if (data?.[0]) {
-         const { data: { publicUrl } } = supabase.storage
-           .from('profiles')
-           .getPublicUrl(`avatars/${data[0].name}`);
-         setImageUrl(publicUrl);
-		//  console.log(data[0].name);
-		//  console.log('Public URL:', publicUrl);
-       }
-     } catch (error) {
-       console.error('Error fetching profile image:', error);
-       setImageUrl(null);
-     }
-   };
-
-   fetchImage();
- }, [username, refresh]);
-
- return imageUrl;
+  return imageUrl;
 };

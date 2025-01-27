@@ -7,6 +7,7 @@ import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
 import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
+import { useProfileImages } from "../context/ProfileImagesContext";
 
 interface ProfileProps {
   showProfile: boolean;
@@ -16,7 +17,6 @@ interface ProfileProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
-  onImageUpdate: () => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -27,13 +27,13 @@ const Profile: React.FC<ProfileProps> = ({
   pins,
   setPins,
   setCurrentPlaceId,
-  onImageUpdate,
 }) => {
   const { uploadProfileImage, isUploading } = useProfileImage();
+  const { getImageUrl, imageUrls } = useProfileImages();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
-  const eventUserImageUrl = useProfileImageUrl(eventsUser, refreshTrigger);
+  const eventUserImageUrl = useProfileImageUrl(eventsUser);
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -46,8 +46,7 @@ const Profile: React.FC<ProfileProps> = ({
   };
 
   const handleImageClick = () => {
-    // only change image if it is your profile
-    if (thisUser !== eventsUser) return;
+    if (thisUser !== eventsUser) return; // only change picture if it's your profile
   
     const input = document.createElement("input");
     input.type = "file";
@@ -60,7 +59,8 @@ const Profile: React.FC<ProfileProps> = ({
       try {
         const success = await uploadProfileImage(file, thisUser);
         if (success) {
-          setRefreshTrigger(prev => prev + 1); // Trigger refresh after successful upload
+          // Fetch new image URL after successful upload
+          await getImageUrl(thisUser);
         }
       } catch (err) {
         console.error("Upload failed:", err);

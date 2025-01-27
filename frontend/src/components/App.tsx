@@ -3,6 +3,7 @@ import Register from "./Register";
 import MapView from "./MapView";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router";
 import Login from "./Login";
+import { ProfileImagesProvider } from "../context/ProfileImagesContext";
 
 function App() {
   const myStorage = window.localStorage;
@@ -38,6 +39,7 @@ function App() {
   };
 
   return (
+    <ProfileImagesProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={
@@ -55,6 +57,7 @@ function App() {
         } />
       </Routes>
     </BrowserRouter>
+    </ProfileImagesProvider>
   );
 }
 
