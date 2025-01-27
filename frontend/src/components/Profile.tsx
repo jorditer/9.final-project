@@ -29,11 +29,9 @@ const Profile: React.FC<ProfileProps> = ({
   setCurrentPlaceId,
 }) => {
   const { uploadProfileImage, isUploading } = useProfileImage();
-  const { getImageUrl, imageUrls } = useProfileImages();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
+  const {imageUrls} = useProfileImages();
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
-  const eventUserImageUrl = useProfileImageUrl(eventsUser);
+  const eventUserImageUrl = eventsUser ? imageUrls[eventsUser] : null;
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -46,7 +44,7 @@ const Profile: React.FC<ProfileProps> = ({
   };
 
   const handleImageClick = () => {
-    if (thisUser !== eventsUser) return; // only change picture if it's your profile
+    if (thisUser !== eventsUser) return;
   
     const input = document.createElement("input");
     input.type = "file";
@@ -57,11 +55,7 @@ const Profile: React.FC<ProfileProps> = ({
       if (!file || !thisUser) return;
   
       try {
-        const success = await uploadProfileImage(file, thisUser);
-        if (success) {
-          // Fetch new image URL after successful upload
-          await getImageUrl(thisUser);
-        }
+        await uploadProfileImage(file, thisUser);
       } catch (err) {
         console.error("Upload failed:", err);
       }
@@ -69,6 +63,7 @@ const Profile: React.FC<ProfileProps> = ({
   
     input.click();
   };
+
   const renderUserInfo = (isMobile = false) => (
     <div className="flex items-center gap-3">
       <img
