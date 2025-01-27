@@ -1,4 +1,4 @@
-import { useEventAssistant } from "../hooks/useEventAssistant";
+import { useState } from "react";
 import { useProfileImage } from "../hooks/useProfileImage";
 import noImage from "../assets/imgs/no-image.jpg";
 import Connect from "./Connect";
@@ -6,6 +6,7 @@ import Pin from "../interfaces/Pin";
 import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
+import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
 
 interface ProfileProps {
   showProfile: boolean;
@@ -15,7 +16,6 @@ interface ProfileProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
-  userImageUrl: string | null;
   onImageUpdate: () => void;
 }
 
@@ -27,12 +27,13 @@ const Profile: React.FC<ProfileProps> = ({
   pins,
   setPins,
   setCurrentPlaceId,
-  userImageUrl,
   onImageUpdate,
 }) => {
-  const userEvents = pins.filter((pin) => pin.username === eventsUser);
-  const { addAssistant } = useEventAssistant(setPins);
   const { uploadProfileImage, isUploading } = useProfileImage();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const userEvents = pins.filter((pin) => pin.username === eventsUser);
+  const eventUserImageUrl = useProfileImageUrl(eventsUser, refreshTrigger);
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -43,10 +44,9 @@ const Profile: React.FC<ProfileProps> = ({
       console.error("Error deleting event:", err);
     }
   };
-  console.log("in Profile.tsx = " + userImageUrl);
 
   const handleImageClick = () => {
-    // only allow img change when the user is in its profile
+    // only change image if it is your profile
     if (thisUser !== eventsUser) return;
   
     const input = document.createElement("input");
@@ -60,7 +60,7 @@ const Profile: React.FC<ProfileProps> = ({
       try {
         const success = await uploadProfileImage(file, thisUser);
         if (success) {
-          onImageUpdate(); // Trigger the refresh of image URL
+          setRefreshTrigger(prev => prev + 1); // Trigger refresh after successful upload
         }
       } catch (err) {
         console.error("Upload failed:", err);
@@ -73,11 +73,12 @@ const Profile: React.FC<ProfileProps> = ({
     <div className="flex items-center gap-3">
       <img
         className={`${isMobile ? 'size-12 min-h-10' : 'size-40 -mt-1 lg:size-42'} object-cover rounded-full`}
-        src={userImageUrl || noImage}
+        src={eventUserImageUrl || noImage}
         alt="user-image"
         onClick={handleImageClick}
         style={{ opacity: isUploading ? 0.5 : 1 }}
       />
+      {isMobile && <span className="font-semibold text-lg">{eventsUser || thisUser}</span>}
       {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (
         <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
       )}
@@ -133,7 +134,6 @@ const Profile: React.FC<ProfileProps> = ({
                         className={`text-lg font-semibold ${
                           thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
                         }`}
-                        onClick={() => thisUser && addAssistant(event, thisUser)}
                       >
                         {event.title}
                       </h4>
@@ -152,7 +152,6 @@ const Profile: React.FC<ProfileProps> = ({
                         className={`text-lg font-semibold ${
                           thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
                         }`}
-                        onClick={() => thisUser && addAssistant(event, thisUser)}
                       >
                         {event.title}
                       </h4>

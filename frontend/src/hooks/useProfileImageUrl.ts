@@ -23,8 +23,8 @@ export const useProfileImageUrl = (username: string | null, refresh?: number) =>
            .from('profiles')
            .getPublicUrl(`avatars/${data[0].name}`);
          setImageUrl(publicUrl);
-		 console.log(data[0].name);
-		 console.log('Public URL:', publicUrl);
+		//  console.log(data[0].name);
+		//  console.log('Public URL:', publicUrl);
        }
      } catch (error) {
        console.error('Error fetching profile image:', error);

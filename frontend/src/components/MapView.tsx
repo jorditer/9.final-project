@@ -91,7 +91,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
       >
         <Request onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} thisUser={thisUser} />
-      <Profile onImageUpdate={onImageUpdate} userImageUrl={userImageUrl} onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
+      <Profile onImageUpdate={onImageUpdate} onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
         <PinsLayer
           friendshipRefresh={friendshipRefresh}
           setPins={setPins}
