@@ -640,6 +640,7 @@ input[type="submit"]:active {
 
 button {
   /* react-mapbox-gl closing button */
+  margin: 0.25rem;
   display: flex;
   padding-left: 7px;
   padding-right: 7px;
