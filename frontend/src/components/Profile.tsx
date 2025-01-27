@@ -16,6 +16,7 @@ interface ProfileProps {
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
   userImageUrl: string | null;
+  onImageUpdate: () => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -27,6 +28,7 @@ const Profile: React.FC<ProfileProps> = ({
   setPins,
   setCurrentPlaceId,
   userImageUrl,
+  onImageUpdate,
 }) => {
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   const { addAssistant } = useEventAssistant(setPins);
@@ -44,27 +46,29 @@ const Profile: React.FC<ProfileProps> = ({
   console.log("in Profile.tsx = " + userImageUrl);
 
   const handleImageClick = () => {
-    // Only allow upload if user is viewing their own profile
+    // only allow img change when the user is in its profile
     if (thisUser !== eventsUser) return;
-
+  
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-
+  
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file || !thisUser) return;
-
+  
       try {
-        await uploadProfileImage(file, thisUser);
+        const success = await uploadProfileImage(file, thisUser);
+        if (success) {
+          onImageUpdate(); // Trigger the refresh of image URL
+        }
       } catch (err) {
         console.error("Upload failed:", err);
       }
     };
-
+  
     input.click();
   };
-
   const renderUserInfo = (isMobile = false) => (
     <div className="flex items-center gap-3">
       <img

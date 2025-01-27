@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../config/supabase.config';
 
-export const useProfileImageUrl = (username: string | null) => {
+export const useProfileImageUrl = (username: string | null, refresh?: number) => {
  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
  useEffect(() => {
@@ -33,7 +33,7 @@ export const useProfileImageUrl = (username: string | null) => {
    };
 
    fetchImage();
- }, [username]);
+ }, [username, refresh]);
 
  return imageUrl;
 };
