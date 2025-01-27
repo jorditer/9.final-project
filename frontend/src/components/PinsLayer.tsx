@@ -6,7 +6,6 @@ import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useEventAssistant } from "../hooks/useEventAssistant";
 import AssistantsDisplay from "./AssistantsDisplay";
 
 interface PinsLayerProps {
@@ -33,7 +32,6 @@ const PinsLayer = ({
   friendshipRefresh,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
-  const { addAssistant } = useEventAssistant(setPins);
 
   // Fetch friends list when component mounts
   useEffect(() => {
@@ -104,7 +102,6 @@ const PinsLayer = ({
                   className={`text-xl font-extrabold me-4 ${
                     thisUser !== p.username ? "cursor-pointer hover:text-blue-600" : ""
                   }`}
-                  onClick={() => thisUser && addAssistant(p, thisUser)}
                 >
                   {p.title}
                 </h2>
@@ -118,7 +115,7 @@ const PinsLayer = ({
                 {p.description && <label>Description</label>}
                 <p>{p.description}</p>
                 <h3 className="text-md mt-1">{<Time date={p.date} />}</h3>
-                <AssistantsDisplay assistants={p.assistants } />
+                <AssistantsDisplay p={p} thisUser={thisUser} setPins={setPins} assistants={p.assistants } />
                 <small className="text-nowrap">
                   Created by <strong>{p.username}</strong>,{" "}
                   <em className="text-slate-500">{formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}</em>
