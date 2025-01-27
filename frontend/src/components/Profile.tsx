@@ -30,8 +30,31 @@ const Profile: React.FC<ProfileProps> = ({
   const { uploadProfileImage, isUploading } = useProfileImage();
   const { imageUrls } = useProfileImages();
   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+  const [friendStatus, setFriendStatus] = useState<"connect" | "connected" | "pending">("connect");
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   const eventUserImageUrl = eventsUser ? imageUrls[eventsUser] : null;
+
+  // Fetch friend status
+  useEffect(() => {
+    const fetchFriendStatus = async () => {
+      if (!thisUser || !eventsUser) return;
+      
+      try {
+        const response = await axios.get(`/api/users/${thisUser}`);
+        const user = response.data.data;
+        if (user.friends.includes(eventsUser)) {
+          setFriendStatus("connected");
+        } else if (user.sentFriendRequests.includes(eventsUser)) {
+          setFriendStatus("pending");
+        } else {
+          setFriendStatus("connect");
+        }
+      } catch (err) {
+        console.error("Error fetching friend status:", err);
+      }
+    };
+    fetchFriendStatus();
+  }, [thisUser, eventsUser]);
 
   // Reset temp image when eventUserImageUrl changes (new image uploaded)
   useEffect(() => {
@@ -62,17 +85,17 @@ const Profile: React.FC<ProfileProps> = ({
       if (!file || !thisUser) return;
   
       try {
-        const tempUrl = URL.createObjectURL(file); // Create temporary URL for the selected file
+        const tempUrl = URL.createObjectURL(file);
         setTempImageUrl(tempUrl);
-
         await uploadProfileImage(file, thisUser);
         
-        URL.revokeObjectURL(tempUrl); // Clean up the temporary URL
+        URL.revokeObjectURL(tempUrl);
       } catch (err) {
         console.error("Upload failed:", err);
         setTempImageUrl(null);
       }
     };
+  
     input.click();
   };
 
@@ -100,7 +123,13 @@ const Profile: React.FC<ProfileProps> = ({
         </div>
         {isMobile && <span className="font-semibold text-lg">{eventsUser || thisUser}</span>}
         {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (
-          <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+          <Connect 
+            onFriendshipChange={onFriendshipChange} 
+            thisUser={thisUser} 
+            eventsUser={eventsUser} 
+            friendStatus={friendStatus}
+            setFriendStatus={setFriendStatus}
+          />
         )}
       </div>
     );
@@ -124,7 +153,13 @@ const Profile: React.FC<ProfileProps> = ({
           {renderUserInfo()}
           <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && (
-            <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+            <Connect 
+              onFriendshipChange={onFriendshipChange} 
+              thisUser={thisUser} 
+              eventsUser={eventsUser}
+              friendStatus={friendStatus}
+              setFriendStatus={setFriendStatus}
+            />
           )}
         </div>
  
