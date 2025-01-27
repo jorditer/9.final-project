@@ -42,54 +42,46 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
   };
 
   const getImageUrl = async (username: string) => {
-    // Return cached URL if exists (no expiration)
+    // Return cached URL if exists
     if (imageUrls[username]) {
       return imageUrls[username];
     }
     
     try {
-      const { data, error } = await supabase.storage
+      // Get the public URL directly, assuming jpg extension
+      const { data: { publicUrl } } = supabase.storage
         .from('profiles')
-        .list('avatars', { 
-          search: username + '.',
-          limit: 1,
-          sortBy: { column: 'updated_at', order: 'desc' }
-        });
-
-      if (error) throw error;
-
-      if (data?.[0]) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('profiles')
-          .getPublicUrl(`avatars/${data[0].name}`);
-        
-        // Still add timestamp to prevent browser caching when image updates
-        const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
+        .getPublicUrl(`avatars/${username}.jpg`);
+      
+      // Add timestamp for cache busting
+      const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
+  
+      // Check if the image actually exists with a HEAD request
+      const response = await fetch(urlWithTimestamp, { method: 'HEAD' });
+      
+      if (response.ok) {
         updateCache(username, urlWithTimestamp);
         return urlWithTimestamp;
       }
       
-      // Cache the fact that user has no image to prevent repeated lookups
+      // If image doesn't exist, cache empty result
       updateCache(username, '');
       return null;
+  
     } catch (error) {
       console.error('Error fetching image:', error);
+      updateCache(username, '');
       return null;
     }
   };
 
   const prefetchImages = async (usernames: string[]) => {
-    // Remove empty usernames and already cached ones
-    const newUsernames = usernames.filter(username => 
-      username && !imageUrls[username]
-    );
-    
-    if (newUsernames.length === 0) return;
-
-    // Fetch all images in parallel
-    await Promise.all(
-      newUsernames.map(username => getImageUrl(username))
-    );
+    const uncachedUsernames = usernames.filter(username => !imageUrls[username]);
+    if (uncachedUsernames.length === 0) return;
+  
+    for (const username of uncachedUsernames) {
+      await getImageUrl(username);
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import noImage from "../assets/imgs/no-image.jpg"
 import { useEventAssistant } from "../hooks/useEventAssistant";
 import { useProfileImages } from "../context/ProfileImagesContext";
@@ -17,15 +17,23 @@ const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplay
   const maxDisplay = 3;
   const displayCount = assistants.length;
 
-  // Prefetch ALL assistant images immediately, not just displayed ones
-  useEffect(() => {
-    prefetchImages(assistants);
-  }, [assistants]);
+    const displayedAssistants = useMemo(() => 
+      assistants.slice(0, maxDisplay).map(username => ({
+        username,
+        imageUrl: imageUrls[username] || null
+      }))
+    , [assistants, imageUrls]);
 
-  const displayedAssistants = assistants.slice(0, maxDisplay).map(username => ({
-    username,
-    imageUrl: imageUrls[username] || null
-  }));
+  // Fetch ONLY images that aren't cached
+  useEffect(() => {
+    const uncachedAssistants = displayedAssistants
+      .filter(({ imageUrl }) => !imageUrl)
+      .map(({ username }) => username);
+  
+    if (uncachedAssistants.length > 0) {
+      prefetchImages(uncachedAssistants);
+    }
+  }, [displayedAssistants]);
 
   return (
     <div onClick={() => thisUser && toggleAssistant(p, thisUser)} 

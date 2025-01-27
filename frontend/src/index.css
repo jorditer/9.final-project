@@ -902,10 +902,6 @@ h1 {
   height: 100lvh;
 }
 
-.h-12 {
-  height: 3rem;
-}
-
 .max-h-20 {
   max-height: 5rem;
 }
@@ -952,10 +948,6 @@ h1 {
 
 .w-lvw {
   width: 100lvw;
-}
-
-.w-12 {
-  width: 3rem;
 }
 
 .min-w-0 {
