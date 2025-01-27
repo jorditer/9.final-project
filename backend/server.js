@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import pinRoutes from './routes/pins.route.js';
 import userRoutes from './routes/users.route.js';
 import cors from 'cors';
+import { startCleanupJob, stopCleanupJob } from './services/cleanupService.js';
 // import { default as Event } from './models/events.model.js';
 
 dotenv.config();
@@ -25,9 +26,21 @@ if (!mongoUrl) {
     throw new Error('MONGO_URL is not defined in the environment variables');
 }
 
+// Apparently you need to handle the cleaning for every signal
+process.on('SIGTERM', () => {
+    stopCleanupJob();
+    process.exit(0);
+  });
+  
+  process.on('SIGINT', () => {
+    stopCleanupJob();
+    process.exit(0);
+  });
+
 mongoose.connect(mongoUrl)
     .then(() => {
         console.log('Connected to MongoDB!');
+        startCleanupJob();
         app.listen(PORT, () => {
             console.log(`Server started on http://localhost:${PORT}`);
         });

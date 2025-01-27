@@ -14,11 +14,10 @@ const User: React.FC<UserProps> = ({
   setEventsUser, 
   setShowProfile 
 }) => {
-  // State to control dropdown visibility
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handle clicking outside to close dropdown
+  // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -30,7 +29,7 @@ const User: React.FC<UserProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle viewing profile
+// View Profile part
   const handleViewProfile = () => {
     if (thisUser) {
       setEventsUser(thisUser);
@@ -39,7 +38,7 @@ const User: React.FC<UserProps> = ({
     }
   };
 
-  // Handle logout with dropdown closure
+  // Logout part
   const handleLogoutClick = () => {
     setIsDropdownOpen(false);
     handleLogout();

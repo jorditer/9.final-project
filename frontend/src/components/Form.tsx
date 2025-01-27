@@ -55,16 +55,17 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
 
   return (
     <div className="text-base -my-1 flex justify-end flex-col">
-      <form onSubmit={handleSubmit}>
-        <label className="">Date</label>
+      <form id="create-event" onSubmit={handleSubmit}>
+        <label htmlFor="date" className="">Date</label>
         <input
           className="py-[2px]"
+          id="date"
+          name="date"
           min={formattedDateTime}
           type="datetime-local"
           title="Please select a future date"
           value={eventData.date}
           onChange={handleChange}
-          name="date"
         />
         <label htmlFor="title" className="">Title</label>
         <input 
@@ -95,7 +96,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           onChange={handleChange} 
           className="max-h-20"
         ></textarea>
-        <input className="cursor-pointer" type="submit" value="Create Event" />
+        <input id="submit" name="submit" className="cursor-pointer" type="submit" value="Create Event" />
       </form>
 
     </div>

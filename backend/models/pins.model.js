@@ -32,6 +32,7 @@ const PinSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+    // array of assistants to the event
     assistants: [
       {
         type: String,

@@ -24,7 +24,7 @@ const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplay
       }))
     , [assistants, imageUrls]);
 
-  // Fetch ONLY images that aren't cached
+  // Fetch ONLY images that aren't cached (or at least it should D:)
   useEffect(() => {
     const uncachedAssistants = displayedAssistants
       .filter(({ imageUrl }) => !imageUrl)
