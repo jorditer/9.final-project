@@ -8,7 +8,7 @@ interface ConnectProps {
 }
 
 const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsUser }) => {
-  const [friendStatus, setFriendStatus] = useState<'connect' | 'connected' | 'pending'>('connect');
+  const [friendStatus, setFriendStatus] = useState<"connect" | "connected" | "pending">("connect");
   const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
@@ -18,11 +18,11 @@ const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsU
         const user = response.data.data;
 
         if (user.friends.includes(eventsUser)) {
-          setFriendStatus('connected');
+          setFriendStatus("connected");
         } else if (user.sentFriendRequests.includes(eventsUser)) {
-          setFriendStatus('pending');
+          setFriendStatus("pending");
         } else {
-          setFriendStatus('connect');
+          setFriendStatus("connect");
         }
       } catch (err) {
         console.error("Error fetching friend status:", err);
@@ -34,12 +34,12 @@ const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsU
 
   const handleFriendAction = async () => {
     try {
-      if (friendStatus === 'connect') {
+      if (friendStatus === "connect") {
         await axios.post(`/api/users/${thisUser}/friends/request/${eventsUser}`);
-        setFriendStatus('pending');
-      } else if (friendStatus === 'connected') {
+        setFriendStatus("pending");
+      } else if (friendStatus === "connected") {
         await axios.delete(`/api/users/${thisUser}/friends/${eventsUser}`);
-        setFriendStatus('connect');
+        setFriendStatus("connect");
       }
       onFriendshipChange();
     } catch (err) {
@@ -48,12 +48,12 @@ const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsU
   };
 
   const getButtonText = () => {
-    if (friendStatus === 'connected') {
-      return hovering ? 'Disconnect' : 'Connected';
-    } else if (friendStatus === 'pending') {
-      return 'Pending';
+    if (friendStatus === "connected") {
+      return hovering ? "Disconnect" : "Connected";
+    } else if (friendStatus === "pending") {
+      return "Pending";
     } else {
-      return 'Connect';
+      return "Connect";
     }
   };
 
@@ -63,24 +63,26 @@ const Connect: React.FC<ConnectProps> = ({ onFriendshipChange, thisUser, eventsU
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       className={`-mb-2 group relative h-8 w-20 flex items-center justify-center overflow-hidden overflow-x-hidden rounded-md px-4 text-neutral-50 ${
-        friendStatus === 'connected'
+        friendStatus === "connected"
           ? hovering
-            ? 'bg-red-500 hover:bg-red-600'
-            : 'bg-blue-500 hover:bg-gray-300 text-gray-800'
-          : friendStatus === 'pending'
-          ? 'bg-blue-500 cursor-not-allowed'
-          : 'bg-neutral-950 hover:bg-blue-600'
+            ? "bg-red-500 hover:bg-red-600"
+            : "bg-blue-500 hover:bg-gray-300 text-gray-800"
+          : friendStatus === "pending"
+          ? "bg-blue-300 cursor-not-allowed"
+          : "bg-neutral-950 hover:bg-blue-600"
       }`}
     >
-      <span className="relative z-10">
-        {getButtonText()}
-      </span>
+      <span className="relative z-10">{getButtonText()}</span>
       <span className="absolute inset-0 overflow-hidden rounded-md">
-        <span className={`absolute left-0 aspect-square w-full origin-center -translate-x-full rounded-full transition-all duration-500 ${
-          friendStatus === 'connected' && hovering
-            ? 'bg-red-500 group-hover:-translate-x-0 group-hover:scale-150'
-            : 'bg-blue-500 group-hover:-translate-x-0 group-hover:scale-150'
-        }`}></span>
+        <span
+          className={`absolute left-0 aspect-square w-full origin-center -translate-x-full rounded-full transition-all duration-500 ${
+            friendStatus === "pending"
+              ? "pointer-events-none"
+              : friendStatus === "connected"
+              ? "bg-red-500 group-hover:-translate-x-0 group-hover:scale-150"
+              : "bg-blue-500 group-hover:-translate-x-0 group-hover:scale-150"
+          }`}
+        ></span>
       </span>
     </button>
   );

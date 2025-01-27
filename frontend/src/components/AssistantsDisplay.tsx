@@ -34,7 +34,7 @@ const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplay
       {displayedAssistants.map(({username, imageUrl}) => (
         <img 
           key={username} 
-          className="w-8 h-8 border-2 border-white rounded-full dark:border-gray-800" 
+          className="w-8 h-8 border-2 border-white rounded-full dark:border-gray-800 object-cover" 
           src={imageUrl || noImage}
           alt={username} 
         />

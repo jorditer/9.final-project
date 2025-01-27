@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfileImage } from "../hooks/useProfileImage";
 import noImage from "../assets/imgs/no-image.jpg";
 import Connect from "./Connect";
@@ -6,7 +6,6 @@ import Pin from "../interfaces/Pin";
 import Time from "./Time";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
-import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
 import { useProfileImages } from "../context/ProfileImagesContext";
 
 interface ProfileProps {
@@ -29,9 +28,17 @@ const Profile: React.FC<ProfileProps> = ({
   setCurrentPlaceId,
 }) => {
   const { uploadProfileImage, isUploading } = useProfileImage();
-  const {imageUrls} = useProfileImages();
+  const { imageUrls } = useProfileImages();
+  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   const eventUserImageUrl = eventsUser ? imageUrls[eventsUser] : null;
+
+  // Reset temp image when eventUserImageUrl changes (new image uploaded)
+  useEffect(() => {
+    if (eventUserImageUrl) {
+      setTempImageUrl(null);
+    }
+  }, [eventUserImageUrl]);
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -55,30 +62,49 @@ const Profile: React.FC<ProfileProps> = ({
       if (!file || !thisUser) return;
   
       try {
+        const tempUrl = URL.createObjectURL(file); // Create temporary URL for the selected file
+        setTempImageUrl(tempUrl);
+
         await uploadProfileImage(file, thisUser);
+        
+        URL.revokeObjectURL(tempUrl); // Clean up the temporary URL
       } catch (err) {
         console.error("Upload failed:", err);
+        setTempImageUrl(null);
       }
     };
-  
     input.click();
   };
 
-  const renderUserInfo = (isMobile = false) => (
-    <div className="flex items-center gap-3">
-      <img
-        className={`${isMobile ? 'size-12 min-h-10' : 'size-40 -mt-1 lg:size-42'} object-cover rounded-full`}
-        src={eventUserImageUrl || noImage}
-        alt="user-image"
-        onClick={handleImageClick}
-        style={{ opacity: isUploading ? 0.5 : 1 }}
-      />
-      {isMobile && <span className="font-semibold text-lg">{eventsUser || thisUser}</span>}
-      {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (
-        <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
-      )}
-    </div>
-  );
+  const renderUserInfo = (isMobile = false) => {
+    const imageUrl = tempImageUrl || eventUserImageUrl || noImage;
+    
+    return (
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <img
+            className={`${
+              isMobile ? 'size-12 min-w-12' : 'size-40 -mt-1 lg:size-42'
+            } object-cover rounded-full transition-opacity duration-300 ${
+              isUploading ? 'opacity-50' : 'opacity-100'
+            }`}
+            src={imageUrl}
+            alt="user-image"
+            onClick={handleImageClick}
+          />
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+            </div>
+          )}
+        </div>
+        {isMobile && <span className="font-semibold text-lg">{eventsUser || thisUser}</span>}
+        {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (
+          <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -95,12 +121,12 @@ const Profile: React.FC<ProfileProps> = ({
  
         {/* Desktop profile */}
         <div className="hidden md:flex md:flex-col items-center gap-2">
-  {renderUserInfo()}
-  <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
-  {thisUser && eventsUser && thisUser !== eventsUser && (
-    <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
-  )}
-</div>
+          {renderUserInfo()}
+          <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
+          {thisUser && eventsUser && thisUser !== eventsUser && (
+            <Connect onFriendshipChange={onFriendshipChange} thisUser={thisUser} eventsUser={eventsUser} />
+          )}
+        </div>
  
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">
@@ -162,7 +188,9 @@ const Profile: React.FC<ProfileProps> = ({
                 </div>
               </div>
             ))}
-            {userEvents.length === 0 && <p className="text-gray-500 text-center">No events created yet :(</p>}
+            {userEvents.length === 0 && (
+              <p className="text-gray-500 text-center">No events created yet :(</p>
+            )}
           </div>
         </div>
       </div>
