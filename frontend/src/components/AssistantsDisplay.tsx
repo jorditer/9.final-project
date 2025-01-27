@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import noImage from "../assets/imgs/no-image.jpg"
 import { useEventAssistant } from "../hooks/useEventAssistant";
-import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
 import { useProfileImages } from "../context/ProfileImagesContext";
 import Pin from "../interfaces/Pin";
 
 interface AssistantsDisplayProps {
   assistants: string[];
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
-	thisUser: string | null;
-	p: Pin;
+  thisUser: string | null;
+  p: Pin;
 }
 
 const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplayProps) => {
@@ -17,11 +16,12 @@ const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplay
   const { imageUrls, prefetchImages } = useProfileImages();
   const maxDisplay = 3;
   const displayCount = assistants.length;
-	useEffect(() => {
-    prefetchImages(assistants.slice(0, maxDisplay));
+
+  // Prefetch ALL assistant images immediately, not just displayed ones
+  useEffect(() => {
+    prefetchImages(assistants);
   }, [assistants]);
 
-  // Use imageUrls directly instead of creating multiple hooks
   const displayedAssistants = assistants.slice(0, maxDisplay).map(username => ({
     username,
     imageUrl: imageUrls[username] || null

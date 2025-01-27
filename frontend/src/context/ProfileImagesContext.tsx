@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+// ProfileImagesContext.tsx
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { supabase } from '../config/supabase.config';
 
 type ProfileImagesContextType = {
@@ -9,18 +10,21 @@ type ProfileImagesContextType = {
   updateCache: (username: string, url: string) => void;
 };
 
+const CACHE_KEY = 'profile_image_urls';
+
 const ProfileImagesContext = createContext<ProfileImagesContextType | null>(null);
 
-export const useProfileImages = () => {
-  const context = useContext(ProfileImagesContext);
-  if (!context) {
-    throw new Error('useProfileImages must be used within a ProfileImagesProvider');
-  }
-  return context;
-};
-
 export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => {
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  // Initialize state from localStorage if available
+  const [imageUrls, setImageUrls] = useState<Record<string, string>>(() => {
+    const cached = localStorage.getItem(CACHE_KEY);
+    return cached ? JSON.parse(cached) : {};
+  });
+
+  // Update localStorage when imageUrls changes
+  useEffect(() => {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(imageUrls));
+  }, [imageUrls]);
 
   const invalidateCache = (username: string) => {
     setImageUrls(prev => {
@@ -38,8 +42,10 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
   };
 
   const getImageUrl = async (username: string) => {
-    // Return cached URL if exists
-    if (imageUrls[username]) return imageUrls[username];
+    // Return cached URL if exists (no expiration)
+    if (imageUrls[username]) {
+      return imageUrls[username];
+    }
     
     try {
       const { data, error } = await supabase.storage
@@ -47,7 +53,7 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
         .list('avatars', { 
           search: username + '.',
           limit: 1,
-          sortBy: { column: 'updated_at', order: 'desc' }  // Get most recent file
+          sortBy: { column: 'updated_at', order: 'desc' }
         });
 
       if (error) throw error;
@@ -57,11 +63,14 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
           .from('profiles')
           .getPublicUrl(`avatars/${data[0].name}`);
         
-        // Add cache-busting parameter to prevent browser caching
+        // Still add timestamp to prevent browser caching when image updates
         const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
         updateCache(username, urlWithTimestamp);
         return urlWithTimestamp;
       }
+      
+      // Cache the fact that user has no image to prevent repeated lookups
+      updateCache(username, '');
       return null;
     } catch (error) {
       console.error('Error fetching image:', error);
@@ -70,10 +79,14 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
   };
 
   const prefetchImages = async (usernames: string[]) => {
-    const newUsernames = usernames.filter(username => !imageUrls[username]);
+    // Remove empty usernames and already cached ones
+    const newUsernames = usernames.filter(username => 
+      username && !imageUrls[username]
+    );
     
     if (newUsernames.length === 0) return;
 
+    // Fetch all images in parallel
     await Promise.all(
       newUsernames.map(username => getImageUrl(username))
     );
@@ -90,4 +103,12 @@ export const ProfileImagesProvider = ({ children }: { children: ReactNode }) => 
       {children}
     </ProfileImagesContext.Provider>
   );
+};
+
+export const useProfileImages = () => {
+  const context = useContext(ProfileImagesContext);
+  if (!context) {
+    throw new Error('useProfileImages must be used within a ProfileImagesProvider');
+  }
+  return context;
 };

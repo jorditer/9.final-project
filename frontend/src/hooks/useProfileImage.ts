@@ -10,34 +10,18 @@ export const useProfileImage = () => {
   const uploadProfileImage = async (file: File, username: string) => {
     setIsUploading(true);
     try {
-      // Delete any existing files for this user
-      const { data: existingFiles } = await supabase.storage
-        .from('profiles')
-        .list('avatars', {
-          search: username,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
-
-      if (existingFiles?.length) {
-        await Promise.all(
-          existingFiles.map(file => 
-            supabase.storage
-              .from('profiles')
-              .remove([`avatars/${file.name}`])
-          )
-        );
-      }
-
+      // Prepare the new filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${username}.${fileExt}`;
+      
       // Invalidate cache before upload
       invalidateCache(username);
 
-      // Upload new file
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${username}.${fileExt}`;
-      const { error: uploadError, data } = await supabase.storage
+      // Upload new file with upsert
+      const { error: uploadError } = await supabase.storage
         .from('profiles')
         .upload(`avatars/${fileName}`, file, {
-          upsert: true
+          upsert: true  // This will automatically replace any existing file
         });
 
       if (uploadError) throw uploadError;
