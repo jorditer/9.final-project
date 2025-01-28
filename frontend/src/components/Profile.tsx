@@ -27,6 +27,7 @@ const Profile: React.FC<ProfileProps> = ({
   const { friendStatus, setFriendStatus } = useFriendStatus(thisUser, eventsUser);
   const { handleDelete } = useEvents(pins, setPins, setCurrentPlaceId);
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
+  
 
   return (
     <div

@@ -27,9 +27,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete }) => {
         <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
           <div>
             <h4
-              className={`text-lg font-semibold ${
-                thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
-              }`}
+              className="text-lg font-semibold"
             >
               {event.title}
             </h4>

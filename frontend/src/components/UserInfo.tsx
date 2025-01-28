@@ -58,19 +58,19 @@ const UserInfo: React.FC<UserInfoProps> = ({
   
     input.click();
   };
-
-  const imageUrl = tempImageUrl || eventUserImageUrl || noImage;
+  const finalImageUrl = tempImageUrl || eventUserImageUrl || noImage;
+  const isOwnProfile = thisUser === eventsUser;
 
   return (
     <div className="flex items-center gap-3">
       <div className="relative">
-        <img
-          className={`${
+      <img
+          className={`transition duration-300 ease-in-out cursor-pointer ${
             isMobile ? 'size-12 min-w-12' : 'size-40 -mt-1 lg:size-42'
           } object-cover rounded-full transition-opacity duration-300 ${
             isUploading ? 'opacity-50' : 'opacity-100'
-          }`}
-          src={imageUrl}
+          } ${isOwnProfile ? 'hover:grayscale hover:brightness-75' : ''}`}
+          src={finalImageUrl}
           alt="user-image"
           onClick={handleImageClick}
         />

@@ -55,7 +55,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
   };
-  
+
   const handleAddEvent = (e: mapboxgl.MapMouseEvent) => {
     setCurrentPlaceId(null);
     const lat = e.lngLat.lat;
@@ -69,6 +69,16 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const handleLogout = () => {
     onLogout();
     navigate("/login");
+  };
+
+  // New handler for location selection
+  const handleLocationSelect = (lat: number, long: number) => {
+    setViewport(prev => ({
+      ...prev,
+      latitude: lat,
+      longitude: long,
+      zoom: 14  // Zoom in a bit when selecting a location
+    }));
   };
 
   return (
@@ -106,7 +116,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         />
 
         {newEvent && (
-          <Popup className="[&_.mapboxgl-popup-content]:p-0 [&_.mapboxgl-popup-content]:overflow-hidden [&_.mapboxgl-popup-content]:rounded-lg" latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}>
+          <Popup latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}>
             <Form thisUser={thisUser} coordinates={{ lat: newEvent.lat, long: newEvent.long }} onSuccess={handleNewPin} />
           </Popup>
         )}
@@ -119,7 +129,11 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         >
           <ArrowIcon className={`[&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}`}/>
         </button>
-        <SearchBar setShowProfile={setShowProfile} setEventsUser={setEventsUser} />
+        <SearchBar 
+          setShowProfile={setShowProfile} 
+          setEventsUser={setEventsUser}
+          onLocationSelect={handleLocationSelect}
+        />
       </Map>
     </div>
   );
