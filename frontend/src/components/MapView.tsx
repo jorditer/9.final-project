@@ -25,7 +25,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [eventsUser, setEventsUser] = useState(thisUser);
-  const [friendshipRefresh, setFriendshipRefresh] = useState(0);  // Rerendering pins when friend added or deleted
+  const [friendshipRefresh, setFriendshipRefresh] = useState(0);
   const [viewport, setViewport] = useState({
     latitude: 41.38879,
     longitude: 2.15899,
@@ -49,19 +49,15 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   const handleNewPin = (newPin: Pin) => {
     setPins((prev) => [...prev, newPin]);
-    setNewEvent(null); // Close popup when created
+    setNewEvent(null);
   };
 
   const handleMarkerClick = (id: string, lat: number, long: number): void => {
     setCurrentPlaceId(id);
-    // setViewport((prev) => ({ // To transport the display onto the pin TODO
-    //   ...prev,
-    //   latitude: lat,
-    //   longitude: long,
-    // }));
   };
+  
   const handleAddEvent = (e: mapboxgl.MapMouseEvent) => {
-    setCurrentPlaceId(null); // Close opened popup when creating a new Event
+    setCurrentPlaceId(null);
     const lat = e.lngLat.lat;
     const long = e.lngLat.lng;
     setNewEvent({
@@ -75,7 +71,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     navigate("/login");
   };
 
-
   return (
     <div className="h-lvh w-lvw">
       <Map
@@ -88,7 +83,15 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
       >
         <Request onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} thisUser={thisUser} />
-      <Profile onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} setPins={setPins} setCurrentPlaceId={setCurrentPlaceId} eventsUser={eventsUser} thisUser={thisUser} pins={pins} showProfile={showProfile}/>
+        <Profile 
+          onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} 
+          setPins={setPins} 
+          setCurrentPlaceId={setCurrentPlaceId} 
+          eventsUser={eventsUser} 
+          thisUser={thisUser} 
+          pins={pins} 
+          showProfile={showProfile}
+        />
         <PinsLayer
           friendshipRefresh={friendshipRefresh}
           setPins={setPins}
@@ -98,14 +101,15 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           viewport={viewport}
           onMarkerClick={handleMarkerClick}
           onPopupClose={() => setCurrentPlaceId(null)}
+          setEventsUser={setEventsUser}
+          setShowProfile={setShowProfile}
         />
 
         {newEvent && (
-          <Popup latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}>
+          <Popup className="[&_.mapboxgl-popup-content]:p-0 [&_.mapboxgl-popup-content]:overflow-hidden [&_.mapboxgl-popup-content]:rounded-lg" latitude={newEvent.lat} closeButton={true} onClose={() => setNewEvent(null)} longitude={newEvent.long}>
             <Form thisUser={thisUser} coordinates={{ lat: newEvent.lat, long: newEvent.long }} onSuccess={handleNewPin} />
           </Popup>
         )}
-        {/* <Login /> */}
         <User thisUser={thisUser} setEventsUser={setEventsUser} setShowProfile={setShowProfile} handleLogout={handleLogout} />
         <button
           onClick={() => setShowProfile(!showProfile)}
@@ -113,7 +117,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
             showProfile ? "bottom-[calc(40%_+1rem)]" : "bottom-2"
           }`}
         >
-          <ArrowIcon className={` [&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}` }/>
+          <ArrowIcon className={`[&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}`}/>
         </button>
         <SearchBar setShowProfile={setShowProfile} setEventsUser={setEventsUser} />
       </Map>

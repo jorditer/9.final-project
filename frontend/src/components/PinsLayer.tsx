@@ -3,7 +3,7 @@ import MapMarker from "./MapMarker";
 import Pin from "../interfaces/Pin";
 import { formatDistanceToNow } from "date-fns";
 import Time from "./Time";
-import { Trash2 } from "lucide-react";
+import { Trash2, MapPin, UsersRound } from "lucide-react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import AssistantsDisplay from "./AssistantsDisplay";
@@ -19,6 +19,8 @@ interface PinsLayerProps {
   onMarkerClick: (id: string, lat: number, long: number) => void;
   onPopupClose: () => void;
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
+  setEventsUser: (username: string) => void;
+  setShowProfile: (show: boolean) => void;
 }
 
 const PinsLayer = ({
@@ -30,10 +32,11 @@ const PinsLayer = ({
   onPopupClose,
   setPins,
   friendshipRefresh,
+  setEventsUser,
+  setShowProfile,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
 
-  // Fetch friends list when component mounts
   useEffect(() => {
     const fetchFriends = async () => {
       if (thisUser) {
@@ -47,10 +50,11 @@ const PinsLayer = ({
     };
 
     fetchFriends();
-  }, [thisUser, friendshipRefresh]); // firendship makes the effect trigger when a friend is added/deleted
+  }, [thisUser, friendshipRefresh]);
 
-  // Filter pins to show only those from friends and the current user
-  const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
+  const filteredPins = pins.filter(
+    (pin) => pin.username === thisUser || friendsList.includes(pin.username)
+  );
 
   const handleDelete = async (pinId: string) => {
     try {
@@ -67,66 +71,114 @@ const PinsLayer = ({
     window.open(url, "_blank");
   };
 
-  return (
-    <div className="">
-      {filteredPins.map((p: Pin) => (
-        <div key={p._id}>
-          <Marker longitude={p.long} latitude={p.lat} anchor="bottom">
-            <MapMarker
-              color={p.username === thisUser ? "tomato" : "blue"}
-              zoom={viewport.zoom}
-              onClick={() => onMarkerClick(p._id, p.lat, p.long)}
-            />
-          </Marker>
-          {currentPlaceId === p._id && (
-            <Popup
-              key={p._id}
-              latitude={p.lat}
-              longitude={p.long}
-              closeButton={true}
-              closeOnClick={false}
-              onClose={onPopupClose}
-              anchor="left"
-            >
-              <div className="text-base -my-1 flex justify-end flex-col relative">
-                {p.username === thisUser && (
-                  <button
-                    onClick={() => handleDelete(p._id)}
-                    className="fixed -right-[2px] top-6 p-1.5 rounded-full hover:bg-red-50 transition-colors"
-                    title="Delete event"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
-                )}
-                <h2
-                  className={`text-xl font-extrabold me-4 ${
-                    thisUser !== p.username ? "cursor-pointer hover:text-blue-600" : ""
-                  }`}
+return (
+  <div className="pins-layer">
+    {filteredPins.map((pin: Pin) => (
+      <div key={pin._id} className="pin-container">
+        {/* Pin Marker */}
+        <Marker 
+          longitude={pin.long} 
+          latitude={pin.lat} 
+          anchor="bottom"
+        >
+          <MapMarker
+            color={pin.username === thisUser ? "tomato" : "blue"}
+            zoom={viewport.zoom}
+            onClick={() => onMarkerClick(pin._id, pin.lat, pin.long)}
+          />
+        </Marker>
+
+        {/* Pin Popup */}
+        {currentPlaceId === pin._id && (
+          <Popup
+            latitude={pin.lat}
+            longitude={pin.long}
+            closeButton={true}
+            closeOnClick={false}
+            onClose={onPopupClose}
+            anchor="left"
+          >
+            <div className="flex flex-col space-y-4 max-w-[300px]">
+              {/* Delete Button */}
+              {pin.username === thisUser && (
+                <button
+                  onClick={() => handleDelete(pin._id)}
+                  className="absolute right-1 top-1 p-1.5 rounded-full hover:bg-red-50 transition-colors z-10"
+                  title="Delete event"
                 >
-                  {p.title}
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+              )}
+
+              {/* Title Section */}
+              <div className="bg-gray-100 p-3 -mx-2 border-b">
+                <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">
+                  {pin.title}
                 </h2>
-                <label className="">Location</label>
-                <h3
-                  className="text-md font-bold hover:cursor-pointer hover:underline"
-                  onClick={() => openInGoogleMaps(p.lat, p.long)}
-                >
-                  {p.location}
-                </h3>
-                {p.description && <label>Description</label>}
-                <p>{p.description}</p>
-                <h3 className="text-md mt-1">{<Time date={p.date} />}</h3>
-                <AssistantsDisplay p={p} thisUser={thisUser} setPins={setPins} assistants={p.assistants } />
-                <small className="text-nowrap">
-                  Created by <strong>{p.username}</strong>,{" "}
-                  <em className="text-slate-500">{formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}</em>
-                </small>
               </div>
-            </Popup>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+
+              {/* Content Section */}
+              <div className="px-3 space-y-3">
+                {/* Location */}
+                <div className="flex items-center gap-2">
+                  <MapPin className="mt-1 text-gray-500" />
+                  <h3
+                    className="text-sm text-gray-700 hover:text-blue-600 cursor-pointer mt-1"
+                    onClick={() => openInGoogleMaps(pin.lat, pin.long)}
+                  >
+                    {pin.location}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                {pin.description && (
+                  <div className="text-sm text-gray-600 leading-relaxed break-words">
+                    {pin.description}
+                  </div>
+                )}
+
+                {/* Date */}
+                <div className="text-sm font-medium text-gray-700">
+                  <Time date={pin.date} />
+                </div>
+
+                {/* Assistants */}
+                <div className="flex items-center">
+                  <UsersRound className="text-gray-500"/>
+                  <AssistantsDisplay
+                    p={pin}
+                    thisUser={thisUser}
+                    setPins={setPins}
+                    assistants={pin.assistants}
+                  />
+                </div>
+
+                {/* Footer Info */}
+                <div className="text-xs text-nowrap text-gray-500 border-t pt-2 mt-2">
+                  Created by{" "}
+                  <a
+                    className="font-medium cursor-pointer text-gray-700 hover:text-blue-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEventsUser(pin.username);
+                      setShowProfile(true);
+                    }}
+                  >
+                    {pin.username}
+                  </a>
+                  <span className="mx-1">·</span>
+                  <span className="italic">
+                    {formatDistanceToNow(new Date(pin.createdAt), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Popup>
+        )}
+      </div>
+    ))}
+  </div>
+);
 };
 
 export default PinsLayer;
