@@ -13,6 +13,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
 import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
 import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
+import { useEvents } from "../hooks/useEvents"; // Add this import
 
 interface MapViewProps {
   thisUser: string | null;
@@ -32,6 +33,9 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     zoom: 12,
   });
   const navigate = useNavigate();
+
+  // Initialize the event handlers
+  const eventHandlers = useEvents(pins, setPins, setCurrentPlaceId);
 
   useEffect(() => {
     const getPins = async () => {
@@ -71,13 +75,12 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     navigate("/login");
   };
 
-  // New handler for location selection
   const handleLocationSelect = (lat: number, long: number) => {
     setViewport(prev => ({
       ...prev,
       latitude: lat,
       longitude: long,
-      zoom: 14  // Zoom in a bit when selecting a location
+      zoom: 14
     }));
   };
 
@@ -113,6 +116,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           onPopupClose={() => setCurrentPlaceId(null)}
           setEventsUser={setEventsUser}
           setShowProfile={setShowProfile}
+          setCurrentPlaceId={setCurrentPlaceId}
+          eventHandlers={eventHandlers} // Pass the event handlers
         />
 
         {newEvent && (

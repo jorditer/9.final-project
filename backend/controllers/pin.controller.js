@@ -167,3 +167,97 @@ export const removeAssistant = async (req, res) => {
     });
   }
 };
+
+const updatePinField = async (id, field, value, res) => {
+  if (!moongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Invalid pin ID" 
+    });
+  }
+
+  try {
+    const updatedPin = await Pin.findByIdAndUpdate(
+      id,
+      { [field]: value },
+      { 
+        new: true,
+        runValidators: true 
+      }
+    );
+
+    if (!updatedPin) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Pin not found" 
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedPin
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error"
+    });
+  }
+};
+
+export const updatePinTitle = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+  
+  if (!title) {
+    return res.status(400).json({
+      success: false,
+      message: "Title is required"
+    });
+  }
+  
+  await updatePinField(id, "title", title, res);
+};
+
+export const updatePinLocation = async (req, res) => {
+  const { id } = req.params;
+  const { location } = req.body;
+  
+  if (!location) {
+    return res.status(400).json({
+      success: false,
+      message: "Location is required"
+    });
+  }
+  
+  await updatePinField(id, "location", location, res);
+};
+
+export const updatePinDate = async (req, res) => {
+  const { id } = req.params;
+  const { date } = req.body;
+  
+  if (!date) {
+    return res.status(400).json({
+      success: false,
+      message: "Date is required"
+    });
+  }
+  
+  await updatePinField(id, "date", new Date(date), res);
+};
+
+export const updatePinDescription = async (req, res) => {
+  const { id } = req.params;
+  const { description } = req.body;
+  
+  if (!description) {
+    return res.status(400).json({
+      success: false,
+      message: "Description is required"
+    });
+  }
+  
+  await updatePinField(id, "description", description, res);
+};

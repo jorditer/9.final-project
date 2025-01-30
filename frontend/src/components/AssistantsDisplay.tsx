@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import noImage from "../assets/imgs/no-image.jpg"
 import { useEventAssistant } from "../hooks/useEventAssistant";
 import { useProfileImages } from "../context/ProfileImagesContext";
@@ -17,27 +17,39 @@ const AssistantsDisplay = ({assistants, setPins, thisUser, p}: AssistantsDisplay
   const maxDisplay = 3;
   const displayCount = assistants.length;
 
-    const displayedAssistants = useMemo(() => 
-      assistants.slice(0, maxDisplay).map(username => ({
-        username,
-        imageUrl: imageUrls[username] || null
-      }))
-    , [assistants, imageUrls]);
+  // Memoize the list of assistants to display
+  const assistantsToDisplay = useMemo(() => 
+    assistants.slice(0, maxDisplay)
+  , [assistants]);
 
-  // Fetch ONLY images that aren't cached (or at least it should D:)
-  useEffect(() => {
-    const uncachedAssistants = displayedAssistants
-      .filter(({ imageUrl }) => !imageUrl)
-      .map(({ username }) => username);
-  
+  // Memoize the fetch function to prevent unnecessary reruns
+  const fetchUncachedImages = useCallback(() => {
+    const uncachedAssistants = assistantsToDisplay.filter(
+      username => !imageUrls[username]
+    );
+
     if (uncachedAssistants.length > 0) {
       prefetchImages(uncachedAssistants);
     }
-  }, [displayedAssistants]);
+  }, [assistantsToDisplay, imageUrls, prefetchImages]);
+
+  // Only fetch images once when component mounts or assistants change
+  useEffect(() => {
+    fetchUncachedImages();
+  }, [assistantsToDisplay]); // Removed fetchUncachedImages from dependencies
+
+  // Create the final display data with images
+  const displayedAssistants = useMemo(() => 
+    assistantsToDisplay.map(username => ({
+      username,
+      imageUrl: imageUrls[username] || null
+    }))
+  , [assistantsToDisplay, imageUrls]);
 
   return (
-    <div onClick={() => thisUser && toggleAssistant(p, thisUser)} 
-        className="flex -space-x-4 rtl:space-x-reverse my-1 ms-3 justify-start"
+    <div 
+      onClick={() => thisUser && toggleAssistant(p, thisUser)} 
+      className="flex -space-x-4 rtl:space-x-reverse my-1 ms-3 justify-start"
     > 
       {displayedAssistants.map(({username, imageUrl}) => (
         <img 

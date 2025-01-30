@@ -21,6 +21,11 @@ interface PinsLayerProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setEventsUser: (username: string) => void;
   setShowProfile: (show: boolean) => void;
+  setCurrentPlaceId: (id: string | null) => void;
+  eventHandlers: {
+    handleDelete: (pinId: string) => Promise<void>;
+    updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
+  };
 }
 
 const PinsLayer = ({
@@ -34,6 +39,8 @@ const PinsLayer = ({
   friendshipRefresh,
   setEventsUser,
   setShowProfile,
+  eventHandlers,
+  setCurrentPlaceId,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
 
@@ -139,7 +146,17 @@ return (
 
                 {/* Date */}
                 <div className="text-sm font-medium text-gray-700">
-                  <Time date={pin.date} />
+                <div className="text-sm font-medium text-gray-700">
+  <Time 
+    date={pin.date} 
+    pinId={pin._id}
+    isOwner={pin.username === thisUser}
+    pins={pins}
+    setPins={setPins}
+    setCurrentPlaceId={setCurrentPlaceId}
+    updatePinDate={eventHandlers.updatePinDate}
+  />
+</div>
                 </div>
 
                 {/* Assistants */}

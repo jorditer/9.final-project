@@ -1,7 +1,6 @@
 // hooks/useEvents.ts
-import { useState } from 'react';
-import axios from 'axios';
-import Pin from '../interfaces/Pin';
+import axios from "axios";
+import Pin from "../interfaces/Pin";
 
 export const useEvents = (
   pins: Pin[], 
@@ -18,5 +17,18 @@ export const useEvents = (
     }
   };
 
-  return { handleDelete };
+  const updatePinDate = async (pinId: string, date: Date) => {
+    try {
+      const response = await axios.patch(`/api/pins/${pinId}/date`, { date });
+      setPins(prevPins => prevPins.map(pin => 
+        pin._id === pinId ? response.data.data : pin
+      ));
+      return response.data.data;
+    } catch (err) {
+      console.error("Error updating event date:", err);
+      throw err;
+    }
+  };
+
+  return { handleDelete, updatePinDate };
 };

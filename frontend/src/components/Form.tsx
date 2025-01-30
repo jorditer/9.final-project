@@ -56,7 +56,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
   return (
     <div className="text-base -my-1 flex justify-end flex-col">
       <form id="create-event" onSubmit={handleSubmit}>
-        <label htmlFor="date" className="">Date</label>
+        <label htmlFor="date" className="">Date*</label>
         <input
           className="py-[2px]"
           id="date"
@@ -67,7 +67,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           value={eventData.date}
           onChange={handleChange}
         />
-        <label htmlFor="title" className="">Title</label>
+        <label htmlFor="title" className="">Title*</label>
         <input 
           className="py-[2px]" 
           name="title" 
@@ -77,7 +77,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           maxLength={22} 
           required 
         />
-        <label htmlFor="location" className="">Location</label>
+        <label htmlFor="location" className="">Location*</label>
         <input 
           className="py-[2px]" 
           name="location" 
@@ -85,7 +85,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           type="text" 
           onChange={handleChange} 
           maxLength={20} 
-          required 
+          required
         />
         <label htmlFor="description">Description</label>
         <textarea

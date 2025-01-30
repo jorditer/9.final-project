@@ -2,7 +2,6 @@
 import { Trash2 } from "lucide-react";
 import Time from "./Time";
 import Pin from "../interfaces/Pin";
-
 interface EventCardProps {
   event: Pin;
   thisUser: string | null;
