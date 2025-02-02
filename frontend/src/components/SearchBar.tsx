@@ -60,7 +60,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
     <div className="fixed top-[0.1rem] sm:top-2 left-2 sm:left-4 z-10">
       <div className="flex items-center gap-1">
         {/* Mode Toggle Buttons - These allow switching between user and place search */}
-        <div className="flex gap-1 p-1 rounded-md border ">
+        <div className="flex gap-1 p-1 rounded-md ">
           <button
             onClick={() => {
               setSearchMode('users');
@@ -96,17 +96,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
         {/* Search Input and Results Dropdown */}
         <div className="relative">
           <input
+          id="user"
             type="text"
             value={inputValue}
             onChange={handleInputChange}
             onFocus={() => setShowResults(true)}
             placeholder={searchMode === 'users' ? "Search users..." : "Search places..."}
-            className="px-3 py-2 border border-black text-base rounded-md bg-white/90 w-64"
+            className="px-3 py-2 border border-black text-base rounded-xl bg-white/90 w-64"
           />
         
           {/* Results Dropdown - Shows when there's input and search is active */}
           {showResults && inputValue && (
-            <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-96 overflow-y-auto">
+            <div className="absolute top-full mt-1 w-full bg-white border border-gray-400 rounded-md shadow-lg max-h-96 overflow-y-auto">
               {/* User Results */}
               {searchMode === 'users' && filteredUsers.map((username) => (
                 <button
@@ -117,7 +118,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
                     setShowProfile(true);
                     setShowResults(false);
                   }}
-                  className="w-full px-3 py-2 text-left hover:bg-gray-100 flex items-center gap-2"
+                  className="ps-3 w-[96%] py-2 text-left hover:bg-gray-100 flex items-center gap-2"
                 >
                   <Users size={16} className="text-gray-600" />
                   {username}
@@ -135,7 +136,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
                     setInputValue(place.place_name);
                     setShowResults(false);
                   }}
-                  className="w-full px-3 py-2 text-left hover:bg-gray-100"
+                  className="ps-3 w-[96%] py-1.5 text-left hover:bg-gray-100"
                 >
                   <div className="flex items-center gap-2">
                     <MapPin size={16} className="text-gray-600 flex-shrink-0" />

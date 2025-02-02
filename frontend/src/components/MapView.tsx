@@ -34,7 +34,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   });
   const navigate = useNavigate();
 
-  // Initialize the event handlers
   const eventHandlers = useEvents(pins, setPins, setCurrentPlaceId);
 
   useEffect(() => {
@@ -96,15 +95,37 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
       >
         <Request onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} thisUser={thisUser} />
-        <Profile 
-          onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} 
-          setPins={setPins} 
-          setCurrentPlaceId={setCurrentPlaceId} 
-          eventsUser={eventsUser} 
-          thisUser={thisUser} 
-          pins={pins} 
-          showProfile={showProfile}
-        />
+{/* Profile Container with Arrow */}
+<div className={`z-20 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${
+  showProfile ? '' : 'pointer-events-none'
+}`}>
+  <div className={`relative transition-all duration-700 transform ${
+    showProfile 
+      ? "translate-y-0" 
+      : "translate-y-[calc(100%_+_0.25rem)]"
+  }`}>
+    <button
+      onClick={() => setShowProfile(!showProfile)}
+      className="absolute left-1/2 -top-12 -translate-x-1/2 z-20 cursor-pointer pointer-events-auto"
+    >
+      <ArrowIcon className={`[&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}`}/>
+    </button>
+    <div className={`mb-1 bg-white h-2/5 min-h-72 max-h-[500px] rounded-t-lg rounded-b-md overflow-hidden transition-opacity duration-700 ${
+  showProfile ? "opacity-100" : "opacity-0"
+}`}>
+      <Profile 
+        onFriendshipChange={() => setFriendshipRefresh(prev => prev + 1)} 
+        setPins={setPins} 
+        setCurrentPlaceId={setCurrentPlaceId} 
+        eventsUser={eventsUser} 
+        thisUser={thisUser} 
+        pins={pins} 
+        showProfile={showProfile}
+        updatePinDate={eventHandlers.updatePinDate} // Pass the event handlers
+      />
+    </div>
+  </div>
+</div>
         <PinsLayer
           friendshipRefresh={friendshipRefresh}
           setPins={setPins}
@@ -126,14 +147,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           </Popup>
         )}
         <User thisUser={thisUser} setEventsUser={setEventsUser} setShowProfile={setShowProfile} handleLogout={handleLogout} />
-        <button
-          onClick={() => setShowProfile(!showProfile)}
-          className={`z-10 transition-all duration-700 absolute left-1/2 cursor-pointer -translate-x-1/2 ${
-            showProfile ? "bottom-[calc(40%_+1rem)]" : "bottom-2"
-          }`}
-        >
-          <ArrowIcon className={`[&_.circle-bg]:active:fill-black [&_.circle-bg]:hover:fill-gray-400 w-8 h-8 transition-transform duration-700 hover:fill-black fill-gray-800 ${!showProfile && 'rotate-180'}`}/>
-        </button>
         <SearchBar 
           setShowProfile={setShowProfile} 
           setEventsUser={setEventsUser}

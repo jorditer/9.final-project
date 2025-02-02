@@ -6,15 +6,16 @@ interface EventCardProps {
   event: Pin;
   thisUser: string | null;
   onDelete: (pinId: string) => void;
+  updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
     <div className="bg-gray-50 p-4 rounded-lg relative group">
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
-          className="absolute right-2 top-2 p-1.5 rounded-full hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute -right-1 -top-1 p-1.5 rounded-full hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
           title="Delete event"
         >
           <Trash2 className="w-4 h-4 text-red-500" />
@@ -34,7 +35,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete }) => {
           </div>
           <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
           <div className="w-full">
-            <Time date={event.date} />
+          <Time 
+          date={event.date}
+          pinId={event._id}
+          isOwner={event.username === thisUser}
+          updatePinDate={updatePinDate}
+        />
           </div>
         </div>
 
@@ -53,7 +59,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete }) => {
           </div>
           <div className="self-center justify-self-start flex items-center justify-end truncate">
             <div className="overflow-hidden text-ellipsis">
-              <Time date={event.date} />
+            <Time 
+          date={event.date}
+          pinId={event._id}
+          isOwner={event.username === thisUser}
+          updatePinDate={updatePinDate}
+        />
             </div>
           </div>
         </div>

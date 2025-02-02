@@ -8,9 +8,6 @@ interface TimeProps {
   date: Date;
   pinId: string;
   isOwner: boolean;
-  pins: Pin[];
-  setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
-  setCurrentPlaceId: (id: string | null) => void;
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 

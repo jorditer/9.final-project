@@ -13,6 +13,8 @@ interface ProfileProps {
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
+  updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
+
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -21,6 +23,7 @@ const Profile: React.FC<ProfileProps> = ({
   thisUser,
   eventsUser,
   pins,
+  updatePinDate,
   setPins,
   setCurrentPlaceId,
 }) => {
@@ -30,11 +33,7 @@ const Profile: React.FC<ProfileProps> = ({
   
 
   return (
-    <div
-      className={`z-10 fixed mx-2 bottom-2 w-[calc(100%-1rem)] h-2/5 bg-white transition-all duration-700 ease-in-out transform ${
-        showProfile ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
-      } overflow-hidden rounded-t-lg`}
-    >
+    <div className="z-10 h-full">
       <div className="h-full p-4 flex flex-col md:flex-row gap-4">
         {/* Mobile header */}
         <div className="flex justify-between items-center md:hidden">
@@ -48,7 +47,7 @@ const Profile: React.FC<ProfileProps> = ({
             setFriendStatus={setFriendStatus}
           />
         </div>
- 
+  
         {/* Desktop profile */}
         <div className="hidden md:flex md:flex-col items-center gap-2">
           <UserInfo
@@ -58,7 +57,7 @@ const Profile: React.FC<ProfileProps> = ({
             friendStatus={friendStatus}
             setFriendStatus={setFriendStatus}
           />
-          <span className="font-semibold text-center text-3xl">{eventsUser || thisUser}</span>
+          <span className="font-semibold text-center text-3xl -mb-2">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && (
             <Connect 
               onFriendshipChange={onFriendshipChange} 
@@ -69,7 +68,7 @@ const Profile: React.FC<ProfileProps> = ({
             />
           )}
         </div>
- 
+  
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">
           {/* Desktop title */}
@@ -79,7 +78,8 @@ const Profile: React.FC<ProfileProps> = ({
           <div className="flex flex-col gap-3">
             {userEvents.map((event) => (
               <EventCard
-                key={event._id}
+                // key={event._id}
+                updatePinDate={updatePinDate}
                 event={event}
                 thisUser={thisUser}
                 onDelete={handleDelete}

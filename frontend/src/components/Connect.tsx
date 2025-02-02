@@ -42,7 +42,7 @@ const Connect: React.FC<ConnectProps> = ({
   return (
     <button
       onClick={handleFriendAction}
-      className={`-mb-2 group relative h-8 w-20 flex items-center justify-center 
+      className={`group relative h-8 w-20 flex items-center justify-center 
         overflow-hidden overflow-x-hidden rounded-md px-4 text-neutral-50 ${
         friendStatus === "connected"
           ? "bg-blue-500"

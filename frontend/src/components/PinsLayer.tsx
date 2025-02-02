@@ -106,24 +106,23 @@ return (
             anchor="left"
           >
             <div className="flex flex-col space-y-4 max-w-[300px]">
-              {/* Delete Button */}
-              {pin.username === thisUser && (
-                <button
-                  onClick={() => handleDelete(pin._id)}
-                  className="absolute right-1 top-1 p-1.5 rounded-full hover:bg-red-50 transition-colors z-10"
-                  title="Delete event"
-                >
-                  <Trash2 className="w-4 h-4 text-red-500" />
-                </button>
-              )}
-
-              {/* Title Section */}
-              <div className="bg-gray-100 p-3 -mx-2 border-b">
-                <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">
-                  {pin.title}
-                </h2>
-              </div>
-
+{/* Title Section */}
+<div className="bg-gray-100 -mx-2 border-b">
+  <div className="flex justify-between items-center p-3">
+    <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">
+      {pin.title}
+    </h2>
+    {pin.username === thisUser && (
+      <button
+        onClick={() => handleDelete(pin._id)}
+        className="hover:bg-red-50 py-2 rounded-full transition-colors flex-shrink-0"
+        title="Delete event"
+      >
+        <Trash2 className="w-4 h-4 text-red-500" />
+      </button>
+    )}
+  </div>
+</div>
               {/* Content Section */}
               <div className="px-3 space-y-3">
                 {/* Location */}
@@ -151,9 +150,6 @@ return (
     date={pin.date} 
     pinId={pin._id}
     isOwner={pin.username === thisUser}
-    pins={pins}
-    setPins={setPins}
-    setCurrentPlaceId={setCurrentPlaceId}
     updatePinDate={eventHandlers.updatePinDate}
   />
 </div>
