@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, MapPin } from 'lucide-react';
 import api from "../services/api";  // Add this import at the top
+import { authService } from '../services/auth';
 
 interface SearchBarProps {
   setEventsUser: (username: string) => void;
@@ -18,6 +19,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
 
   useEffect(() => {
     const fetchUsers = async () => {
+      if (!authService.isAuthenticated()) {
+        return;
+      }
       try {
         // Remove '/api' prefix
         const res = await api.get('/users');

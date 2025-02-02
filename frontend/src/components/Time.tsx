@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, Pencil } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { useEvents } from "../hooks/useEvents";
 import Pin from "../interfaces/Pin";
@@ -18,6 +18,8 @@ const Time: React.FC<TimeProps> = ({
   updatePinDate
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+
 // const { updatePinDate } = useEvents(pins, setPins, setCurrentPlaceId);
   
   // Format date for input value
@@ -43,20 +45,29 @@ const Time: React.FC<TimeProps> = ({
 
   return (
     <div className="flex items-center space-x-2 rounded-lg w-full">
-      <Calendar 
-        className={`w-5 h-5 text-gray-600 flex-shrink-0 ${isOwner ? 'cursor-pointer hover:text-blue-500' : ''}`} 
+      <div 
+        className={`w-5 h-5 text-gray-600 flex-shrink-0 ${
+          isOwner && 'cursor-pointer hover:text-blue-500'
+        }`}
         onClick={() => isOwner && setIsEditing(!isEditing)}
-      />
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        {isOwner && (isHovering || isEditing) ? <Pencil size={20} /> : <Calendar size={20} />}
+      </div>
       {isEditing ? (
+        <div className="flex-1 max-w-40">
+
         <input
           type="datetime-local"
-          className="text-sm p-1 border rounded"
+          className="text-sm p-1 border bg-gray-500 rounded"
           value={formatForInput(new Date(date))}
           min={formatForInput(new Date())}
           onChange={handleDateChange}
           onBlur={() => setIsEditing(false)}
           autoFocus
-        />
+          />
+          </div>
       ) : (
         <div className="flex flex-col min-w-0 flex-1">
           <span className="text-sm font-medium truncate">

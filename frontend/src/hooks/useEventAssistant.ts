@@ -1,4 +1,5 @@
 import axios from 'axios';
+import api from '../services/api';
 import Pin from '../interfaces/Pin';
 
 export const useEventAssistant = (setPins: React.Dispatch<React.SetStateAction<Pin[]>>) => {
@@ -10,9 +11,9 @@ export const useEventAssistant = (setPins: React.Dispatch<React.SetStateAction<P
       const isAlreadyAssistant = pin.assistants.includes(username);
       
       if (isAlreadyAssistant) {
-        await axios.delete(`/api/pins/${pin._id}/assistants/${username}`);
+        await api.delete(`/pins/${pin._id}/assistants/${username}`);
       } else {
-        await axios.post(`/api/pins/${pin._id}/assistants/${username}`);
+        await api.post(`/pins/${pin._id}/assistants/${username}`);
       }
 
       // Update local state

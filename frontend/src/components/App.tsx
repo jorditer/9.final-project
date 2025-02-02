@@ -1,4 +1,3 @@
-// App.tsx
 import { useState, useEffect } from "react";
 import Register from "./Register";
 import MapView from "./MapView";
@@ -46,6 +45,9 @@ function App() {
     const showOverlay = location.pathname === '/login' || location.pathname === '/signup';
     
     if (!showOverlay) return null;
+    if (authService.isAuthenticated() && showOverlay) {
+      return <Navigate to="/" replace />;
+    }
     
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-10">

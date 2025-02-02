@@ -29,7 +29,7 @@ const User: React.FC<UserProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-// View Profile part
+// View Profile
   const handleViewProfile = () => {
     if (thisUser) {
       setEventsUser(thisUser);
@@ -38,7 +38,7 @@ const User: React.FC<UserProps> = ({
     }
   };
 
-  // Logout part
+  // Logout
   const handleLogoutClick = () => {
     setIsDropdownOpen(false);
     handleLogout();

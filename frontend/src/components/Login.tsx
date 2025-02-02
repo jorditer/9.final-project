@@ -1,6 +1,7 @@
 import { FormEvent, useState, FC } from "react";
 import createChangeHandler from "../utils/form";
 import axios from "axios";
+import api from "../services/api";
 import User from "../interfaces/User";
 import { useNavigate } from "react-router";
 import { authService } from "../services/auth";
@@ -18,31 +19,34 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
     password: "",
   });
 
-  const myStorage = window.localStorage
+  // const myStorage = window.localStorage
   const navigate = useNavigate();
   const handleChange = createChangeHandler(setNewUser);
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/users/login", newUser);
+      const res = await api.post("/users/login", newUser);
       const { accessToken, username } = res.data;
-      myStorage.setItem("user", res.data.username);
 
-			if (res.status === 201 || res.status === 200) {
-				setThisUser(res.data.username);
-        authService.setAuth(accessToken, username);
-				setError(false);
-				setSuccess(true);
-        navigate('/');
-			}
+      // First store the authentication data
+      authService.setAuth(accessToken, username);
+      
+      // Then update the app state
+      setThisUser(username);
+      setError(false);
+      setSuccess(true);
+      
+      // Finally navigate
+      navigate('/', { replace: true }); // Using replace to prevent back navigation to login
+      
     } catch (err) {
-			if (axios.isAxiosError(err) && err.response) {
+      if (axios.isAxiosError(err) && err.response) {
         setErrorMessage(err.response.data.message);
       } else {
         setErrorMessage("An unexpected error occurred");
       }
-      setError(true)
+      setError(true);
     }
   };
   return (

@@ -981,6 +981,10 @@ h1 {
   width: 100lvw;
 }
 
+.w-10 {
+  width: 2.5rem;
+}
+
 .min-w-0 {
   min-width: 0px;
 }
@@ -991,6 +995,14 @@ h1 {
 
 .max-w-\[300px\] {
   max-width: 300px;
+}
+
+.max-w-20 {
+  max-width: 5rem;
+}
+
+.max-w-40 {
+  max-width: 10rem;
 }
 
 .flex-1 {
@@ -1301,6 +1313,11 @@ h1 {
 .bg-yellow-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(133 77 14 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-40 {

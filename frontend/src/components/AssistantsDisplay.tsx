@@ -3,6 +3,7 @@ import noImage from "../assets/imgs/no-image.jpg"
 import { useEventAssistant } from "../hooks/useEventAssistant";
 import { useProfileImages } from "../context/ProfileImagesContext";
 import Pin from "../interfaces/Pin";
+import api from "../services/api";
 
 interface AssistantsDisplayProps {
   assistants: string[];
