@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../services/api";
 import axios from "axios";
 
 interface RequestProps {
@@ -12,8 +13,11 @@ const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
+      // Don't make the request if there's no user
+      if (!thisUser) return;
+      
       try {
-        const response = await axios.get(`/api/users/${thisUser}`);
+        const response = await api.get(`/users/${thisUser}`);
         const user = response.data.data;
         setPendingRequests(user.pendingFriendRequests);
         setShowPopup(user.pendingFriendRequests.length > 0);
@@ -27,7 +31,8 @@ const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
 
   const handleAccept = async (friendUsername: string) => {
     try {
-      await axios.post(`/api/users/${thisUser}/friends/accept/${friendUsername}`);
+      // Remove '/api' prefix
+      await api.post(`/users/${thisUser}/friends/accept/${friendUsername}`);
       const updatedRequests = pendingRequests.filter(username => username !== friendUsername);
       setPendingRequests(updatedRequests);
       setShowPopup(updatedRequests.length > 0);
@@ -39,7 +44,8 @@ const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
 
   const handleReject = async (friendUsername: string) => {
     try {
-      await axios.post(`/api/users/${thisUser}/friends/reject/${friendUsername}`);
+      // Remove '/api' prefix
+      await api.post(`/users/${thisUser}/friends/reject/${friendUsername}`);
       const updatedRequests = pendingRequests.filter(username => username !== friendUsername);
       setPendingRequests(updatedRequests);
       setShowPopup(updatedRequests.length > 0);

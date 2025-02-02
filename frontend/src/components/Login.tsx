@@ -3,6 +3,7 @@ import createChangeHandler from "../utils/form";
 import axios from "axios";
 import User from "../interfaces/User";
 import { useNavigate } from "react-router";
+import { authService } from "../services/auth";
 
 interface LoginProps {
   setThisUser: (user: string | null) => void;
@@ -25,10 +26,12 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
     e.preventDefault();
     try {
       const res = await axios.post("/api/users/login", newUser);
+      const { accessToken, username } = res.data;
       myStorage.setItem("user", res.data.username);
 
 			if (res.status === 201 || res.status === 200) {
 				setThisUser(res.data.username);
+        authService.setAuth(accessToken, username);
 				setError(false);
 				setSuccess(true);
         navigate('/');

@@ -1,4 +1,5 @@
 import express from "express";
+import authMiddleware from '../middleware/auth.js';
 import { 
   addAssistant, 
   removeAssistant, 
@@ -13,6 +14,8 @@ import {
 } from "../controllers/pin.controller.js"
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.get('/', getPin);
 router.post('/', postPin);

@@ -1,4 +1,5 @@
 import axios from "axios";
+import api from '../services/api'; // Import our API service
 
 interface ConnectProps {
   thisUser: string;
@@ -18,10 +19,10 @@ const Connect: React.FC<ConnectProps> = ({
   const handleFriendAction = async () => {
     try {
       if (friendStatus === "connect") {
-        await axios.post(`/api/users/${thisUser}/friends/request/${eventsUser}`);
+        await api.post(`/users/${thisUser}/friends/request/${eventsUser}`);
         setFriendStatus("pending");
       } else if (friendStatus === "connected") {
-        await axios.delete(`/api/users/${thisUser}/friends/${eventsUser}`);
+        await api.delete(`/users/${thisUser}/friends/${eventsUser}`);
         setFriendStatus("connect");
       }
       onFriendshipChange();

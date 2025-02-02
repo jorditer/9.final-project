@@ -1,6 +1,5 @@
-// hooks/useFriendStatus.ts
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 export type FriendStatus = "connect" | "connected" | "pending";
 
@@ -9,11 +8,16 @@ export const useFriendStatus = (thisUser: string | null, eventsUser: string | nu
 
   useEffect(() => {
     const fetchFriendStatus = async () => {
-      if (!thisUser || !eventsUser) return;
+      // Early return if we don't have both users
+      if (!thisUser || !eventsUser) {
+        return;
+      }
       
       try {
-        const response = await axios.get(`/api/users/${thisUser}`);
+        const response = await api.get(`/users/${thisUser}`);
         const user = response.data.data;
+
+        // Determine the friendship status based on user data
         if (user.friends.includes(eventsUser)) {
           setFriendStatus("connected");
         } else if (user.sentFriendRequests.includes(eventsUser)) {
@@ -25,8 +29,9 @@ export const useFriendStatus = (thisUser: string | null, eventsUser: string | nu
         console.error("Error fetching friend status:", err);
       }
     };
+
     fetchFriendStatus();
-  }, [thisUser, eventsUser]);
+  }, [thisUser, eventsUser]); // Rerun when either user changes
 
   return { friendStatus, setFriendStatus };
 };

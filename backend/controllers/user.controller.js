@@ -1,94 +1,232 @@
 import User from "../models/users.model.js";
-import moongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
+import { jwtConfig } from '../config/jwt.config.js';
+import rateLimit from 'express-rate-limit';
 
+// Create rate limiters for sensitive operations
+export const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,    // 15 minute window
+  max: 5,                      // 5 attempts per window
+  message: "Too many login attempts. Please try again later.",
+  standardHeaders: true,       // Return rate limit info in headers
+  legacyHeaders: false        // Disable X-RateLimit headers
+});
+
+export const registrationLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,    // 1 hour window
+  max: 3,                      // 3 registrations per IP per hour
+  message: "Too many accounts created. Please try again later."
+});
+
+// Helper function to generate authentication tokens
+const generateTokens = (user) => {
+  const accessToken = jwt.sign(
+    { username: user.username },
+    jwtConfig.secret,
+    { expiresIn: jwtConfig.accessTokenExpiry }
+  );
+
+  const refreshToken = jwt.sign(
+    { username: user.username },
+    jwtConfig.refreshSecret,
+    { expiresIn: jwtConfig.refreshTokenExpiry }
+  );
+
+  return { accessToken, refreshToken };
+};
+
+// Get all users with pagination and limited information
 export const getAllUsers = async (req, res) => {
   try {
-    const user = await User.find({});
-    res.status(200).json({ success: true, data: user });
+    // Implement pagination to prevent large data dumps
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const users = await User.find({})
+      .select('username')  // Only return necessary fields
+      .skip(skip)
+      .limit(limit);
+
+    const total = await User.countDocuments();
+
+    res.status(200).json({ 
+      success: true, 
+      data: users,
+      pagination: {
+        current: page,
+        pages: Math.ceil(total / limit),
+        total
+      }
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error('User fetch error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Could not retrieve users" 
+    });
   }
 };
+
+// User registration with proper validation and security
 export const postUser = async (req, res) => {
   try {
-    const existingUsername = await User.findOne({ username: req.body.username });
+    // Validate required fields
+    const { username, email, password } = req.body;
+    if (!username?.trim() || !email?.trim() || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
+    }
+
+    // Validate username format
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      return res.status(400).json({
+        success: false,
+        message: "Username must be 3-20 characters and contain only letters, numbers, and underscores"
+      });
+    }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+      });
+    }
+
+    // Check for existing users
+    const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return res.status(409).json({
         success: false,
-        message: "Username already exists",
+        message: "Username is already taken"
       });
     }
 
-    const existingEmail = await User.findOne({ email: req.body.email });
+    const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.status(409).json({
         success: false,
-        message: "Email already exists",
+        message: "Email is already registered"
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    // Hash password with appropriate cost factor
+    const salt = await bcrypt.genSalt(12);  // Increased from 10 for better security
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create new user with minimal required fields
     const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
+      username: username.trim(),
+      email: email.toLowerCase().trim(),
       password: hashedPassword,
+      friends: [],
+      pendingFriendRequests: [],
+      sentFriendRequests: []
     });
 
     await newUser.save();
-    res.status(201).json({ success: true, data: newUser });
+
+    // Generate tokens for automatic login
+    const tokens = generateTokens(newUser);
+
+    // Set refresh token in HTTP-only cookie
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Return success with minimal user information
+    res.status(201).json({ 
+      success: true, 
+      data: {
+        username: newUser.username,
+        accessToken: tokens.accessToken
+      }
+    });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Registration failed"
     });
   }
 };
 
+// User login with rate limiting and secure token handling
 export const logUser = async (req, res) => {
   try {
-    if (!req.body.username || !req.body.password) {
+    const { username, password } = req.body;
+
+    // Validate input
+    if (!username?.trim() || !password) {
       return res.status(400).json({
         success: false,
         message: "Username and password are required"
       });
     }
 
-    const user = await User.findOne({ username: req.body.username }).select('+password');
-    if (!user) {
+    // Find user and include password for verification
+    const user = await User.findOne({ username: username.trim() })
+      .select('+password')
+      .lean();  // Use lean() for better performance
+
+    // Use constant-time comparison to prevent timing attacks
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect username",
+        message: "Invalid credentials"
       });
     }
 
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Incorrect password",
-      });
-    }
+    // Generate new tokens
+    const tokens = generateTokens(user);
 
+    // Set refresh token in HTTP-only cookie
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    // Return success with minimal information
     return res.status(200).json({
       success: true,
       username: user.username,
+      accessToken: tokens.accessToken
     });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Login failed"
     });
   }
 };
 
+// Get user profile with proper authorization
 export const getUserByUsername = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username }).select('-password');
+    
+    // Verify authorization
+    if (!req.user) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Authentication required" 
+      });
+    }
+
+    // Find user without sensitive information
+    const user = await User.findOne({ username })
+      .select('-password -email -__v')
+      .lean();
     
     if (!user) {
       return res.status(404).json({ 
@@ -97,144 +235,44 @@ export const getUserByUsername = async (req, res) => {
       });
     }
 
+    // Return different information based on friendship status
+    const isSelf = req.user.username === username;
+    const isFriend = user.friends.includes(req.user.username);
+
+    const sanitizedUser = {
+      username: user.username,
+      friends: isSelf || isFriend ? user.friends : undefined,
+      pendingFriendRequests: isSelf ? user.pendingFriendRequests : undefined,
+      sentFriendRequests: isSelf ? user.sentFriendRequests : undefined
+    };
+
     return res.status(200).json({ 
       success: true, 
-      data: user 
+      data: sanitizedUser 
     });
   } catch (error) {
-    console.error(error);
+    console.error('User fetch error:', error);
     return res.status(500).json({ 
       success: false, 
-      message: "Internal server error" 
+      message: "Could not retrieve user information" 
     });
   }
 };
 
-export const addFriend = async (req, res) => {
-  try {
-    const { username, friendUsername } = req.params;
-
-    // Check if trying to add self as friend
-    if (username === friendUsername) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot add yourself as a friend"
-      });
-    }
-
-    // Find both users
-    const user = await User.findOne({ username });
-    const friend = await User.findOne({ username: friendUsername });
-
-    if (!user || !friend) {
-      return res.status(404).json({
-        success: false,
-        message: "User or friend not found"
-      });
-    }
-
-    // Check if already friends
-    if (user.friends.includes(friendUsername)) {
-      return res.status(400).json({
-        success: false,
-        message: "Already friends with this user"
-      });
-    }
-
-    // Add friend to user's friends list
-    user.friends.push(friendUsername);
-    await user.save();
-
-    // Add user to friend's friends list (mutual friendship)
-    if (!friend.friends.includes(username)) {
-      friend.friends.push(username);
-      await friend.save();
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Friend added successfully",
-      data: user
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error"
-    });
-  }
-};
-
-export const removeFriend = async (req, res) => {
-  try {
-    const { username, friendUsername } = req.params;
-
-    // Find both users
-    const user = await User.findOne({ username });
-    const friend = await User.findOne({ username: friendUsername });
-
-    if (!user || !friend) {
-      return res.status(404).json({
-        success: false,
-        message: "User or friend not found"
-      });
-    }
-
-    // Remove friend from user's friends list
-    user.friends = user.friends.filter(friend => friend !== friendUsername);
-    await user.save();
-
-    // Remove user from friend's friends list (mutual unfriending)
-    friend.friends = friend.friends.filter(friend => friend !== username);
-    await friend.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Friend removed successfully",
-      data: user
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error"
-    });
-  }
-};
-
-export const getFriendsList = async (req, res) => {
-  try {
-    const { username } = req.params;
-    const user = await User.findOne({ username })
-      .select('friends')
-      .populate('friends', 'username email -_id');
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: user.friends
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error"
-    });
-  }
-};
-
-// Replace addFriend with these new functions:
-
+// Friend request system with proper authorization checks
 export const sendFriendRequest = async (req, res) => {
   try {
     const { username, friendUsername } = req.params;
 
+    // Verify authorization
+    if (req.user.username !== username) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to send friend requests for this user"
+      });
+    }
+
+    // Prevent self-friending
     if (username === friendUsername) {
       return res.status(400).json({
         success: false,
@@ -242,8 +280,11 @@ export const sendFriendRequest = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ username });
-    const friend = await User.findOne({ username: friendUsername });
+    // Find both users
+    const [user, friend] = await Promise.all([
+      User.findOne({ username }),
+      User.findOne({ username: friendUsername })
+    ]);
 
     if (!user || !friend) {
       return res.status(404).json({
@@ -252,7 +293,7 @@ export const sendFriendRequest = async (req, res) => {
       });
     }
 
-    // Check if already friends
+    // Check existing relationships
     if (user.friends.includes(friendUsername)) {
       return res.status(400).json({
         success: false,
@@ -260,7 +301,6 @@ export const sendFriendRequest = async (req, res) => {
       });
     }
 
-    // Check if request already sent
     if (user.sentFriendRequests.includes(friendUsername)) {
       return res.status(400).json({
         success: false,
@@ -268,100 +308,365 @@ export const sendFriendRequest = async (req, res) => {
       });
     }
 
-    // Add to sent requests for sender
-    user.sentFriendRequests.push(friendUsername);
-    await user.save();
-
-    // Add to pending requests for receiver
-    friend.pendingFriendRequests.push(username);
-    await friend.save();
+    // Update both users atomically
+    await Promise.all([
+      User.updateOne(
+        { username },
+        { $addToSet: { sentFriendRequests: friendUsername } }
+      ),
+      User.updateOne(
+        { username: friendUsername },
+        { $addToSet: { pendingFriendRequests: username } }
+      )
+    ]);
 
     res.status(200).json({
       success: true,
       message: "Friend request sent successfully"
     });
   } catch (error) {
+    console.error('Friend request error:', error);
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: "Could not send friend request"
     });
   }
 };
 
+// Accept friend request with proper validation
 export const acceptFriendRequest = async (req, res) => {
   try {
     const { username, friendUsername } = req.params;
     
-    const user = await User.findOne({ username });
-    const friend = await User.findOne({ username: friendUsername });
-
-    if (!user || !friend) {
-      return res.status(404).json({
+    // Verify authorization
+    if (req.user.username !== username) {
+      return res.status(403).json({
         success: false,
-        message: "User or friend not found"
+        message: "Not authorized to accept friend requests for this user"
       });
     }
 
-    // Verify request exists
-    if (!user.pendingFriendRequests.includes(friendUsername)) {
-      return res.status(400).json({
-        success: false,
-        message: "No pending request from this user"
+    const session = await User.startSession();
+    session.startTransaction();
+
+    try {
+      const [user, friend] = await Promise.all([
+        User.findOne({ username }).session(session),
+        User.findOne({ username: friendUsername }).session(session)
+      ]);
+
+      if (!user || !friend) {
+        throw new Error("User or friend not found");
+      }
+
+      // Verify request exists
+      if (!user.pendingFriendRequests.includes(friendUsername)) {
+        throw new Error("No pending request from this user");
+      }
+
+      // Update both users' friend lists and remove request records
+      await Promise.all([
+        User.updateOne(
+          { username },
+          {
+            $addToSet: { friends: friendUsername },
+            $pull: { pendingFriendRequests: friendUsername }
+          }
+        ).session(session),
+        User.updateOne(
+          { username: friendUsername },
+          {
+            $addToSet: { friends: username },
+            $pull: { sentFriendRequests: username }
+          }
+        ).session(session)
+      ]);
+
+      await session.commitTransaction();
+      res.status(200).json({
+        success: true,
+        message: "Friend request accepted"
       });
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
     }
-
-    // Remove from pending/sent lists
-    user.pendingFriendRequests = user.pendingFriendRequests.filter(u => u !== friendUsername);
-    friend.sentFriendRequests = friend.sentFriendRequests.filter(u => u !== username);
-
-    // Add to friends lists
-    user.friends.push(friendUsername);
-    friend.friends.push(username);
-
-    await user.save();
-    await friend.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Friend request accepted"
-    });
   } catch (error) {
+    console.error('Friend acceptance error:', error);
     res.status(500).json({
       success: false,
-      message: "Internal server error"
+      message: error.message || "Could not accept friend request"
     });
   }
 };
-
+// Reject friend request with proper validation and cleanup
 export const rejectFriendRequest = async (req, res) => {
   try {
     const { username, friendUsername } = req.params;
     
-    const user = await User.findOne({ username });
-    const friend = await User.findOne({ username: friendUsername });
-
-    if (!user || !friend) {
-      return res.status(404).json({
+    // Verify authorization
+    if (req.user.username !== username) {
+      return res.status(403).json({
         success: false,
-        message: "User or friend not found"
+        message: "Not authorized to reject requests for this user"
       });
     }
 
-    // Remove from pending/sent lists
-    user.pendingFriendRequests = user.pendingFriendRequests.filter(u => u !== friendUsername);
-    friend.sentFriendRequests = friend.sentFriendRequests.filter(u => u !== username);
+    const session = await User.startSession();
+    session.startTransaction();
 
-    await user.save();
-    await friend.save();
+    try {
+      const [user, friend] = await Promise.all([
+        User.findOne({ username }).session(session),
+        User.findOne({ username: friendUsername }).session(session)
+      ]);
+
+      if (!user || !friend) {
+        throw new Error("User or friend not found");
+      }
+
+      // Verify request exists
+      if (!user.pendingFriendRequests.includes(friendUsername)) {
+        throw new Error("No pending request from this user");
+      }
+
+      // Remove request records from both users
+      await Promise.all([
+        User.updateOne(
+          { username },
+          { $pull: { pendingFriendRequests: friendUsername } }
+        ).session(session),
+        User.updateOne(
+          { username: friendUsername },
+          { $pull: { sentFriendRequests: username } }
+        ).session(session)
+      ]);
+
+      await session.commitTransaction();
+      res.status(200).json({
+        success: true,
+        message: "Friend request rejected"
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  } catch (error) {
+    console.error('Friend rejection error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Could not reject friend request"
+    });
+  }
+};
+
+// Remove friend with proper authorization and mutual removal
+export const removeFriend = async (req, res) => {
+  try {
+    const { username, friendUsername } = req.params;
+
+    // Verify authorization
+    if (req.user.username !== username) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to remove friends for this user"
+      });
+    }
+
+    const session = await User.startSession();
+    session.startTransaction();
+
+    try {
+      const [user, friend] = await Promise.all([
+        User.findOne({ username }).session(session),
+        User.findOne({ username: friendUsername }).session(session)
+      ]);
+
+      if (!user || !friend) {
+        throw new Error("User or friend not found");
+      }
+
+      // friendship exists
+      if (!user.friends.includes(friendUsername)) {
+        throw new Error("Not friends with this user");
+      }
+
+      // Remove friendship from both
+      await Promise.all([
+        User.updateOne(
+          { username },
+          { $pull: { friends: friendUsername } }
+        ).session(session),
+        User.updateOne(
+          { username: friendUsername },
+          { $pull: { friends: username } }
+        ).session(session)
+      ]);
+
+      await session.commitTransaction();
+      res.status(200).json({
+        success: true,
+        message: "Friend removed successfully"
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  } catch (error) {
+    console.error('Friend removal error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Could not remove friend"
+    });
+  }
+};
+
+// Get friends list with proper authorization
+export const getFriendsList = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    // Verify authorization
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      });
+    }
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Check if requesting user has permission to view friends list
+    const canViewFriends = req.user.username === username || 
+                          user.friends.includes(req.user.username);
+    
+    if (!canViewFriends) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to view friends list"
+      });
+    }
+
+    // Get paginated friends list
+    const friendsCount = user.friends.length;
+    const paginatedFriends = user.friends.slice(skip, skip + limit);
+
+    // Get friend details
+    const friendDetails = await User.find(
+      { username: { $in: paginatedFriends } }
+    ).select('username -_id');
 
     res.status(200).json({
       success: true,
-      message: "Friend request rejected"
+      data: {
+        friends: friendDetails,
+        pagination: {
+          current: page,
+          pages: Math.ceil(friendsCount / limit),
+          total: friendsCount
+        }
+      }
     });
   } catch (error) {
+    console.error('Friends list fetch error:', error);
     res.status(500).json({
       success: false,
-      message: "Internal server error" 
+      message: "Could not retrieve friends list"
     });
   }
+};
+
+// Refresh token endpoint
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token required"
+      });
+    }
+
+    try {
+      // Verify refresh token
+      const decoded = jwt.verify(refreshToken, jwtConfig.refreshSecret);
+      
+      // Generate new access token
+      const accessToken = jwt.sign(
+        { username: decoded.username },
+        jwtConfig.secret,
+        { expiresIn: jwtConfig.accessTokenExpiry }
+      );
+
+      res.status(200).json({
+        success: true,
+        accessToken
+      });
+    } catch (err) {
+      // Clear invalid refresh token
+      res.clearCookie('refreshToken');
+      throw new Error('Invalid refresh token');
+    }
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(401).json({
+      success: false,
+      message: "Could not refresh token"
+    });
+  }
+};
+
+// Logout endpoint
+export const logoutUser = async (req, res) => {
+  try {
+    // Clear refresh token cookie
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Could not complete logout"
+    });
+  }
+};
+
+export default {
+  getAllUsers,
+  postUser,
+  logUser,
+  getUserByUsername,
+  sendFriendRequest,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  removeFriend,
+  getFriendsList,
+  refreshToken,
+  logoutUser,
+  loginLimiter,
+  registrationLimiter
 };

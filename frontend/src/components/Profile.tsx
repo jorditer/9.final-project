@@ -78,7 +78,7 @@ const Profile: React.FC<ProfileProps> = ({
           <div className="flex flex-col gap-3">
             {userEvents.map((event) => (
               <EventCard
-                // key={event._id}
+                key={event._id}
                 updatePinDate={updatePinDate}
                 event={event}
                 thisUser={thisUser}

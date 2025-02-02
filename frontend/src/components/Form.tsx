@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import createChangeHandler from "../utils/form";
 import axios from "axios";
+import api from "../services/api";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface FormProps {
@@ -25,13 +26,13 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!thisUser) {
+      console.error('No user logged in');
+      return;
+    }
     try {
-      if (!thisUser) {
-        console.error('No user logged in');
-        return;
-      }
 
-      const res = await axios.post("/api/pins", {
+      const res = await api.post("/pins", {
         ...eventData,
         lat,
         long,

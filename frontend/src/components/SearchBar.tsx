@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, MapPin } from 'lucide-react';
+import api from "../services/api";  // Add this import at the top
 
 interface SearchBarProps {
   setEventsUser: (username: string) => void;
@@ -18,7 +19,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('/api/users');
+        // Remove '/api' prefix
+        const res = await api.get('/users');
         const usernames = res.data.data.map((user: { username: string }) => user.username);
         setUsers(usernames);
       } catch (err) {
@@ -32,15 +34,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
     const value = e.target.value;
     setInputValue(value);
     setShowResults(true);
-
-    // Search places when in places mode and input is not empty
+  
     if (searchMode === 'places' && value.length >= 2) {
       try {
+        // This stays as axios since it's an external API
         const response = await axios.get(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json`, {
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json`,
+          {
             params: {
               access_token: import.meta.env.VITE_MAPBOX_TOKEN,
-              proximity: '2.168365,41.387098',  // Barcelona coordinates
+              proximity: '2.168365,41.387098',
               language: 'en'
             }
           }

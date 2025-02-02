@@ -1,27 +1,46 @@
-import { useState } from "react";
+// App.tsx
+import { useState, useEffect } from "react";
 import Register from "./Register";
 import MapView from "./MapView";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router";
 import Login from "./Login";
 import { ProfileImagesProvider } from "../context/ProfileImagesContext";
+import { authService } from "../services/auth";
+import api from "../services/api";
 
 function App() {
-  const myStorage = window.localStorage;
-  const [thisUser, setThisUser] = useState<string | null>(myStorage.getItem("user"));
+  const [thisUser, setThisUser] = useState<string | null>(authService.getUser());
 
-  const handleLogout = () => {
-    setThisUser(null);
-    myStorage.removeItem("user");
+  const handleLogout = async () => {
+    try {
+      // First, tell the server we're logging out so it can invalidate the refresh token
+      await api.post('/api/users/logout');
+      
+      // Clear all authentication data from the browser
+      authService.clearAuth();
+      
+      // Update application state
+      setThisUser(null);
+    } catch (error) {
+      // Even if the server request fails, we should still clear local auth state
+      console.error('Logout error:', error);
+      authService.clearAuth();
+      setThisUser(null);
+    }
   };
 
+  // This component protects routes that require authentication
   const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
-    if (!thisUser && location.pathname === '/') {
+    
+    // Use our auth service to check if user is authenticated
+    if (!authService.isAuthenticated() && location.pathname === '/') {
       return <Navigate to="/login" replace />;
     }
     return <>{children}</>;
   };
 
+  // This component handles the auth overlay for login/register pages
   const AuthOverlay = () => {
     const location = useLocation();
     const showOverlay = location.pathname === '/login' || location.pathname === '/signup';
@@ -40,23 +59,23 @@ function App() {
 
   return (
     <ProfileImagesProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={
-          <ProtectedRoute>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <div className="h-lvh w-lvw relative">
+                <MapView thisUser={thisUser} onLogout={handleLogout} />
+              </div>
+            </ProtectedRoute>
+          } />
+          <Route path="*" element={
             <div className="h-lvh w-lvw relative">
-              <MapView thisUser={thisUser} onLogout={handleLogout} />
+              <MapView thisUser={null} onLogout={handleLogout} />
+              <AuthOverlay />
             </div>
-          </ProtectedRoute>
-        } />
-        <Route path="*" element={
-          <div className="h-lvh w-lvw relative">
-            <MapView thisUser={null} onLogout={handleLogout} />
-            <AuthOverlay />
-          </div>
-        } />
-      </Routes>
-    </BrowserRouter>
+          } />
+        </Routes>
+      </BrowserRouter>
     </ProfileImagesProvider>
   );
 }
