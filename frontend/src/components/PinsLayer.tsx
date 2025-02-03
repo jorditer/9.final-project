@@ -3,8 +3,7 @@ import MapMarker from "./MapMarker";
 import Pin from "../interfaces/Pin";
 import { formatDistanceToNow } from "date-fns";
 import Time from "./Time";
-import { Trash2, MapPin, UsersRound } from "lucide-react";
-import axios from "axios";
+import { Trash2, MapPin, UsersRound, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import AssistantsDisplay from "./AssistantsDisplay";
 import api from "../services/api";
@@ -44,6 +43,9 @@ const PinsLayer = ({
   setCurrentPlaceId,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
+  const [editingLocation, setEditingLocation] = useState<string | null>(null);
+  const [hoveringLocation, setHoveringLocation] = useState<string | null>(null);
+  const [newLocation, setNewLocation] = useState<string>("");
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -60,15 +62,15 @@ const PinsLayer = ({
     fetchFriends();
   }, [thisUser, friendshipRefresh]);
 
-  const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
-
-  const handleDelete = async (pinId: string) => {
-    try {
-      await api.delete(`/pins/${pinId}`);
-      setPins(pins.filter((pin) => pin._id !== pinId));
-      onPopupClose();
-    } catch (err) {
-      console.error("Error deleting pin:", err);
+  const handleLocationConfirm = async (pinId: string) => {
+    if (newLocation) {
+      try {
+        await api.patch(`/pins/${pinId}/location`, { location: newLocation });
+        setPins(pins.map((p) => (p._id === pinId ? { ...p, location: newLocation } : p)));
+        setEditingLocation(null);
+      } catch (err) {
+        console.error("Error updating location:", err);
+      }
     }
   };
 
@@ -76,6 +78,8 @@ const PinsLayer = ({
     const url = `https://www.google.com/maps?q=${lat},${long}`;
     window.open(url, "_blank");
   };
+
+  const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
 
   return (
     <div className="pins-layer">
@@ -100,33 +104,84 @@ const PinsLayer = ({
               onClose={onPopupClose}
               anchor="left"
             >
+              {pin.username === thisUser && (
+                <button
+                  onClick={() => eventHandlers.handleDelete(pin._id)}
+                  className="absolute -right-[4.5px] top-5 rounded-full hover:bg-red-50 transition-colors"
+                  title="Delete event"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+              )}
+
               <div className="flex flex-col space-y-4 max-w-[300px]">
                 {/* Title Section */}
-                <div className="bg-gray-100 -mx-2 border-b">
-                  <div className="flex justify-between items-center p-3">
+                <div className="bg-gray-100 border-b">
+                  <div className="flex items-center p-3">
                     <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">{pin.title}</h2>
-                    {pin.username === thisUser && (
-                      <button
-                        onClick={() => handleDelete(pin._id)}
-                        className="hover:bg-red-50 py-2 rounded-full transition-colors flex-shrink-0"
-                        title="Delete event"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </button>
-                    )}
                   </div>
                 </div>
+
                 {/* Content Section */}
                 <div className="px-3 space-y-3">
                   {/* Location */}
-                  <div className="flex items-center gap-2">
-                    <MapPin className="mt-1 text-gray-500" />
+                  <div className="relative flex items-center gap-2">
+                    <div
+                      className={`text-gray-600 flex-shrink-0 ${
+                        pin.username === thisUser && "cursor-pointer hover:text-blue-500"
+                      }`}
+                      onClick={() => pin.username === thisUser && setEditingLocation(pin._id)}
+                      onMouseEnter={() => pin.username === thisUser && setHoveringLocation(pin._id)}
+                      onMouseLeave={() => setHoveringLocation(null)}
+                    >
+                      {pin.username === thisUser && (hoveringLocation === pin._id || editingLocation === pin._id) ? (
+                        <Pencil size={20} />
+                      ) : (
+                        <MapPin size={20} />
+                      )}
+                    </div>
                     <h3
-                      className="text-sm text-gray-700 hover:text-blue-600 cursor-pointer mt-1"
+                      className="text-sm text-gray-700 hover:text-blue-600 cursor-pointer"
                       onClick={() => openInGoogleMaps(pin.lat, pin.long)}
                     >
                       {pin.location}
                     </h3>
+                    {editingLocation === pin._id && (
+                      <div className="absolute left-0 -top-8 bg-white shadow-lg rounded-md py-2 px-2 z-10 w-full">
+                        <div className="flex">
+                          <input
+                            type="text"
+                            className="min-w-20 w-full py-0 text-sm border rounded px-1 min-h-0 text-ellipsis noclass leading-none"
+                            defaultValue={pin.location}
+                            onChange={(e) => setNewLocation(e.target.value)}
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && newLocation) {
+                                handleLocationConfirm(pin._id);
+                              } else if (e.key === "Escape") {
+                                setEditingLocation(null);
+                              }
+                            }}
+                          />
+                          <div className="flex">
+                            <button
+                              onClick={() => handleLocationConfirm(pin._id)}
+                              className="px-1.5 rounded-xl text-green-600 hover:bg-green-50 text-lg"
+                              title="Confirm"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              onClick={() => setEditingLocation(null)}
+                              className="px-1.5 rounded-xl text-red-600 hover:bg-red-50 text-lg"
+                              title="Cancel"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -136,14 +191,12 @@ const PinsLayer = ({
 
                   {/* Date */}
                   <div className="text-sm font-medium text-gray-700">
-                    <div className="text-sm font-medium text-gray-700">
-                      <Time
-                        date={pin.date}
-                        pinId={pin._id}
-                        isOwner={pin.username === thisUser}
-                        updatePinDate={eventHandlers.updatePinDate}
-                      />
-                    </div>
+                    <Time
+                      date={pin.date}
+                      pinId={pin._id}
+                      isOwner={pin.username === thisUser}
+                      updatePinDate={eventHandlers.updatePinDate}
+                    />
                   </div>
 
                   {/* Assistants */}
@@ -153,9 +206,9 @@ const PinsLayer = ({
                   </div>
 
                   {/* Footer Info */}
-                  <div className="text-xs text-nowrap text-gray-500 border-t pt-2 mt-2">
+                  <div className="text-xs whitespace-nowrap text-gray-500 border-t pt-2 mt-2 pb-2">
                     Created by{" "}
-                    <a
+                    <button // or <span> if you prefer
                       className="font-medium cursor-pointer text-gray-700 hover:text-blue-600"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -164,7 +217,7 @@ const PinsLayer = ({
                       }}
                     >
                       {pin.username}
-                    </a>
+                    </button>
                     <span className="mx-1">·</span>
                     <span className="italic">{formatDistanceToNow(new Date(pin.createdAt), { addSuffix: true })}</span>
                   </div>

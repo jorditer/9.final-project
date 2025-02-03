@@ -9,12 +9,17 @@ label {
 small {
   @apply italic text-slate-700;
 }
+.mapboxgl-popup-content {
+  padding: 0 !important;
+}
 
 @layer components {
-  input:not([type="submit"]):not([placeholder="Search..."]):not([type="datetime-local"]),
+  input:not([type="submit"]):not([placeholder="Search"]):not([type="datetime-local"]):not([class~="noclass"]),
   textarea {
     @apply px-2 focus:outline-none active:border-gray-950 w-full focus:border-gray-600 mt-[0.4rem] border border-gray-400 rounded-sm;
-
+  }
+  .noclass {
+    @apply focus:outline-none active:border-gray-950 w-full focus:border-gray-600 border border-gray-400 rounded-sm;
   }
   input[type="datetime-local"] {
     @apply ps-1 focus:outline-none active:border-gray-950 w-full focus:border-gray-600 mt-[0.4rem] border border-gray-400 rounded-sm;

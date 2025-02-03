@@ -1,6 +1,6 @@
 import Pin from "../models/pins.model.js";
 import User from "../models/users.model.js";
-import moongoose from "mongoose";
+import mongoose from "mongoose";
 
 export const getPin = async (req, res) => {
   try {
@@ -51,7 +51,7 @@ export const postPin = async (req, res) => {
 export const deletePin = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!moongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid pin ID" });
     }
 
@@ -70,7 +70,7 @@ export const deletePin = async (req, res) => {
 export const getPinId = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!moongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid pin ID" });
     }
 
@@ -90,7 +90,7 @@ export const addAssistant = async (req, res) => {
   try {
     const { id, username } = req.params;
     
-    if (!moongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ 
         success: false, 
         message: "Invalid pin ID" 
@@ -131,7 +131,7 @@ export const removeAssistant = async (req, res) => {
   try {
     const { id, username } = req.params;
 
-    if (!moongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ 
         success: false, 
         message: "Invalid pin ID" 
@@ -169,7 +169,7 @@ export const removeAssistant = async (req, res) => {
 };
 
 const updatePinField = async (id, field, value, res) => {
-  if (!moongoose.Types.ObjectId.isValid(id)) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ 
       success: false, 
       message: "Invalid pin ID" 

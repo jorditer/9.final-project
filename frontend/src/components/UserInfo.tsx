@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useProfileImage } from "../hooks/useProfileImage";
 import { useProfileImages } from "../context/ProfileImagesContext";
 import { Pencil } from "lucide-react"; // Import Pencil icon
-import noImage from "../assets/imgs/no-image.jpg";
 import Connect from "./Connect";
+import noImage from "../assets/imgs/no-image.jpg";
 import { FriendStatus } from "../hooks/useFriendStatus";
 
 interface UserInfoProps {
