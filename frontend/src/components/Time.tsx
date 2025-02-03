@@ -84,7 +84,7 @@ const Time: React.FC<TimeProps> = ({ date, pinId, isOwner, updatePinDate }) => {
       </div>
       
       <div className="flex flex-col min-w-0 flex-1">
-        <span className={`text-sm font-medium truncate ${pendingDate ? '' : 'hidden sm:inline'}`}>
+        <span className={`text-sm font-medium truncate `}>
         <span className={`${pendingDate ? 'hidden' : 'hidden sm:inline'}` }>{format(new Date(pendingDate || date), "EEEE, ")}</span>
         {format(new Date(pendingDate || date), "MMMM d")}
         </span>

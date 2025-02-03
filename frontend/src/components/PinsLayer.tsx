@@ -206,9 +206,9 @@ const PinsLayer = ({
                   </div>
 
                   {/* Footer Info */}
-                  <div className="text-xs whitespace-nowrap text-gray-500 border-t pt-2 mt-2 pb-2">
+                  <div className="text-xs text-nowrap text-gray-500 border-t pt-2 mt-2 pb-2">
                     Created by{" "}
-                    <button // or <span> if you prefer
+                    <a
                       className="font-medium cursor-pointer text-gray-700 hover:text-blue-600"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -217,7 +217,7 @@ const PinsLayer = ({
                       }}
                     >
                       {pin.username}
-                    </button>
+                    </a>
                     <span className="mx-1">·</span>
                     <span className="italic">{formatDistanceToNow(new Date(pin.createdAt), { addSuffix: true })}</span>
                   </div>
