@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import { jwtConfig } from '../config/jwt.config.js';
 import rateLimit from 'express-rate-limit';
 
-// Create rate limiters for sensitive operations
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,    // 15 minute window
   max: 5,                      // 5 attempts per window
@@ -14,8 +13,8 @@ export const loginLimiter = rateLimit({
 });
 
 export const registrationLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,    // 1 hour window
-  max: 3,                      // 3 registrations per IP per hour
+  windowMs: 60 * 60 * 1000,    // 1 hour
+  max: 3,
   message: "Too many accounts created. Please try again later."
 });
 
@@ -632,9 +631,16 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-// Logout endpoint
 export const logoutUser = async (req, res) => {
   try {
+    // Verify auth token first
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      });
+    }
+
     // Clear refresh token cookie
     res.clearCookie('refreshToken', {
       httpOnly: true,

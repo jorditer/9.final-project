@@ -12,17 +12,23 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      // First, tell the server we're logging out so it can invalidate the refresh token
-      await api.post('/api/users/logout');
-      
-      // Clear all authentication data from the browser
-      authService.clearAuth();
-      
-      // Update application state
-      setThisUser(null);
+      const token = authService.getToken();
+      if (!token) {
+        // If no token, just clean up local state
+        authService.clearAuth();
+        setThisUser(null);
+        return;
+      }
+  
+      await api.post('/users/logout', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
     } catch (error) {
-      // Even if the server request fails, we should still clear local auth state
       console.error('Logout error:', error);
+    } finally {
+      // Always clean up local state
       authService.clearAuth();
       setThisUser(null);
     }
