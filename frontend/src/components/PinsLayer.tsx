@@ -205,11 +205,11 @@ const PinsLayer = ({
                   {/* Assistants */}
                   <div className="flex items-center">
                     <UsersRound className="text-gray-500" />
-                    <AssistantsDisplay p={pin} thisUser={thisUser} setPins={setPins} assistants={pin.assistants} />
+                    <AssistantsDisplay p={pin} thisUser={thisUser} setPins={setPins} />
                   </div>
 
                   {/* Footer with full-width background */}
-                  <div className="bg-secondary -mx-3 px-3 text-gray-500 border-t py-1.5 mt-2 ">
+                  <div className="text-nowrap bg-secondary -mx-3 px-3 text-gray-500 border-t py-1.5 mt-2 ">
                     <span>Created by </span>
                     <a
                       className="font-medium cursor-pointer text-gray-700 hover:text-dark"
@@ -222,7 +222,10 @@ const PinsLayer = ({
                       {pin.username}
                     </a>
                     <span className="mx-1">·</span>
-                    <span className="italic">{formatDistanceToNow(new Date(pin.createdAt), { addSuffix: true })}</span>
+                    <span className="italic">{formatDistanceToNow(new Date(pin.createdAt), { 
+    addSuffix: true,
+    includeSeconds: true,
+  }).replace('about ', '').replace('less than ', '')}</span>
                   </div>
                 </div>
               </div>

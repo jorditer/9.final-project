@@ -11,7 +11,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
-    <div className="bg-secondary p-4 rounded-lg relative group">
+    <div className="bg-secondary p-4 rounded-lg relative group border-2 border-dark">
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
@@ -31,7 +31,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           </div>
           <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
           <div className="w-full">
-            <Time pin={event} isOwner={event.username === thisUser} updatePinDate={updatePinDate} />
+            <Time
+                      pin={event}
+              isOwner={event.username === thisUser}
+              updatePinDate={updatePinDate}
+            />
           </div>
         </div>
 
@@ -50,7 +54,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           </div>
           <div className="self-center justify-self-start flex items-center justify-end truncate">
             <div className="overflow-hidden text-ellipsis">
-              <Time pin={event} isOwner={event.username === thisUser} updatePinDate={updatePinDate} />
+              <Time
+                      pin={event}
+                isOwner={event.username === thisUser}
+                updatePinDate={updatePinDate}
+              />
             </div>
           </div>
         </div>

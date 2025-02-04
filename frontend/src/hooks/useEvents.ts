@@ -1,4 +1,3 @@
-// hooks/useEvents.ts
 import api from "../services/api";
 import Pin from "../interfaces/Pin";
 
@@ -9,7 +8,6 @@ export const useEvents = (
 ) => {
   const handleDelete = async (pinId: string) => {
     try {
-      // Replace axios.delete with api.delete
       await api.delete(`/pins/${pinId}`);
       setPins(pins.filter((pin) => pin._id !== pinId));
       setCurrentPlaceId(null);
@@ -20,7 +18,6 @@ export const useEvents = (
 
   const updatePinDate = async (pinId: string, date: Date) => {
     try {
-      // Replace axios.patch with api.patch
       const response = await api.patch(`/pins/${pinId}/date`, { date });
       setPins(prevPins => prevPins.map(pin => 
         pin._id === pinId ? response.data.data : pin
