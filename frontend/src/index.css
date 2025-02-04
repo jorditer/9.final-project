@@ -689,10 +689,10 @@ h1 {
   max-width: -moz-max-content;
   max-width: max-content;
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
-  --tw-gradient-from: #10b981 var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(16 185 129 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-from: #E2BFB3 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(226 191 179 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-  --tw-gradient-to: #1d4ed8 var(--tw-gradient-to-position);
+  --tw-gradient-to: #FFBE98 var(--tw-gradient-to-position);
   -webkit-background-clip: text;
           background-clip: text;
   font-size: 2.25rem;
@@ -1337,6 +1337,11 @@ h1 {
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
 
+.bg-accent {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 191 179 / var(--tw-bg-opacity, 1));
+}
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
@@ -1362,11 +1367,6 @@ h1 {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gray-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gray-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
@@ -1380,6 +1380,11 @@ h1 {
 .bg-neutral-950 {
   --tw-bg-opacity: 1;
   background-color: rgb(10 10 10 / var(--tw-bg-opacity, 1));
+}
+
+.bg-primary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
 .bg-red-500 {
@@ -1399,6 +1404,21 @@ h1 {
 .bg-yellow-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(133 77 14 / var(--tw-bg-opacity, 1));
+}
+
+.bg-secondary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(190 215 220 / var(--tw-bg-opacity, 1));
+}
+
+.bg-hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(247 222 208 / var(--tw-bg-opacity, 1));
+}
+
+.bg-tertiary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 190 152 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-40 {
@@ -1617,6 +1637,11 @@ h1 {
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
 }
 
+.text-cancel {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
+}
+
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity, 1));
@@ -1768,9 +1793,15 @@ label {
   line-height: 1.25rem;
   font-weight: 700;
   --tw-text-opacity: 1;
-  color: rgb(241 238 220 / var(--tw-text-opacity, 1));
+  color: rgb(255 190 152 / var(--tw-text-opacity, 1));
   text-decoration-line: underline;
   text-underline-offset: 6px;
+}
+
+.custom-popup .mapboxgl-popup-content {
+  /* background: rgb(var(--primary)) !important; */
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
 small {
@@ -1808,6 +1839,11 @@ small {
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-hoverDelete:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 202 202 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-red-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
@@ -1834,6 +1870,31 @@ small {
 .hover\:text-blue-600:hover {
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-primary:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-blue-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(29 78 216 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-hover:hover {
+  --tw-text-opacity: 1;
+  color: rgb(247 222 208 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-tertiary:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 190 152 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-secondary:hover {
+  --tw-text-opacity: 1;
+  color: rgb(190 215 220 / var(--tw-text-opacity, 1));
 }
 
 .focus\:outline-none:focus {

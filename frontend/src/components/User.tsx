@@ -56,7 +56,7 @@ const User: React.FC<UserProps> = ({
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-2 mt-12 sm:mt-14 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="absolute right-2 mt-12 sm:mt-14 w-48 rounded-md shadow-lg bg-primary ring-1 ring-black ring-opacity-5">
           <div className="py-1">
             <button
               onClick={handleViewProfile}

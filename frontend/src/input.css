@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 label {
-  @apply text-sm text-primary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
+  @apply text-sm text-tertiary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
+}
+.custom-popup .mapboxgl-popup-content {
+  /* background: rgb(var(--primary)) !important; */
+  @apply bg-primary;
 }
 
 small {
@@ -37,7 +41,7 @@ small {
     @apply bg-red-100 border-red-900;
   }
   h1 {
-    @apply text-4xl font-black text-transparent bg-clip-text max-w-max bg-gradient-to-r to-blue-700 from-emerald-500 md:text-5xl lg:text-6xl;
+    @apply text-4xl font-black text-transparent bg-clip-text max-w-max bg-gradient-to-r to-tertiary from-accent md:text-5xl lg:text-6xl;
   }
 
 }

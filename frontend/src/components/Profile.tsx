@@ -72,7 +72,7 @@ const Profile: React.FC<ProfileProps> = ({
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">
           {/* Desktop title */}
-          <h1 className="hidden md:block mb-3 top-0 bg-white py-2">
+          <h1 className="hidden md:block mb-3 top-0 bg-primary py-2">
             {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
           </h1>
           <div className="flex flex-col gap-3">

@@ -117,7 +117,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
               />
             </button>
             <div
-              className={`mb-1 bg-white h-2/5 min-h-72 max-h-[500px] rounded-t-lg rounded-b-md overflow-hidden transition-opacity duration-700 ${
+              className={`mb-1 bg-primary h-2/5 min-h-72 max-h-[500px] rounded-t-lg rounded-b-md overflow-hidden transition-opacity duration-700 ${
                 showProfile ? "opacity-100" : "opacity-0"
               }`}
             >

@@ -55,7 +55,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
   const formattedDateTime = now.toISOString().slice(0, 16);
 
   return (
-    <div className="text-base -my-1 flex justify-end flex-col">
+    <div className="text-base -my-1 flex justify-end flex-col p-2">
       <form id="create-event" onSubmit={handleSubmit}>
         <label htmlFor="date" className="">Date*</label>
         <input
@@ -95,7 +95,7 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           placeholder="What is the plan?"
           maxLength={60}
           onChange={handleChange} 
-          className="max-h-20"
+          className="max-h-20 mb-1"
         ></textarea>
         <input id="submit" name="submit" className="cursor-pointer" type="submit" value="Create Event" />
       </form>

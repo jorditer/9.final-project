@@ -11,11 +11,11 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
-    <div className="bg-gray-50 p-4 rounded-lg relative group">
+    <div className="bg-accent  p-4 rounded-lg relative group">
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
-          className="absolute -right-1 -top-1 p-1.5 rounded-full hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute -right-1 -top-1 p-1.5 rounded-full hover:bg-hoverDelete transition-colors opacity-0 group-hover:opacity-100"
           title="Delete event"
         >
           <Trash2 className="w-4 h-4 text-red-500" />

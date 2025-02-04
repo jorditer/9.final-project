@@ -103,11 +103,12 @@ const PinsLayer = ({
               closeOnClick={false}
               onClose={onPopupClose}
               anchor="left"
+              className="custom-popup"
             >
               {pin.username === thisUser && (
                 <button
                   onClick={() => eventHandlers.handleDelete(pin._id)}
-                  className="absolute -right-[4.5px] top-5 rounded-full hover:bg-red-50 transition-colors"
+                  className="absolute -right-[4.5px] top-5 rounded-full hover:bg-hoverDelete transition-colors"
                   title="Delete event"
                 >
                   <Trash2 className="w-4 h-4 text-red-500" />
@@ -116,7 +117,7 @@ const PinsLayer = ({
 
               <div className="flex flex-col space-y-4 max-w-[300px]">
                 {/* Title Section */}
-                <div className="bg-gray-100 border-b">
+                <div className="bg-hover border-b">
                   <div className="flex items-center p-3">
                     <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">{pin.title}</h2>
                   </div>
@@ -128,7 +129,7 @@ const PinsLayer = ({
                   <div className="relative flex items-center gap-2">
                     <div
                       className={`text-gray-600 flex-shrink-0 ${
-                        pin.username === thisUser && "cursor-pointer hover:text-blue-500"
+                        pin.username === thisUser && "cursor-pointer hover:text-secondary"
                       }`}
                       onClick={() => pin.username === thisUser && setEditingLocation(pin._id)}
                       onMouseEnter={() => pin.username === thisUser && setHoveringLocation(pin._id)}
@@ -147,7 +148,7 @@ const PinsLayer = ({
                       {pin.location}
                     </h3>
                     {editingLocation === pin._id && (
-                      <div className="absolute left-0 -top-8 bg-white shadow-lg rounded-md py-2 px-2 z-10 w-full">
+                      <div className="absolute left-0 -top-8 bg-primary shadow-lg rounded-md py-2 px-2 z-10 w-full">
                         <div className="flex">
                           <input
                             type="text"
@@ -173,7 +174,7 @@ const PinsLayer = ({
                             </button>
                             <button
                               onClick={() => setEditingLocation(null)}
-                              className="px-1.5 rounded-xl text-red-600 hover:bg-red-50 text-lg"
+                              className="px-1.5 rounded-xl text-cancel hover:bg-hoverDelete text-lg"
                               title="Cancel"
                             >
                               ✕
