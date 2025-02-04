@@ -90,7 +90,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     <div className="h-lvh w-lvw">
       <Header></Header>
       <Map
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "calc(100vh - 56px)" }}
         {...viewport}
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
         onMove={(evt) => setViewport(evt.viewState)}
