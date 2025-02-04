@@ -5,7 +5,6 @@ export default interface Pin {
 	description: string;
 	location: string;
 	date: Date;
-	price: number;
 	lat: number;
 	long: number;
 	createdAt: Date;

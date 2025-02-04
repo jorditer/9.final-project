@@ -94,7 +94,7 @@ const PinsLayer = ({
             />
           </Marker>
 
-          {/* Pin Popup */}
+          {/* Popup */}
           {currentPlaceId === pin._id && (
             <Popup
               latitude={pin.lat}
@@ -105,6 +105,7 @@ const PinsLayer = ({
               anchor="left"
               className="custom-popup"
             >
+              {/* Delete Button */}
               {pin.username === thisUser && (
                 <button
                   onClick={() => eventHandlers.handleDelete(pin._id)}
@@ -117,7 +118,7 @@ const PinsLayer = ({
 
               <div className="flex flex-col space-y-4 max-w-[300px]">
                 {/* Title Section */}
-                <div className="bg-hover border-b">
+                <div className="bg-secondary border-b">
                   <div className="flex items-center p-3">
                     <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words">{pin.title}</h2>
                   </div>
@@ -129,10 +130,10 @@ const PinsLayer = ({
                   <div className="relative flex items-center gap-2">
                     <div
                       className={`text-gray-600 flex-shrink-0 ${
-                        pin.username === thisUser && "cursor-pointer hover:text-secondary"
+                        pin.username === thisUser && "cursor-pointer hover:text-dark"
                       }`}
-                      onClick={() => pin.username === thisUser && setEditingLocation(pin._id)}
-                      onMouseEnter={() => pin.username === thisUser && setHoveringLocation(pin._id)}
+                      onClick={pin.username === thisUser ? () => setEditingLocation(pin._id) : undefined}
+                      onMouseEnter={pin.username === thisUser ? () => setHoveringLocation(pin._id) : undefined}
                       onMouseLeave={() => setHoveringLocation(null)}
                     >
                       {pin.username === thisUser && (hoveringLocation === pin._id || editingLocation === pin._id) ? (
@@ -147,16 +148,18 @@ const PinsLayer = ({
                     >
                       {pin.location}
                     </h3>
+
+                    {/* Location Edit Interface */}
                     {editingLocation === pin._id && (
-                      <div className="absolute left-0 -top-8 bg-primary shadow-lg rounded-md py-2 px-2 z-10 w-full">
+                      <div className="absolute left-0 -top-8 bg-secondary shadow-lg rounded-md py-2 px-2 z-10 w-full">
                         <div className="flex">
                           <input
                             type="text"
-                            className="min-w-20 w-full py-0 text-sm border rounded px-1 min-h-0 text-ellipsis noclass leading-none"
+                            className="bg-secondary min-w-20 w-full py-0 text-sm border rounded px-1 min-h-0 text-ellipsis noclass leading-none"
                             defaultValue={pin.location}
-                            onChange={(e) => setNewLocation(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewLocation(e.target.value)}
                             autoFocus
-                            onKeyDown={(e) => {
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                               if (e.key === "Enter" && newLocation) {
                                 handleLocationConfirm(pin._id);
                               } else if (e.key === "Escape") {
@@ -193,6 +196,9 @@ const PinsLayer = ({
                   {/* Date */}
                   <div className="text-sm font-medium text-gray-700">
                     <Time
+                      location={pin.location}
+                      description={pin.description}
+                      title={pin.title}
                       date={pin.date}
                       pinId={pin._id}
                       isOwner={pin.username === thisUser}
@@ -206,12 +212,12 @@ const PinsLayer = ({
                     <AssistantsDisplay p={pin} thisUser={thisUser} setPins={setPins} assistants={pin.assistants} />
                   </div>
 
-                  {/* Footer Info */}
-                  <div className="text-xs text-nowrap text-gray-500 border-t pt-2 mt-2 pb-2">
-                    Created by{" "}
+                  {/* Footer with full-width background */}
+                  <div className="bg-secondary -mx-3 px-3 text-gray-500 border-t py-1.5 mt-2 ">
+                    <span>Created by </span>
                     <a
-                      className="font-medium cursor-pointer text-gray-700 hover:text-blue-600"
-                      onClick={(e) => {
+                      className="font-medium cursor-pointer text-gray-700 hover:text-dark"
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         setEventsUser(pin.username);
                         setShowProfile(true);

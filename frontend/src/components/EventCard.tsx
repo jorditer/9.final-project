@@ -11,7 +11,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
-    <div className="bg-accent  p-4 rounded-lg relative group">
+    <div className="bg-secondary p-4 rounded-lg relative group">
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
@@ -26,21 +26,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
         {/* Desktop layout */}
         <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
           <div>
-            <h4
-              className="text-lg font-semibold"
-            >
-              {event.title}
-            </h4>
+            <h4 className="text-lg font-semibold">{event.title}</h4>
             <p className="text-sm text-gray-600">{event.location}</p>
           </div>
           <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
           <div className="w-full">
-          <Time 
-          date={event.date}
-          pinId={event._id}
-          isOwner={event.username === thisUser}
-          updatePinDate={updatePinDate}
-        />
+            <Time
+              location={event.location}
+              description={event.description}
+              title={event.title}
+              date={event.date}
+              pinId={event._id}
+              isOwner={event.username === thisUser}
+              updatePinDate={updatePinDate}
+            />
           </div>
         </div>
 
@@ -59,12 +58,15 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           </div>
           <div className="self-center justify-self-start flex items-center justify-end truncate">
             <div className="overflow-hidden text-ellipsis">
-            <Time 
-          date={event.date}
-          pinId={event._id}
-          isOwner={event.username === thisUser}
-          updatePinDate={updatePinDate}
-        />
+              <Time
+                location={event.location}
+                description={event.description}
+                title={event.title}
+                date={event.date}
+                pinId={event._id}
+                isOwner={event.username === thisUser}
+                updatePinDate={updatePinDate}
+              />
             </div>
           </div>
         </div>

@@ -10,11 +10,13 @@ export default {
       colors: {
         hover: "#F7DED0",
         primary: "#fff",
-        accent: "#E2BFB3",
-        secondary: "#BED7DC",
+        accent: "#E2BFB3", //#FFF4F2
+        secondary: "#FFF4F2",
         tertiary: "#FFBE98",
+        dark: "#F99B66",
         cancel: "#DC2626",
         hoverDelete: "#FECACA",
+        // hoverSubmit: 
       },
     },
   },
