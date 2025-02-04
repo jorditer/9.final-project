@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, MapPin } from 'lucide-react';
-import api from "../services/api";  // Add this import at the top
+import api from "../services/api";
 import { authService } from '../services/auth';
 
 interface SearchBarProps {
@@ -23,7 +23,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
         return;
       }
       try {
-        // Remove '/api' prefix
         const res = await api.get('/users');
         const usernames = res.data.data.map((user: { username: string }) => user.username);
         setUsers(usernames);
@@ -41,7 +40,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
   
     if (searchMode === 'places' && value.length >= 2) {
       try {
-        // This stays as axios since it's an external API
         const response = await axios.get(
           `https://api.mapbox.com/geocoding/v5/mapbox.places/${value}.json`,
           {
@@ -64,10 +62,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
   );
 
   return (
-    <div className="fixed top-[0.1rem] sm:top-2 left-2 sm:left-4 z-10">
+    <div className="absolute top-1 sm:top-2 left-1 sm:left-3 z-10">
       <div className="flex items-center gap-1">
-        {/* Mode Toggle Buttons - These allow switching between user and place search */}
-        <div className="flex gap-1 p-1 rounded-md ">
+        {/* Mode Toggle Buttons */}
+        <div className="flex gap-1 p-1 rounded-md">
           <button
             onClick={() => {
               setSearchMode('users');
@@ -103,7 +101,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
         {/* Search Input and Results Dropdown */}
         <div className="relative">
           <input
-          id="user"
+            id="user"
             type="text"
             value={inputValue}
             onChange={handleInputChange}
@@ -112,7 +110,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
             className="px-3 py-2 border border-black text-base rounded-xl bg-white/90 w-64"
           />
         
-          {/* Results Dropdown - Shows when there's input and search is active */}
+          {/* Results Dropdown */}
           {showResults && inputValue && (
             <div className="absolute top-full mt-1 w-full bg-white border border-gray-400 rounded-md shadow-lg max-h-96 overflow-y-auto">
               {/* User Results */}

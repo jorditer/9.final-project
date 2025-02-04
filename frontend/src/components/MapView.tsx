@@ -6,14 +6,13 @@ import Request from "./Request";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
 import Profile from "./Profile";
+import Header from './Header';
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Pin from "../interfaces/Pin";
 import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
 import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
-import { useProfileImageUrl } from "../hooks/useProfileImageUrl";
 import { useEvents } from "../hooks/useEvents"; // Add this import
 
 interface MapViewProps {
@@ -89,6 +88,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   return (
     <div className="h-lvh w-lvw">
+      <Header></Header>
       <Map
         style={{ width: "100%", height: "100%" }}
         {...viewport}
