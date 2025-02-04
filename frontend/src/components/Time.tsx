@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Calendar, Pencil } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import Pin from "../interfaces/Pin";
@@ -9,27 +9,106 @@ interface TimeProps {
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 
+/**
+ * Time component that displays and allows editing of a pin's date/time.
+ * Features include:
+ * - Toggle between calendar and pencil icons based on icon hover
+ * - Date/time editing for pin owners
+ * - Google Calendar integration
+ * - Responsive display of date information
+ */
 const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [pendingDate, setPendingDate] = useState<Date | null>(null);
+  // Combined state object to manage all editing-related states
+  const [editState, setEditState] = useState<{
+    isEditing: boolean;
+    isHovering: boolean;
+    pendingDate: Date | null;
+  }>({
+    isEditing: false,
+    isHovering: false,
+    pendingDate: null,
+  });
+  
+  // Refs for DOM element access and event handling
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Initiates the editing mode and sets up necessary event listeners
+   */
+  const startEditing = useCallback(() => {
+    if (!isOwner) return;
+    
+    setEditState(prev => ({ ...prev, isEditing: true }));
+    
+    setTimeout(() => {
+      // Open the native datetime picker
+      inputRef.current?.showPicker();
+      
+      // Set up document-level click handler for detecting clicks outside
+      const handleDocumentClick = (e: MouseEvent) => {
+        // Close editing mode if click is outside the component
+        if (!containerRef.current?.contains(e.target as Node)) {
+          cancelEdit();
+          document.removeEventListener('click', handleDocumentClick);
+        }
+      };
+      
+      // Small delay to prevent the handler from triggering immediately
+      setTimeout(() => {
+        document.addEventListener('click', handleDocumentClick);
+      }, 100);
+    }, 0);
+  }, [isOwner]);
+
+  /**
+   * Resets all editing-related state to their default values
+   */
+  const cancelEdit = useCallback(() => {
+    setEditState({
+      isEditing: false,
+      isHovering: false,
+      pendingDate: null,
+    });
+  }, []);
+
+  /**
+   * Saves the pending date changes and exits edit mode
+   */
+  const confirmEdit = async () => {
+    if (editState.pendingDate) {
+      try {
+        await updatePinDate(pin._id, editState.pendingDate);
+        cancelEdit();
+      } catch (err) {
+        console.error("Failed to update date:", err);
+      }
+    }
+  };
+
+  /**
+   * Formats a date for the datetime-local input
+   */
   const formatForInput = (date: Date) => {
     return new Date(date).toISOString().slice(0, 16);
   };
 
+  /**
+   * Formats a date into a relative time string (e.g., "2 hours ago")
+   */
   const formatTimeDistance = (date: Date) => {
     const distance = formatDistanceToNow(new Date(date), { addSuffix: true });
     return distance.replace(/about /, '');
   };
 
+  /**
+   * Creates a Google Calendar event URL with the pin's details
+   */
   const createGoogleCalendarUrl = (eventDate: Date) => {
     const startDate = new Date(eventDate);
     const endDate = new Date(eventDate);
     endDate.setHours(endDate.getHours() + 1); // 1hour default
 
-    // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ format)
     const formatForCalendar = (date: Date) => {
       return date.toISOString().replace(/-|:|\.\d+/g, '');
     };
@@ -48,108 +127,89 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
       `Location: ${pin.location}`,
       pin.lat && pin.long ? `Maps Link: https://www.google.com/maps?q=${pin.lat},${pin.long}` : null
     ].filter(Boolean).join('\n\n');
-
+    
     url += `&details=${encodeURIComponent(fullDescription)}`;
-
     return url;
   };
 
-  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * Handles changes to the datetime input
+   */
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value) {
-      setIsEditing(false);
-      setPendingDate(null);
+      cancelEdit();
       return;
     }
-    setPendingDate(new Date(e.target.value));
+    setEditState(prev => ({
+      ...prev,
+      pendingDate: new Date(e.target.value)
+    }));
   };
 
-  const handleConfirm = async () => {
-    if (pendingDate) {
-      try {
-        await updatePinDate(pin._id, pendingDate);
-        setIsEditing(false);
-        setPendingDate(null);
-      } catch (err) {
-        console.error("Failed to update date:", err);
-      }
-    }
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setPendingDate(null);
-  };
-
-  const handleIconClick = () => {
-    if (isOwner) {
-      setIsEditing(true);
-      setTimeout(() => {
-        const handleDocumentClick = (e: MouseEvent) => {
-          const target = e.target as HTMLElement;
-          if (!target.closest('.datetime-picker-container')) {
-            handleCancel();
-            document.removeEventListener('click', handleDocumentClick);
-          }
-        };
-        setTimeout(() => {
-          document.addEventListener('click', handleDocumentClick);
-        }, 100);
-        inputRef.current?.showPicker();
-      }, 0);
-    }
-  };
-
+  /**
+   * Handles clicks on the time display
+   */
   const handleTimeClick = () => {
-    if (!isEditing) {
-      window.open(createGoogleCalendarUrl(pendingDate || pin.date), '_blank');
+    if (!editState.isEditing) {
+      window.open(createGoogleCalendarUrl(editState.pendingDate || pin.date), '_blank');
     }
   };
+
+  // Determine which icon to show based on component state
+  const showPencil = isOwner && (editState.isEditing || editState.isHovering);
 
   return (
-    <div className="flex items-center space-x-2 rounded-lg w-full datetime-picker-container relative">
+    <div 
+      ref={containerRef}
+      className="flex items-center space-x-2 rounded-lg w-full datetime-picker-container relative"
+    >
+      {/* Icon container - shows either pencil or calendar */}
+      {/* Hover events are now only on the icon container */}
       <div 
         className={`w-5 h-5 text-gray-600 flex-shrink-0 ${
           isOwner && 'cursor-pointer hover:text-dark'
         }`}
-        onClick={handleIconClick}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        onClick={startEditing}
+        onMouseEnter={() => isOwner && setEditState(prev => ({ ...prev, isHovering: true }))}
+        onMouseLeave={() => setEditState(prev => ({ ...prev, isHovering: false }))}
       >
-        {isOwner && (isHovering || isEditing) ? <Pencil size={20} /> : <Calendar size={20} />}
+        {showPencil ? <Pencil size={20} /> : <Calendar size={20} />}
       </div>
       
+      {/* Date and time display */}
       <div 
         className="flex flex-col min-w-0 flex-1 cursor-pointer hover:text-blue-600"
         onClick={handleTimeClick}
         title="Click to add to Google Calendar"
       >
         <span className={`text-sm font-medium truncate`}>
-          <span className={`${pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
-            {format(new Date(pendingDate || pin.date), "EEEE, ")}
+          <span className={`${editState.pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
+            {format(new Date(editState.pendingDate || pin.date), "EEEE, ")}
           </span>
-          {format(new Date(pendingDate || pin.date), "MMMM d")}
+          {format(new Date(editState.pendingDate || pin.date), "MMMM d")}
         </span>
         <div className="flex items-center space-x-2 text-xs">
           <span className="text-gray-600 underline flex-shrink-0">
             {format(new Date(pin.date), "h:mm a")}
           </span>
-          <em className={`text-gray-500 text-nowrap ${pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
+          <em className={`text-gray-500 text-nowrap ${editState.pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
             ({formatTimeDistance(pin.date)})
           </em>
         </div>
       </div>
-   
-      {pendingDate && (
+
+      {/* Confirmation buttons shown when there's a pending date change */}
+      {editState.pendingDate && (
         <div className="absolute right-0 top-0 flex items-center space-x-2">
           <button 
-            onClick={handleConfirm}
+            onClick={confirmEdit}
             className="px-1.5 rounded-xl text-green-600 hover:bg-green-50 text-lg"
             title="Confirm"
           >
             ✓
           </button>
           <button 
-            onClick={handleCancel}
+            onClick={cancelEdit}
             className="px-1.5 rounded-xl text-red-600 hover:bg-red-50 text-lg"
             title="Cancel"
           >
@@ -157,18 +217,19 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
           </button>
         </div>
       )}
-   
-      {isEditing && (
+
+      {/* Hidden datetime input that appears when editing */}
+      {editState.isEditing && (
         <input
           ref={inputRef}
           type="datetime-local"
           className="hidden"
-          value={formatForInput(pendingDate || pin.date)}
+          value={formatForInput(editState.pendingDate || pin.date)}
           min={formatForInput(new Date())}
           onChange={handleDateChange}
           onBlur={(e) => {
             if (!e.relatedTarget?.closest('.datetime-picker-container')) {
-              handleCancel();
+              cancelEdit();
             }
           }}
         />
