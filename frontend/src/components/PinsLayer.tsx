@@ -196,11 +196,7 @@ const PinsLayer = ({
                   {/* Date */}
                   <div className="text-sm font-medium text-gray-700">
                     <Time
-                      location={pin.location}
-                      description={pin.description}
-                      title={pin.title}
-                      date={pin.date}
-                      pinId={pin._id}
+                      pin={pin}
                       isOwner={pin.username === thisUser}
                       updatePinDate={eventHandlers.updatePinDate}
                     />

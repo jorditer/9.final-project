@@ -4,25 +4,12 @@ import { format, formatDistanceToNow } from "date-fns";
 import Pin from "../interfaces/Pin";
 
 interface TimeProps {
-  date: Date;
-  pinId: string;
+  pin: Pin;
   isOwner: boolean;
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
-  // Add new properties from Pin
-  title: string;
-  description?: string;
-  location?: string;
 }
 
-const Time: React.FC<TimeProps> = ({ 
-  date, 
-  pinId, 
-  isOwner, 
-  updatePinDate, 
-  title,
-  description,
-  location 
-}) => {
+const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [pendingDate, setPendingDate] = useState<Date | null>(null);
@@ -37,38 +24,34 @@ const Time: React.FC<TimeProps> = ({
     return distance.replace(/about /, '');
   };
 
-  // Enhanced function to generate Google Calendar URL with all pin details
   const createGoogleCalendarUrl = (eventDate: Date) => {
-    // Create start and end dates (1 hour duration by default)
     const startDate = new Date(eventDate);
     const endDate = new Date(eventDate);
-    endDate.setHours(endDate.getHours() + 1);
+    endDate.setHours(endDate.getHours() + 1); // 1hour default
 
     // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ format)
     const formatForCalendar = (date: Date) => {
       return date.toISOString().replace(/-|:|\.\d+/g, '');
     };
 
-    // Create event details with proper encoding
-    const params = new URLSearchParams();
-    params.append('action', 'TEMPLATE');
-    params.append('text', title || 'Untitled Event'); // Use pin title with fallback
+    let url = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+    url += `&text=${encodeURIComponent(pin.title || 'Untitled Event')}`;
+    url += `&dates=${formatForCalendar(startDate)}/${formatForCalendar(endDate)}`;
     
-    // Combine pin description with additional context
-    const fullDescription = [
-      description,
-    ].filter(Boolean).join('\n\n');
-    params.append('details', fullDescription);
-
-    // Add dates in required format
-    params.append('dates', `${formatForCalendar(startDate)}/${formatForCalendar(endDate)}`);
-    
-    // Add location if available
-    if (location) {
-      params.append('location', location);
+    if (pin.lat && pin.long) {
+      const coordinates = `${pin.lat},${pin.long}`;
+      url += `&location=${encodeURIComponent(coordinates)}`;
     }
+    
+    const fullDescription = [
+      pin.description,
+      `Location: ${pin.location}`,
+      pin.lat && pin.long ? `Maps Link: https://www.google.com/maps?q=${pin.lat},${pin.long}` : null
+    ].filter(Boolean).join('\n\n');
 
-    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+    url += `&details=${encodeURIComponent(fullDescription)}`;
+
+    return url;
   };
 
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +66,7 @@ const Time: React.FC<TimeProps> = ({
   const handleConfirm = async () => {
     if (pendingDate) {
       try {
-        await updatePinDate(pinId, pendingDate);
+        await updatePinDate(pin._id, pendingDate);
         setIsEditing(false);
         setPendingDate(null);
       } catch (err) {
@@ -116,10 +99,9 @@ const Time: React.FC<TimeProps> = ({
     }
   };
 
-  // Handler for opening Google Calendar
   const handleTimeClick = () => {
-    if (!isEditing) { // Only open calendar if not in edit mode
-      window.open(createGoogleCalendarUrl(pendingDate || date), '_blank');
+    if (!isEditing) {
+      window.open(createGoogleCalendarUrl(pendingDate || pin.date), '_blank');
     }
   };
 
@@ -139,20 +121,20 @@ const Time: React.FC<TimeProps> = ({
       <div 
         className="flex flex-col min-w-0 flex-1 cursor-pointer hover:text-blue-600"
         onClick={handleTimeClick}
-        title="Click to add to Google Calendar" // Added tooltip for better UX
+        title="Click to add to Google Calendar"
       >
         <span className={`text-sm font-medium truncate`}>
           <span className={`${pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
-            {format(new Date(pendingDate || date), "EEEE, ")}
+            {format(new Date(pendingDate || pin.date), "EEEE, ")}
           </span>
-          {format(new Date(pendingDate || date), "MMMM d")}
+          {format(new Date(pendingDate || pin.date), "MMMM d")}
         </span>
         <div className="flex items-center space-x-2 text-xs">
           <span className="text-gray-600 underline flex-shrink-0">
-            {format(new Date(date), "h:mm a")}
+            {format(new Date(pin.date), "h:mm a")}
           </span>
           <em className={`text-gray-500 text-nowrap ${pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
-            ({formatTimeDistance(date)})
+            ({formatTimeDistance(pin.date)})
           </em>
         </div>
       </div>
@@ -181,7 +163,7 @@ const Time: React.FC<TimeProps> = ({
           ref={inputRef}
           type="datetime-local"
           className="hidden"
-          value={formatForInput(pendingDate || date)}
+          value={formatForInput(pendingDate || pin.date)}
           min={formatForInput(new Date())}
           onChange={handleDateChange}
           onBlur={(e) => {

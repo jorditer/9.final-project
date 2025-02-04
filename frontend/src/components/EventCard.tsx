@@ -31,15 +31,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           </div>
           <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
           <div className="w-full">
-            <Time
-              location={event.location}
-              description={event.description}
-              title={event.title}
-              date={event.date}
-              pinId={event._id}
-              isOwner={event.username === thisUser}
-              updatePinDate={updatePinDate}
-            />
+            <Time pin={event} isOwner={event.username === thisUser} updatePinDate={updatePinDate} />
           </div>
         </div>
 
@@ -58,15 +50,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           </div>
           <div className="self-center justify-self-start flex items-center justify-end truncate">
             <div className="overflow-hidden text-ellipsis">
-              <Time
-                location={event.location}
-                description={event.description}
-                title={event.title}
-                date={event.date}
-                pinId={event._id}
-                isOwner={event.username === thisUser}
-                updatePinDate={updatePinDate}
-              />
+              <Time pin={event} isOwner={event.username === thisUser} updatePinDate={updatePinDate} />
             </div>
           </div>
         </div>
