@@ -1,4 +1,4 @@
-import api from '../services/api'; // Import our API service
+import api from "../services/api"; // Import our API service
 import SearchBar from "./SearchBar";
 import User from "./User";
 import Form from "./Form";
@@ -6,7 +6,7 @@ import Request from "./Request";
 import Pop_up from "../interfaces/Popup";
 import Map, { Popup } from "react-map-gl";
 import Profile from "./Profile";
-import Header from './Header';
+import Header from "./Header";
 import { useState, useEffect } from "react";
 import Pin from "../interfaces/Pin";
 import PinsLayer from "./PinsLayer";
@@ -21,6 +21,7 @@ interface MapViewProps {
 }
 
 function MapView({ thisUser, onLogout }: MapViewProps) {
+  const [timeFilter, setTimeFilter] = useState<"all" | "day" | "week" | "month">("all");
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Pop_up | null>(null);
@@ -76,6 +77,10 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     onLogout();
     navigate("/login");
   };
+  const handleFilterChange = (filter: "all" | "day" | "week" | "month") => {
+    setTimeFilter(filter);
+    // TODO: Implement filtering logic for the pins
+  };
 
   const handleLocationSelect = (lat: number, long: number) => {
     setViewport((prev) => ({
@@ -88,9 +93,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   return (
     <div className="h-lvh w-lvw">
-      <Header></Header>
       <Map
-        style={{ width: "100%", height: "calc(100vh - 56px)" }}
+        style={{ width: "100%", height: "100%" }}
         {...viewport}
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
         onMove={(evt) => setViewport(evt.viewState)}
@@ -98,9 +102,17 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
       >
+      <Header
+        thisUser={thisUser}
+        handleLogout={handleLogout}
+        setEventsUser={setEventsUser}
+        setShowProfile={setShowProfile}
+        // onLocationSelect={handleLocationSelect}
+        onFilterChange={handleFilterChange}
+      />
         <Request onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)} thisUser={thisUser} />
         {/* Profile Container with Arrow */}
-        <div className={`z-20 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${showProfile ? "" : "pointer-events-none"}`}>
+        <div className={`z-20 mb-[60px] sm:mb-0 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${showProfile ? "" : "pointer-events-none"}`}>
           <div
             className={`relative transition-all duration-700 transform ${
               showProfile ? "translate-y-0" : "translate-y-[calc(100%_+_0.25rem)]"
@@ -158,17 +170,19 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
             />
           </Popup>
         )}
-        <User
+        {/* <User
           thisUser={thisUser}
           setEventsUser={setEventsUser}
           setShowProfile={setShowProfile}
           handleLogout={handleLogout}
-        />
-        <SearchBar
-          setShowProfile={setShowProfile}
-          setEventsUser={setEventsUser}
-          onLocationSelect={handleLocationSelect}
-        />
+        /> */}
+        <div className="fixed top-16 left-0 right-0 px-4 z-40">
+          <SearchBar
+            setShowProfile={setShowProfile}
+            setEventsUser={setEventsUser}
+            onLocationSelect={handleLocationSelect}
+          />
+        </div>
       </Map>
     </div>
   );
