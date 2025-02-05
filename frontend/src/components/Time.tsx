@@ -61,6 +61,9 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     }, 0);
   }, [isOwner]);
 
+  const hoverRef = useRef(false);
+
+
   /**
    * Resets all editing-related state to their default values
    */
@@ -124,8 +127,8 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     
     const fullDescription = [
       pin.description,
-      `Location: ${pin.location}`,
-      pin.lat && pin.long ? `Maps Link: https://www.google.com/maps?q=${pin.lat},${pin.long}` : null
+      `<b>Location:</b> ${pin.location}`,
+      pin.lat && pin.long ? `<b>Maps Link:</b> https://www.google.com/maps?q=${pin.lat},${pin.long}` : null
     ].filter(Boolean).join('\n\n');
     
     url += `&details=${encodeURIComponent(fullDescription)}`;
@@ -156,25 +159,24 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
   };
 
   // Determine which icon to show based on component state
-  const showPencil = isOwner && (editState.isEditing || editState.isHovering);
 
   return (
     <div 
       ref={containerRef}
       className="flex items-center space-x-2 rounded-lg w-full datetime-picker-container relative"
     >
-      {/* Icon container - shows either pencil or calendar */}
-      {/* Hover events are now only on the icon container */}
-      <div 
-        className={`w-5 h-5 text-gray-600 flex-shrink-0 ${
-          isOwner && 'cursor-pointer hover:text-dark'
-        }`}
-        onClick={startEditing}
-        onMouseEnter={() => isOwner && setEditState(prev => ({ ...prev, isHovering: true }))}
-        onMouseLeave={() => setEditState(prev => ({ ...prev, isHovering: false }))}
-      >
-        {showPencil ? <Pencil size={20} /> : <Calendar size={20} />}
-      </div>
+      <div className="relative group">
+  <div 
+    className={`w-5 h-5 text-gray-600 flex-shrink-0 ${
+      isOwner && 'cursor-pointer hover:text-dark'
+    }`}
+    onClick={startEditing}
+  >
+    <Calendar className={`absolute ${isOwner ? 'group-hover:opacity-0' : ''} ${editState.pendingDate ? 'opacity-0' : ''}`} size={20} />
+    {isOwner && <Pencil className={`absolute opacity-0 ${editState.pendingDate ? 'opacity-100' : 'group-hover:opacity-100'}`} size={20} />}
+  </div>
+</div>
+
       
       {/* Date and time display */}
       <div 
@@ -189,9 +191,9 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
           {format(new Date(editState.pendingDate || pin.date), "MMMM d")}
         </span>
         <div className="flex items-center space-x-2 text-xs">
-          <span className="text-gray-600 underline flex-shrink-0">
-            {format(new Date(pin.date), "h:mm a")}
-          </span>
+        <span className="text-gray-600 underline flex-shrink-0">
+  {format(new Date(editState.pendingDate || pin.date), "h:mm a")}
+</span>
           <em className={`text-gray-500 text-nowrap ${editState.pendingDate ? 'hidden' : 'hidden sm:inline'}`}>
             ({formatTimeDistance(pin.date)})
           </em>

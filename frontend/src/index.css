@@ -1806,6 +1806,10 @@ h1 {
   transition-duration: 700ms;
 }
 
+.duration-100 {
+  transition-duration: 100ms;
+}
+
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1837,6 +1841,10 @@ small {
 
 .mapboxgl-popup-content {
   padding: 0 !important;
+}
+
+.hover\:hidden:hover {
+  display: none;
 }
 
 .hover\:bg-accept:hover {
@@ -1911,6 +1919,14 @@ small {
   color: rgb(220 38 38 / var(--tw-text-opacity, 1));
 }
 
+.hover\:opacity-0:hover {
+  opacity: 0;
+}
+
+.hover\:opacity-100:hover {
+  opacity: 1;
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1961,6 +1977,14 @@ small {
 }
 
 .group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.group:hover .group-hover\:opacity-0 {
+  opacity: 0;
+}
+
+.peer:hover ~ .peer-hover\:opacity-100 {
   opacity: 1;
 }
 

@@ -11,7 +11,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
-    <div className="bg-secondary p-4 rounded-lg relative group border-2 border-dark">
+    <div className="bg-secondary p-4 rounded-lg relative border-2 border-dark">
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
