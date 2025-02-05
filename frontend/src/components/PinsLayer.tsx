@@ -151,11 +151,11 @@ const PinsLayer = ({
 
                     {/* Location Edit Interface */}
                     {editingLocation === pin._id && (
-                      <div className="absolute left-0 -top-8 bg-secondary shadow-lg rounded-md py-2 px-2 z-10 w-full">
+                      <div className="absolute left-0 border -top-8 bg-secondary shadow-lg rounded-md py-2 px-2 z-10 w-full">
                         <div className="flex">
                           <input
                             type="text"
-                            className="bg-secondary min-w-20 w-full py-0 text-sm border rounded px-1 min-h-0 text-ellipsis noclass leading-none"
+                          className="bg-primary/90 min-w-20 w-full py-0 text-sm border rounded px-1 min-h-0 text-ellipsis noclass leading-none"
                             defaultValue={pin.location}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewLocation(e.target.value)}
                             autoFocus

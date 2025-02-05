@@ -25,22 +25,22 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-[#e7e3dc] shadow-sm z-50">
+    <header className="fixed top-0 left-0 right-0 bg-primary/95 shadow-sm z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="h-16 flex items-center justify-between">
           {/* Left section with logo and filters */}
           <div className="flex items-center gap-8">
             {/* Logo */}
-            <h1 className="text-xl font-bold text-[#FF9B50]">EventPin</h1>
+            <h1 className="text-xl font-bold">EventPin</h1>
             
             {/* Desktop Filters */}
-            <div className="hidden sm:flex space-x-1 bg-white/80 p-1 rounded-lg">
+            <div className="hidden sm:flex bg-secondary/80 p-1 pe-2 rounded-lg">
               <button
                 onClick={() => handleFilterChange('all')}
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${
                   timeFilter === 'all' 
                     ? 'bg-white shadow-sm text-gray-800' 
-                    : 'text-gray-600 hover:bg-gray-200'
+                    : 'text-gray-600 hover:bg-tertiary/60'
                 }`}
               >
                 All
@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${
                   timeFilter === 'day' 
                     ? 'bg-white shadow-sm text-gray-800' 
-                    : 'text-gray-600 hover:bg-gray-200'
+                    : 'text-gray-600 hover:bg-tertiary/60'
                 }`}
               >
                 Today
@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${
                   timeFilter === 'week' 
                     ? 'bg-white shadow-sm text-gray-800' 
-                    : 'text-gray-600 hover:bg-gray-200'
+                    : 'text-gray-600 hover:bg-tertiary/60'
                 }`}
               >
                 This Week
@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${
                   timeFilter === 'month' 
                     ? 'bg-white shadow-sm text-gray-800' 
-                    : 'text-gray-600 hover:bg-gray-200'
+                    : 'text-gray-600 hover:bg-tertiary/60'
                 }`}
               >
                 This Month

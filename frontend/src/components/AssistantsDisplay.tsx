@@ -52,8 +52,8 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
   const getBadgeClasses = () => {
     if (!thisUser) return 'bg-gray-700';
     return isUserAssistant 
-      ? 'bg-green-600 group-hover:bg-red-600 hover:bg-red-600' 
-      : 'bg-gray-700 group-hover:bg-green-600 hover:bg-green-600';
+      ? 'bg-accept group-hover:bg-deny hover:bg-deny' 
+      : 'bg-gray-400 group-hover:bg-accept hover:bg-accept';
   };
 
   return (
@@ -100,8 +100,8 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
         <span className={`
           text-sm ml-2 transition-colors duration-200
           ${isUserAssistant 
-            ? 'text-green-600 group-hover:text-red-600 hover:text-red-600' 
-            : 'text-gray-600 group-hover:text-green-600 hover:text-green-600'
+            ? 'text-accept group-hover:text-deny hover:text-red-600' 
+            : 'text-gray-600 group-hover:text-accept hover:text-acccept'
           }
         `}>
           {isUserAssistant ? 'Going' : 'Join'}

@@ -16,6 +16,8 @@ export default {
         dark: "#F99B66",
         cancel: "#DC2626",
         hoverDelete: "#FECACA",
+        accept: "#69B088",
+        deny: "#D85F5F",
         // hoverSubmit: 
       },
     },
