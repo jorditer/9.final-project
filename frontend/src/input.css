@@ -35,7 +35,7 @@ small {
     @apply flex px-[7px] m-1;
   }
   button[class~=login] {
-    @apply rounded-xl border hover:border-gray-400 border-gray-400;
+    @apply rounded-xl border hover:border-gray-400 border-gray-400 ;
   }
   input:user-invalid {
     @apply bg-red-100 border-red-900;

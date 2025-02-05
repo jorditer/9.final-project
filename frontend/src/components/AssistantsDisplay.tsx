@@ -87,7 +87,6 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
             border-2 border-white rounded-full 
             dark:border-gray-800
             transition-all duration-300 ease-in-out
-            transform group-hover:scale-105 
             ${getBadgeClasses()}
           `}>
             <span className="transition-all duration-200 ease-in-out transform">
