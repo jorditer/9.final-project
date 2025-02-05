@@ -128,7 +128,7 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     const fullDescription = [
       pin.description,
       `<b>Location:</b> ${pin.location}`,
-      pin.lat && pin.long ? `<b>Maps Link:</b> https://www.google.com/maps?q=${pin.lat},${pin.long}` : null
+      pin.lat && pin.long ? `<b>Maps Link:</b> <a>https://www.google.com/maps?q=${pin.lat},${pin.long}</a>` : null
     ].filter(Boolean).join('\n\n');
     
     url += `&details=${encodeURIComponent(fullDescription)}`;
