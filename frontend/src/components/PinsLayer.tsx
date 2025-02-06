@@ -40,7 +40,6 @@ const PinsLayer = ({
   setEventsUser,
   setShowProfile,
   eventHandlers,
-  setCurrentPlaceId,
 }: PinsLayerProps) => {
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [editingLocation, setEditingLocation] = useState<string | null>(null);
