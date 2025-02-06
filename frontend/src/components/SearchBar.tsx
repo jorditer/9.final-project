@@ -62,7 +62,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
   );
 
   return (
-    <div className="absolute top-1 sm:top-2 left-1 sm:left-3 z-10">
+    <div className="absolute top-1 sm:top-2 left-1 sm:left-3 z-5">
       <div className="flex items-center gap-1">
         {/* Mode Toggle Buttons */}
         <div className="flex gap-1 p-1 rounded-md">
@@ -74,8 +74,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
             }}
             className={`p-1.5 rounded transition-colors ${
               searchMode === 'users' 
-                ? 'bg-gray-100 text-black' 
-                : 'hover:bg-gray-200'
+                ? 'bg-primary text-black' 
+                : 'hover:bg-secondary'
             }`}
             title="Search Users"
           >
@@ -89,8 +89,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
             }}
             className={`p-1.5 rounded transition-colors ${
               searchMode === 'places' 
-                ? 'bg-gray-100 text-black' 
-                : 'hover:bg-gray-200'
+                ? 'bg-primary text-black' 
+                : 'hover:bg-secondary'
             }`}
             title="Search Places"
           >

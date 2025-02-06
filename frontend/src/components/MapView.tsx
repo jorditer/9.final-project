@@ -1,6 +1,5 @@
 import api from "../services/api"; // Import our API service
 import SearchBar from "./SearchBar";
-import User from "./User";
 import Form from "./Form";
 import Request from "./Request";
 import Pop_up from "../interfaces/Popup";
@@ -176,7 +175,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           setShowProfile={setShowProfile}
           handleLogout={handleLogout}
         /> */}
-        <div className="fixed top-16 left-0 right-0 px-4 z-40">
+        <div className="fixed top-16 left-0 right-0 px-4 z-10">
           <SearchBar
             setShowProfile={setShowProfile}
             setEventsUser={setEventsUser}

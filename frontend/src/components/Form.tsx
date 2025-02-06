@@ -1,6 +1,5 @@
 import { useState, FormEvent } from "react";
 import createChangeHandler from "../utils/form";
-import axios from "axios";
 import api from "../services/api";
 import "react-datepicker/dist/react-datepicker.css";
 

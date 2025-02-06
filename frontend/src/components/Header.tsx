@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-primary/95 shadow-sm z-50">
+    <header className="fixed top-0 left-0 right-0 bg-primary/95 shadow-sm z-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="h-16 flex items-center justify-between">
           {/* Left section with logo and filters */}
