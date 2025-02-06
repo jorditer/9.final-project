@@ -165,15 +165,15 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
       ref={containerRef}
       className="flex items-center space-x-2 rounded-lg w-full datetime-picker-container relative"
     >
-      <div className="relative group">
+      <div className="relative group/calendar">
   <div 
     className={`w-5 h-5 text-gray-600 flex-shrink-0 ${
       isOwner && 'cursor-pointer hover:text-dark'
     }`}
     onClick={startEditing}
   >
-    <Calendar className={`absolute ${isOwner ? 'group-hover:opacity-0' : ''} ${editState.pendingDate ? 'opacity-0' : ''}`} size={20} />
-    {isOwner && <Pencil className={`absolute opacity-0 ${editState.pendingDate ? 'opacity-100' : 'group-hover:opacity-100'}`} size={20} />}
+    <Calendar className={`absolute ${isOwner ? 'group-hover/calendar:opacity-0' : ''} ${editState.pendingDate ? 'opacity-0' : ''}`} size={20} />
+    {isOwner && <Pencil className={`absolute opacity-0 ${editState.pendingDate ? 'opacity-100' : 'group-hover/calendar:opacity-100'}`} size={20} />}
   </div>
 </div>
 

@@ -3,7 +3,6 @@ import noImage from "../assets/imgs/no-image.jpg"
 import { useEventAssistant } from "../hooks/useEventAssistant";
 import { useProfileImages } from "../context/ProfileImagesContext";
 import Pin from "../interfaces/Pin";
-import api from "../services/api";
 
 interface AssistantsDisplayProps {
   
@@ -19,6 +18,8 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
   const maxDisplay = 3;
   const displayCount = assistants.length;
   const isUserAssistant = thisUser && assistants.includes(thisUser);
+  const isEventOwner = thisUser === p.username;
+
 
   const assistantsToDisplay = useMemo(() => 
     assistants.slice(0, maxDisplay)
@@ -51,6 +52,7 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
 
   const getBadgeClasses = () => {
     if (!thisUser) return 'bg-gray-700';
+    if (isEventOwner) return 'bg-gray-500'; // Static gray for owner
     return isUserAssistant 
       ? 'bg-accept group-hover:bg-deny hover:bg-deny' 
       : 'bg-gray-400 group-hover:bg-accept hover:bg-accept';
@@ -60,11 +62,13 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
     <div 
       role="button"
       aria-label={getActionText()}
-      onClick={() => thisUser && toggleAssistant(p, thisUser)} 
+      // Disable click handler if user is owner
+      onClick={() => thisUser && !isEventOwner && toggleAssistant(p, thisUser)} 
       className={`
         flex items-center my-1
-        ${thisUser ? 'cursor-pointer group' : 'cursor-default'}
-        rounded-lg p-1 hover:bg-gray-50 dark:hover:bg-gray-800
+        ${thisUser && !isEventOwner ? 'cursor-pointer group' : 'cursor-default'}
+        rounded-lg p-1 
+        ${!isEventOwner && 'hover:bg-gray-50 dark:hover:bg-gray-800'}
         transition-colors duration-200
       `}
       title={getActionText()}
@@ -80,7 +84,6 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
             />
           ))}
           
-          {/* Count badge with smooth transitions for all properties */}
           <div className={`
             flex items-center justify-center w-8 h-8 
             text-xs font-medium text-white
@@ -96,7 +99,8 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
         </div>
       </div>
 
-      {thisUser && (
+      {/* Only show Going/Join text if user is not the owner */}
+      {thisUser && !isEventOwner && (
         <span className={`
           text-sm ml-2 transition-colors duration-200
           ${isUserAssistant 
@@ -105,6 +109,13 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
           }
         `}>
           {isUserAssistant ? 'Going' : 'Join'}
+        </span>
+      )}
+      
+      {/* Show static "Owner" text if user is the owner */}
+      {isEventOwner && (
+        <span className="text-sm ml-2 text-gray-500">
+          Owner
         </span>
       )}
     </div>

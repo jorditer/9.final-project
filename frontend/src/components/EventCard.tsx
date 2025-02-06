@@ -11,7 +11,10 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, updatePinDate }) => {
   return (
-    <div className="bg-secondary p-4 rounded-lg relative border-2 border-dark">
+    // Parent div gets 'group' class to enable hover effects on children
+    // The hover:shadow-md gives subtle feedback when hovering over the card
+    <div className="group bg-secondary p-4 rounded-lg relative border-2 border-dark hover:shadow-md transition-all">
+      {/* Delete button - only shows for events owned by current user */}
       {thisUser === event.username && (
         <button
           onClick={() => onDelete(event._id)}
@@ -21,9 +24,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           <Trash2 className="w-4 h-4 text-red-500" />
         </button>
       )}
-      {/* Event Content */}
+  
+      {/* Event Content Container */}
       <div className="flex flex-col space-y-2">
-        {/* Desktop layout */}
+        {/* Desktop layout - hidden on mobile, shows on md screens and up */}
         <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
           <div>
             <h4 className="text-lg font-semibold">{event.title}</h4>
@@ -32,14 +36,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
           <div className="w-full">
             <Time
-                      pin={event}
+              pin={event}
               isOwner={event.username === thisUser}
               updatePinDate={updatePinDate}
             />
           </div>
         </div>
-
-        {/* Mobile layout */}
+  
+        {/* Mobile layout - shows on mobile, hidden on md screens and up */}
         <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
           <div className="flex flex-col min-w-0">
             <h4
@@ -55,7 +59,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
           <div className="self-center justify-self-start flex items-center justify-end truncate">
             <div className="overflow-hidden text-ellipsis">
               <Time
-                      pin={event}
+                pin={event}
                 isOwner={event.username === thisUser}
                 updatePinDate={updatePinDate}
               />
@@ -65,6 +69,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
       </div>
     </div>
   );
-};
+}
 
 export default EventCard;

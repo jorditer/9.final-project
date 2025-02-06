@@ -723,6 +723,10 @@ h1 {
   pointer-events: auto;
 }
 
+.static {
+  position: static;
+}
+
 .fixed {
   position: fixed;
 }
@@ -1419,6 +1423,11 @@ h1 {
   background-color: rgb(247 222 208 / var(--tw-bg-opacity, 1));
 }
 
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
+}
+
 .bg-opacity-40 {
   --tw-bg-opacity: 0.4;
 }
@@ -1971,6 +1980,22 @@ small {
 }
 
 .group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.group\/calendar:hover .group-hover\/calendar\:opacity-0 {
+  opacity: 0;
+}
+
+.group\/calendar:hover .group-hover\/calendar\:opacity-100 {
+  opacity: 1;
+}
+
+.group\/trash:hover .group-hover\/trash\:opacity-100 {
+  opacity: 1;
+}
+
+.group\/trassecondaryh:hover .group-hover\/trassecondaryh\:opacity-100 {
   opacity: 1;
 }
 
