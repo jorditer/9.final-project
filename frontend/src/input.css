@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+input:-webkit-autofill.input-error,
+input:-webkit-autofill:hover.input-error,
+input:-webkit-autofill:focus.input-error {
+  -webkit-box-shadow: 0 0 0px 1000px #FFF4F2 inset;
+    /* @apply bg-red-100 border-red-900; */
+}
+
 label {
   @apply text-sm text-dark font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
 }
@@ -43,5 +50,8 @@ small {
   h1 {
     @apply text-4xl font-black text-transparent bg-clip-text max-w-max bg-gradient-to-r to-dark  from-tertiary md:text-5xl lg:text-6xl;
   }
-
+  
 }
+/* .input-error {
+  @apply bg-red-100 !important border-red-900 ;
+} */

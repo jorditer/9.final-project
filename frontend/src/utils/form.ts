@@ -1,4 +1,3 @@
-// for updating the data that comes from the forms
 import { ChangeEvent } from 'react';
 
 type FormElement = HTMLInputElement | HTMLTextAreaElement;

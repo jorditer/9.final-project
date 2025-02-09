@@ -37,7 +37,7 @@ const Profile: React.FC<ProfileProps> = ({
       <div className="h-full p-4 flex flex-col md:flex-row gap-4">
         {/* Mobile header */}
         <div className="flex justify-between items-center md:hidden">
-          <h1>{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
+          <h1 className="bg-dark">{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
           <UserInfo
             isMobile={true}
             thisUser={thisUser}
@@ -72,7 +72,7 @@ const Profile: React.FC<ProfileProps> = ({
         {/* Events Section */}
         <div className="flex-1 overflow-y-auto pr-2 items-center">
           {/* Desktop title */}
-          <h1 className="hidden md:block mb-3 top-0 bg-primary py-2">
+          <h1 className="hidden md:block mb-3 top-0 py-2 bg-dark">
             {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
           </h1>
           <div className="flex flex-col gap-3">

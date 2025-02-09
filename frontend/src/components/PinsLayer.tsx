@@ -134,7 +134,7 @@ const PinsLayer = ({
             >
               {/* Delete Button */}
               {pin.username === thisUser && (
-                <div className="absolute -right-[4.5px] top-5">
+                <div className="absolute -right-[4.1px] top-5">
                   <button
                     onClick={() => setShowDeleteConfirm(pin._id)}
                     className="rounded-full hover:bg-hoverDelete transition-colors"

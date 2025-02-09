@@ -18,7 +18,12 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
     email: "",
     password: "",
   });
-
+  const [fieldErrors, setFieldErrors] = useState({
+    username: false,
+    email: false
+  });
+  
+  
   const navigate = useNavigate();
   const myStorage = window.localStorage;
   const handleChange = createChangeHandler(setNewUser);
@@ -37,34 +42,34 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
     }
   
     try {
-      // Using our API service for registration
       const response = await api.post("/users/register", newUser);
 
-      
-      // Store authentication data
       const { accessToken, username } = response.data.data;
       localStorage.setItem('accessToken', accessToken);
       myStorage.setItem("user", username);
       
       authService.setAuth(accessToken, username);
-      // Update application state
       setThisUser(username);
       setError(false);
       setSuccess(true);
 
-      // Navigate to home page
       navigate('/');
     } catch (err: any) {
-      // Error handling with proper type checking
-      if (err.response) {
-        setErrorMessage(err.response.data.message);
-      } else {
-        setErrorMessage("An unexpected error occurred");
+      setErrorMessage(err.response.data.message);
+     if (err.response.data.message === "Username is already taken") {
+        setFieldErrors(prev => ({ ...prev, username: true }));
+        console.log("username")
+        console.log("username" + JSON.stringify(fieldErrors))
+      } else if (err.response.data.message === "Email is already registered") {
+        setFieldErrors(prev => ({ ...prev, email: true }));
+        console.log("email")
+        console.log("email" + JSON.stringify(fieldErrors))
       }
+      console.log(errorMessage)
       setError(true);
     }
-  };
-
+  }
+  
   return (
     <>
       {/* Dark overlay */}
@@ -88,18 +93,19 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
               Username
             </label>
             <input 
-              className="mb-1 py-1" 
+              className={`mb-1 py-1 ${fieldErrors.username ? "input-error" : ""}`}
               name="username" 
               id="username" 
               onChange={handleChange} 
               type="text" 
               required 
-            />
+
+              />
             <label className="" htmlFor="email">
               Email
             </label>
             <input 
-              className="py-1" 
+              className={`py-1 ${fieldErrors.email ? "input-error" : ""}` }
               name="email" 
               id="email" 
               onChange={handleChange} 
