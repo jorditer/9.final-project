@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 label {
-  @apply text-sm text-tertiary font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
+  @apply text-sm text-dark font-bold underline-offset-[6px] ps-0.5 pb-1 py-0.5 underline;
 }
 .custom-popup .mapboxgl-popup-content {
   /* background: rgb(var(--primary)) !important; */

@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Left section with logo and filters */}
           <div className="flex items-center gap-8">
             {/* Logo */}
-            <h1 className="text-xl font-bold">EventPin</h1>
+            <h1 className="text-3xl font-bold">EventPin</h1>
             
             {/* Desktop Filters */}
             <div className="hidden sm:flex bg-secondary/80 p-1 pe-2 rounded-lg">

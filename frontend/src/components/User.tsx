@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { User as UserIcon, LogOut, UserCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { User as UserIcon, LogOut, UserCircle } from "lucide-react";
 
 interface UserProps {
   thisUser: string | null;
@@ -8,12 +8,7 @@ interface UserProps {
   setShowProfile: (show: boolean) => void;
 }
 
-const User: React.FC<UserProps> = ({ 
-  thisUser, 
-  handleLogout, 
-  setEventsUser, 
-  setShowProfile 
-}) => {
+const User: React.FC<UserProps> = ({ thisUser, handleLogout, setEventsUser, setShowProfile }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -24,8 +19,8 @@ const User: React.FC<UserProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleViewProfile = () => {
@@ -55,18 +50,18 @@ const User: React.FC<UserProps> = ({
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="absolute right-0 mt-2.5 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
           <div className="py-1">
             <button
               onClick={handleViewProfile}
-              className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              className="w-[96%] px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
             >
               <UserCircle className="w-4 h-4" />
               My Profile
             </button>
             <button
               onClick={handleLogoutClick}
-              className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
+              className="w-[96%]  px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
             >
               <LogOut className="w-4 h-4" />
               Log Out
