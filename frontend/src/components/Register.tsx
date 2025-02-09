@@ -120,11 +120,13 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
               pattern="^(?=.*[0-9])(?=.*[!@#$%^&*<>'\\\/\]]).{7,}$" 
               required 
             />
-            <input 
-              className="mt-3 text-base" 
-              type="submit" 
-              value="Sign up" 
-            />
+            <div className="h-10">
+              <input
+                className="mt-3 text-base"
+                type="submit"
+                value="Sign up"
+              />
+            </div>
             {success && (
               <span className="text-green-600 mt-3 text-center">Success!</span>
             )}

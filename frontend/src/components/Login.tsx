@@ -70,7 +70,7 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
               Password
             </label>
             <input className="py-1" name="password" id="password" onChange={handleChange} minLength={7} maxLength={20} type="password" required />
-            <input className="mt-3 text-base" type="submit" value="Log in" />
+            <div className="h-10"><input className="mt-3 text-base" type="submit" value="Log in" /></div>
             {success && <span className="text-green-600 mt-3 text-center">Success!</span>}
             {error && <span className="text-red-500 mt-3 text-center">{errorMessage}</span>}
           </form>

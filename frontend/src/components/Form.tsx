@@ -96,8 +96,15 @@ const Form = ({ coordinates: {lat, long}, onSuccess, thisUser }: FormProps) => {
           onChange={handleChange} 
           className="max-h-20 mb-1"
         ></textarea>
-        <input id="submit" name="submit" className="cursor-pointer" type="submit" value="Create Event" />
-      </form>
+<div className="h-10">
+  <input 
+    id="submit" 
+    name="submit" 
+    className="cursor-pointer" 
+    type="submit" 
+    value="Create Event" 
+  />
+</div>      </form>
 
     </div>
   );
