@@ -68,24 +68,15 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     }
   };
 
-  /**
-   * Formats a date for the datetime-local input
-   */
   const formatForInput = (date: Date) => {
     return new Date(date).toISOString().slice(0, 16);
   };
 
-  /**
-   * Formats a date into a relative time string (e.g., "2 hours ago")
-   */
   const formatTimeDistance = (date: Date) => {
     const distance = formatDistanceToNow(new Date(date), { addSuffix: true });
     return distance.replace(/about /, '');
   };
 
-  /**
-   * Creates a Google Calendar event URL with the pin's details
-   */
   const createGoogleCalendarUrl = (eventDate: Date) => {
     const startDate = new Date(eventDate);
     const endDate = new Date(eventDate);
@@ -114,9 +105,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     return url;
   };
 
-  /**
-   * Handles changes to the datetime input
-   */
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value) {
       cancelEdit();
@@ -128,16 +116,11 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     }));
   };
 
-  /**
-   * Handles clicks on the time display
-   */
   const handleTimeClick = () => {
     if (!editState.isEditing) {
       window.open(createGoogleCalendarUrl(editState.pendingDate || pin.date), '_blank');
     }
   };
-
-  // Determine which icon to show based on component state
 
   return (
     <div 
@@ -155,7 +138,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     {isOwner && <Pencil className={`absolute opacity-0 ${editState.pendingDate ? 'opacity-100' : 'group-hover/calendar:opacity-100'}`} size={20} />}
   </div>
 </div>
-
       
       {/* Date and time display */}
       <div 
