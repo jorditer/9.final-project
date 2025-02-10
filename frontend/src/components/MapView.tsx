@@ -89,24 +89,28 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfWeek = new Date(startOfDay); // Start from beginning of today
-    startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay()); // Go back to last Sunday
+    const startOfWeek = new Date(startOfDay);
+    startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
+    const startOfDayTime = startOfDay.getTime();
+    const endOfDayTime = startOfDayTime + 24 * 60 * 60 * 1000;
+    const startOfWeekTime = startOfWeek.getTime();
+    const endOfWeekTime = startOfWeekTime + 7 * 24 * 60 * 60 * 1000;
+    const startOfMonthTime = startOfMonth.getTime();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const endOfMonthTime = endOfMonth.getTime();
+
     setPins(allPins.filter(pin => {
-      const eventDate = new Date(pin.date);
-      const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+      const eventTime = new Date(pin.date).getTime();
       
       switch (timeFilter) {
         case "day":
-          return eventDate >= startOfDay && eventDate < endOfDay;
+          return eventTime >= startOfDayTime && eventTime < endOfDayTime;
         case "week":
-          const endOfWeek = new Date(startOfWeek);
-          endOfWeek.setDate(startOfWeek.getDate() + 7);
-          return eventDate >= startOfWeek && eventDate < endOfWeek;
+          return eventTime >= startOfWeekTime && eventTime < endOfWeekTime;
         case "month":
-          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          return eventDate >= startOfMonth && eventDate <= endOfMonth;
+          return eventTime >= startOfMonthTime && eventTime <= endOfMonthTime;
         default:
           return true;
       }
