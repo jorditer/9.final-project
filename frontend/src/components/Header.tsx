@@ -92,28 +92,28 @@ const Header: React.FC<HeaderProps> = ({
       <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2">
         <button
           onClick={() => handleFilterChange('all')}
-          className={`p-2 rounded-md ${timeFilter === 'all' ? 'text-blue-600' : 'text-gray-600'}`}
+          className={`p-2 rounded-md ${timeFilter === 'all' ? 'text-dark' : 'text-gray-600'}`}
           title="All Events"
         >
           <Filter className="h-5 w-5" />
         </button>
         <button
           onClick={() => handleFilterChange('day')}
-          className={`p-2 rounded-md ${timeFilter === 'day' ? 'text-blue-600' : 'text-gray-600'}`}
+          className={`p-2 rounded-md ${timeFilter === 'day' ? 'text-dark' : 'text-gray-600'}`}
           title="Today's Events"
         >
           Today
         </button>
         <button
           onClick={() => handleFilterChange('week')}
-          className={`p-2 rounded-md ${timeFilter === 'week' ? 'text-blue-600' : 'text-gray-600'}`}
+          className={`p-2 rounded-md ${timeFilter === 'week' ? 'text-dark' : 'text-gray-600'}`}
           title="This Week's Events"
         >
           Week
         </button>
         <button
           onClick={() => handleFilterChange('month')}
-          className={`p-2 rounded-md ${timeFilter === 'month' ? 'text-blue-600' : 'text-gray-600'}`}
+          className={`p-2 rounded-md ${timeFilter === 'month' ? 'text-dark' : 'text-gray-600'}`}
           title="This Month's Events"
         >
           Month

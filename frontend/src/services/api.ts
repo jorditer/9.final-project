@@ -5,22 +5,25 @@ import axios, {
   AxiosError,
   AxiosResponse 
  } from 'axios';
- import { authService } from './auth';
- 
- // Define the structure of our refresh token response
- interface RefreshTokenResponse {
+import { authService } from './auth';
+
+// Define the structure of our refresh token response
+interface RefreshTokenResponse {
   accessToken: string;
   success: boolean;
- }
- 
- // Create a fully typed axios instance with our base configuration
- const api: AxiosInstance = axios.create({
+}
+
+// Create a fully typed axios instance with our base configuration
+const api: AxiosInstance = axios.create({
   baseURL: '/api',
-  withCredentials: true // Enables sending cookies in cross-origin requests
- });
- 
- // Request interceptor to automatically add authentication token to requests
- api.interceptors.request.use(
+  withCredentials: true, // This is important for cookies
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Request interceptor to automatically add authentication token to requests
+api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = authService.getToken();
     
@@ -33,9 +36,9 @@ import axios, {
   },
   (error: AxiosError) => Promise.reject(error)
 );
- 
- // Response interceptor to handle token refresh and authentication failures
- api.interceptors.response.use(
+
+// Response interceptor to handle token refresh and authentication failures
+api.interceptors.response.use(
   // Pass through successful responses
   (response: AxiosResponse) => response,
   
@@ -101,6 +104,6 @@ import axios, {
     // If error wasn't a 401 or refresh failed, reject with original error
     return Promise.reject(error);
   }
- );
- 
- export default api;
+);
+
+export default api;

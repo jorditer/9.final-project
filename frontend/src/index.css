@@ -1761,6 +1761,11 @@ h1 {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-dark {
+  --tw-text-opacity: 1;
+  color: rgb(249 155 102 / var(--tw-text-opacity, 1));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -1906,6 +1911,53 @@ small {
 
 .mapboxgl-popup-content {
   padding: 0 !important;
+}
+
+.after\:absolute::after {
+  content: var(--tw-content);
+  position: absolute;
+}
+
+.after\:bottom-0::after {
+  content: var(--tw-content);
+  bottom: 0px;
+}
+
+.after\:left-0::after {
+  content: var(--tw-content);
+  left: 0px;
+}
+
+.after\:h-\[1px\]::after {
+  content: var(--tw-content);
+  height: 1px;
+}
+
+.after\:w-full::after {
+  content: var(--tw-content);
+  width: 100%;
+}
+
+.after\:bg-gradient-to-r::after {
+  content: var(--tw-content);
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.after\:from-gray-200::after {
+  content: var(--tw-content);
+  --tw-gradient-from: #e5e7eb var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(229 231 235 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.after\:to-transparent::after {
+  content: var(--tw-content);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
+}
+
+.after\:content-\[\'\'\]::after {
+  --tw-content: '';
+  content: var(--tw-content);
 }
 
 .hover\:bg-accept:hover {

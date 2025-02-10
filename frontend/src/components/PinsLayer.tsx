@@ -18,12 +18,11 @@ interface PinsLayerProps {
     zoom: number;
   };
   friendshipRefresh: number;
-  onMarkerClick: (id: string, lat: number, long: number) => void;
-  onPopupClose: () => void;
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
   setEventsUser: (username: string) => void;
   setShowProfile: (show: boolean) => void;
-  setCurrentPlaceId: (id: string | null) => void;
+  onMarkerClick: (id: string, lat: number, long: number) => void;
+  onPopupClose: () => void;
   eventHandlers: {
     handleDelete: (pinId: string) => Promise<void>;
     updatePinDate: (pinId: string, date: Date) => Promise<Pin>;

@@ -6,7 +6,6 @@ import { useFriendStatus } from "../hooks/useFriendStatus";
 import { useEvents } from "../hooks/useEvents";
 
 interface ProfileProps {
-  showProfile: boolean;
   thisUser: string | null;
   eventsUser: string | null;
   pins: Pin[];
@@ -14,12 +13,10 @@ interface ProfileProps {
   setCurrentPlaceId: (id: string | null) => void;
   onFriendshipChange: () => void;
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
-
 }
 
 const Profile: React.FC<ProfileProps> = ({
   onFriendshipChange,
-  showProfile,
   thisUser,
   eventsUser,
   pins,

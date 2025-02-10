@@ -1,4 +1,4 @@
-import api from "../services/api"; // Import our API service
+import api from "../services/api";
 import SearchBar from "./SearchBar";
 import Form from "./Form";
 import Request from "./Request";
@@ -12,7 +12,7 @@ import PinsLayer from "./PinsLayer";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useNavigate } from "react-router";
 import { ReactComponent as ArrowIcon } from "../assets/imgs/arrow.svg?react";
-import { useEvents } from "../hooks/useEvents"; // Add this import
+import { useEvents } from "../hooks/useEvents";
 
 interface MapViewProps {
   thisUser: string | null;
@@ -140,7 +140,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         handleLogout={handleLogout}
         setEventsUser={setEventsUser}
         setShowProfile={setShowProfile}
-        // onLocationSelect={handleLocationSelect}
         onFilterChange={handleFilterChange}
       />
       <Map
@@ -182,7 +181,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
                 eventsUser={eventsUser}
                 thisUser={thisUser}
                 pins={pins}
-                showProfile={showProfile}
                 updatePinDate={eventHandlers.updatePinDate}
               />
             </div>
@@ -194,13 +192,12 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           pins={pins}
           currentPlaceId={currentPlaceId}
           thisUser={thisUser}
-          viewport={viewport}
+          viewport={{ zoom: viewport.zoom }}
           onMarkerClick={handleMarkerClick}
           onPopupClose={() => setCurrentPlaceId(null)}
           setEventsUser={setEventsUser}
           setShowProfile={setShowProfile}
-          setCurrentPlaceId={setCurrentPlaceId}
-          eventHandlers={eventHandlers} // Pass the event handlers
+          eventHandlers={eventHandlers}
         />
 
         {newEvent && (
@@ -212,12 +209,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
             />
           </Popup>
         )}
-        {/* <User
-          thisUser={thisUser}
-          setEventsUser={setEventsUser}
-          setShowProfile={setShowProfile}
-          handleLogout={handleLogout}
-        /> */}
       </Map>
     </div>
   );
