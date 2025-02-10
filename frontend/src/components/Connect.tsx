@@ -1,4 +1,4 @@
-import axios from "axios";
+import { useState } from 'react';
 import api from '../services/api'; // Import our API service
 
 interface ConnectProps {
@@ -16,6 +16,8 @@ const Connect: React.FC<ConnectProps> = ({
   friendStatus,
   setFriendStatus
 }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const handleFriendAction = async () => {
     try {
       if (friendStatus === "connect") {
