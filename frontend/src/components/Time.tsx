@@ -9,16 +9,8 @@ interface TimeProps {
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 
-/**
- * Time component that displays and allows editing of a pin's date/time.
- * Features include:
- * - Toggle between calendar and pencil icons based on icon hover
- * - Date/time editing for pin owners
- * - Google Calendar integration
- * - Responsive display of date information
- */
+
 const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
-  // Combined state object to manage all editing-related states
   const [editState, setEditState] = useState<{
     isEditing: boolean;
     isHovering: boolean;
@@ -29,23 +21,17 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     pendingDate: null,
   });
   
-  // Refs for DOM element access and event handling
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * Initiates the editing mode and sets up necessary event listeners
-   */
   const startEditing = useCallback(() => {
     if (!isOwner) return;
     
     setEditState(prev => ({ ...prev, isEditing: true }));
     
     setTimeout(() => {
-      // Open the native datetime picker
       inputRef.current?.showPicker();
       
-      // Set up document-level click handler for detecting clicks outside
       const handleDocumentClick = (e: MouseEvent) => {
         // Close editing mode if click is outside the component
         if (!containerRef.current?.contains(e.target as Node)) {
@@ -54,7 +40,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
         }
       };
       
-      // Small delay to prevent the handler from triggering immediately
       setTimeout(() => {
         document.addEventListener('click', handleDocumentClick);
       }, 100);
@@ -64,9 +49,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
   const hoverRef = useRef(false);
 
 
-  /**
-   * Resets all editing-related state to their default values
-   */
   const cancelEdit = useCallback(() => {
     setEditState({
       isEditing: false,
@@ -75,9 +57,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     });
   }, []);
 
-  /**
-   * Saves the pending date changes and exits edit mode
-   */
   const confirmEdit = async () => {
     if (editState.pendingDate) {
       try {

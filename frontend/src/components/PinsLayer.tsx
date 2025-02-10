@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import AssistantsDisplay from "./AssistantsDisplay";
 import EditModal from "./EditModal";
 import api from "../services/api";
+import DeleteConfirm from "./DeleteConfirm";
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -122,29 +123,25 @@ const PinsLayer = ({
               anchor="left"
               className="custom-popup"
             >
-              {pin.username === thisUser && (
-                <div className="absolute -right-[4.1px] top-5">
-                  <button
-                    onClick={() => setShowDeleteConfirm(pin._id)}
-                    className="rounded-full hover:bg-hoverDelete transition-colors"
-                    title="Delete event"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
-                  {showDeleteConfirm === pin._id && (
-                    <div className="absolute right-6 top-0">
-                      <EditModal
-                        onConfirm={() => {
-                          eventHandlers.handleDelete(pin._id);
-                          setShowDeleteConfirm(null);
-                        }}
-                        onCancel={() => setShowDeleteConfirm(null)}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
+             {pin.username === thisUser && (
+  <div className="absolute -right-[1px] top-4 z-20">
+    <button
+      onClick={() => setShowDeleteConfirm(pin._id)}
+      className="inline-flex items-center justify-center rounded-full p-1 hover:bg-hoverDelete transition-colors"
+      title="Delete event"
+    >
+      <Trash2 className="w-4 h-4 text-red-500" />
+    </button>
+    {showDeleteConfirm === pin._id && (
+      <DeleteConfirm
+        id={pin._id}
+        showConfirm={showDeleteConfirm}
+        setShowConfirm={setShowDeleteConfirm}
+        onDelete={eventHandlers.handleDelete}
+      />
+    )}
+  </div>
+)}
               <div className="flex flex-col space-y-4 max-w-[300px]">
                 <div className="bg-secondary border-b">
                   <div className="flex items-center p-3">
@@ -154,7 +151,7 @@ const PinsLayer = ({
                       </h2>
                       {pin.username === thisUser && (
                         <div
-                          className={`ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-4 ${
+                          className={`text-gray-600 ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-4 ${
                             editingTitle === pin._id ? "opacity-100" : ""
                           }`}
                           onClick={() => setEditingTitle(pin._id)}
@@ -225,7 +222,7 @@ const PinsLayer = ({
                       </div>
                       {pin.username === thisUser && (
                         <div
-                          className={`ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-2 ${
+                          className={`text-gray-600 ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-2 ${
                             editingDescription === pin._id ? "opacity-100" : ""
                           }`}
                           onClick={() => setEditingDescription(pin._id)}

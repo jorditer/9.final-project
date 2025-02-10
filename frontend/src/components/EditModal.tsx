@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface EditModalProps {
-  onConfirm: (value: string | undefined) => void;  // Changed to accept undefined
+  onConfirm: (value: string | undefined) => void;
   onCancel: () => void;
   maxLength?: number;
   defaultValue?: string;
@@ -14,6 +14,19 @@ const EditModal: React.FC<EditModalProps> = ({
   defaultValue = ""
 }) => {
   const [value, setValue] = useState(defaultValue);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onCancel();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onCancel]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && value) {
@@ -24,7 +37,12 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   return (
-    <div className="absolute left-0 border bg-secondary shadow-lg rounded-md py-2 px-2 z-10 w-full">
+    <div 
+      ref={modalRef} 
+      className={`absolute border bg-secondary shadow-lg rounded-md py-2 px-2 z-10 ${
+        maxLength ? 'left-0 w-full' : 'w-[90px]'
+      }`}
+    >
       <div className="flex">
         {maxLength ? (
           <input
