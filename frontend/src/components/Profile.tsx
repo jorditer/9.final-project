@@ -31,12 +31,11 @@ const Profile: React.FC<ProfileProps> = ({
   const { handleDelete } = useEvents(pins, setPins, setCurrentPlaceId);
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   
-
   return (
-    <div className="z-10 h-full">
-      <div className="h-full p-4 flex flex-col md:flex-row gap-4">
+    <div className="h-full flex flex-col">
+      <div className="flex flex-col md:flex-row h-full">
         {/* Mobile header */}
-        <div className="flex justify-between items-center md:hidden">
+        <div className="flex justify-between items-center md:hidden p-4">
           <h1 className="bg-dark">{thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}</h1>
           <UserInfo
             isMobile={true}
@@ -47,9 +46,9 @@ const Profile: React.FC<ProfileProps> = ({
             setFriendStatus={setFriendStatus}
           />
         </div>
-  
+
         {/* Desktop profile */}
-        <div className="hidden md:flex md:flex-col items-center gap-2">
+        <div className="hidden md:flex md:flex-col md:w-64 flex-shrink-0 items-center gap-2 p-4 border-r border-gray-200">
           <UserInfo
             thisUser={thisUser}
             eventsUser={eventsUser}
@@ -68,26 +67,28 @@ const Profile: React.FC<ProfileProps> = ({
             />
           )}
         </div>
-  
+
         {/* Events Section */}
-        <div className="flex-1 overflow-y-auto pr-2 items-center">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Desktop title */}
-          <h1 className="hidden md:block mb-3 top-0 py-2 bg-dark">
+          <h1 className="hidden md:block p-4 bg-dark border-b border-gray-200">
             {thisUser === eventsUser ? "My Events" : `${eventsUser}'s Events`}
           </h1>
-          <div className="flex flex-col gap-3">
-            {userEvents.map((event) => (
-              <EventCard
-                key={event._id}
-                updatePinDate={updatePinDate}
-                event={event}
-                thisUser={thisUser}
-                onDelete={handleDelete}
-              />
-            ))}
-            {userEvents.length === 0 && (
-              <p className="text-gray-500 text-center">No events created yet :(</p>
-            )}
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex flex-col gap-3">
+              {userEvents.map((event) => (
+                <EventCard
+                  key={event._id}
+                  updatePinDate={updatePinDate}
+                  event={event}
+                  thisUser={thisUser}
+                  onDelete={handleDelete}
+                />
+              ))}
+              {userEvents.length === 0 && (
+                <p className="text-gray-500 text-center">No events created yet :(</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
