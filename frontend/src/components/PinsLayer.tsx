@@ -4,11 +4,12 @@ import Pin from "../interfaces/Pin";
 import { formatDistanceToNow } from "date-fns";
 import Time from "./Time";
 import { Trash2, MapPin, UsersRound, Pencil } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import AssistantsDisplay from "./AssistantsDisplay";
 import EditModal from "./EditModal";
 import api from "../services/api";
 import DeleteConfirm from "./DeleteConfirm";
+import { useFriends } from '../context/FriendsContext';
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -42,26 +43,11 @@ const PinsLayer = ({
   setShowProfile,
   eventHandlers,
 }: PinsLayerProps) => {
-  const [friendsList, setFriendsList] = useState<string[]>([]);
+  const { friendsList } = useFriends();
   const [editingLocation, setEditingLocation] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState<string | null>(null);
   const [editingDescription, setEditingDescription] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchFriends = async () => {
-      if (thisUser) {
-        try {
-          const response = await api.get(`/users/${thisUser}`);
-          setFriendsList(response.data.data.friends);
-        } catch (err) {
-          console.error("Error fetching friends list:", err);
-        }
-      }
-    };
-
-    fetchFriends();
-  }, [thisUser, friendshipRefresh]);
 
   const handleTitleConfirm = async (pinId: string, newTitle: string) => {
     try {
@@ -98,7 +84,9 @@ const PinsLayer = ({
     window.open(url, "_blank");
   };
 
-  const filteredPins = pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username));
+  const filteredPins = useMemo(() => 
+    pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username))
+  , [pins, thisUser, friendsList]);
 
   return (
     <div className="pins-layer">

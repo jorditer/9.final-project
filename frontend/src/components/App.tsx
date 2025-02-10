@@ -6,6 +6,7 @@ import Login from "./Login";
 import { ProfileImagesProvider } from "../context/ProfileImagesContext";
 import { authService } from "../services/auth";
 import api from "../services/api";
+import { FriendsProvider } from "../context/FriendsContext";
 
 function App() {
   const [thisUser, setThisUser] = useState<string | null>(authService.getUser());
@@ -28,24 +29,20 @@ function App() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Always clean up local state
       authService.clearAuth();
       setThisUser(null);
     }
   };
 
-  // This component protects routes that require authentication
   const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
     
-    // Use our auth service to check if user is authenticated
     if (!authService.isAuthenticated() && location.pathname === '/') {
       return <Navigate to="/login" replace />;
     }
     return <>{children}</>;
   };
 
-  // This component handles the auth overlay for login/register pages
   const AuthOverlay = () => {
     const location = useLocation();
     const showOverlay = location.pathname === '/login' || location.pathname === '/signup';
@@ -66,25 +63,23 @@ function App() {
   };
 
   return (
-    <ProfileImagesProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <FriendsProvider thisUser={thisUser}>
         <Routes>
+          <Route path="/login" element={<Login setThisUser={setThisUser} />} />
+          <Route path="/signup" element={<Register setThisUser={setThisUser} />} />
           <Route path="/" element={
             <ProtectedRoute>
-              <div className="h-lvh w-lvw relative">
-                <MapView thisUser={thisUser} onLogout={handleLogout} />
-              </div>
+              <ProfileImagesProvider>
+                <div className="h-lvh w-lvw relative">
+                  <MapView thisUser={thisUser} onLogout={handleLogout} />
+                </div>
+              </ProfileImagesProvider>
             </ProtectedRoute>
           } />
-          <Route path="*" element={
-            <div className="h-lvh w-lvw relative">
-              <MapView thisUser={null} onLogout={handleLogout} />
-              <AuthOverlay />
-            </div>
-          } />
         </Routes>
-      </BrowserRouter>
-    </ProfileImagesProvider>
+      </FriendsProvider>
+    </BrowserRouter>
   );
 }
 
