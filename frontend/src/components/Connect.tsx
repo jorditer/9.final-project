@@ -19,17 +19,24 @@ const Connect: React.FC<ConnectProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFriendAction = async () => {
+    if (isProcessing || friendStatus === "pending") return;
+      
     try {
-      if (friendStatus === "connect") {
-        await api.post(`/users/${thisUser}/friends/request/${eventsUser}`);
-        setFriendStatus("pending");
-      } else if (friendStatus === "connected") {
+      setIsProcessing(true);
+      if (friendStatus === "connected") {
+        // Disconnect case
         await api.delete(`/users/${thisUser}/friends/${eventsUser}`);
         setFriendStatus("connect");
+      } else if (friendStatus === "connect") {
+        // Connect case - send friend request
+        await api.post(`/users/${thisUser}/friends/request/${eventsUser}`);
+        setFriendStatus("pending");
       }
       onFriendshipChange();
     } catch (err) {
       console.error("Error updating friend status:", err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 

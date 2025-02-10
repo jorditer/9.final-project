@@ -334,21 +334,12 @@ export const sendFriendRequest = async (req, res) => {
 
 // Accept friend request with proper validation
 export const acceptFriendRequest = async (req, res) => {
+  const session = await User.startSession();
+  
   try {
     const { username, friendUsername } = req.params;
     
-    // Verify authorization
-    if (req.user.username !== username) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to accept friend requests for this user"
-      });
-    }
-
-    const session = await User.startSession();
-    session.startTransaction();
-
-    try {
+    await session.withTransaction(async () => {
       const [user, friend] = await Promise.all([
         User.findOne({ username }).session(session),
         User.findOne({ username: friendUsername }).session(session)
@@ -363,7 +354,7 @@ export const acceptFriendRequest = async (req, res) => {
         throw new Error("No pending request from this user");
       }
 
-      // Update both users' friend lists and remove request records
+      // Update both users atomically
       await Promise.all([
         User.updateOne(
           { username },
@@ -380,32 +371,26 @@ export const acceptFriendRequest = async (req, res) => {
           }
         ).session(session)
       ]);
+    });
 
-      await session.commitTransaction();
-      res.status(200).json({
-        success: true,
-        message: "Friend request accepted"
-      });
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
-    }
+    res.status(200).json({
+      success: true,
+      message: "Friend request accepted"
+    });
   } catch (error) {
     console.error('Friend acceptance error:', error);
     res.status(500).json({
       success: false,
       message: error.message || "Could not accept friend request"
     });
+  } finally {
+    await session.endSession();
   }
 };
-// Reject friend request with proper validation and cleanup
 export const rejectFriendRequest = async (req, res) => {
   try {
     const { username, friendUsername } = req.params;
     
-    // Verify authorization
     if (req.user.username !== username) {
       return res.status(403).json({
         success: false,
@@ -426,12 +411,10 @@ export const rejectFriendRequest = async (req, res) => {
         throw new Error("User or friend not found");
       }
 
-      // Verify request exists
       if (!user.pendingFriendRequests.includes(friendUsername)) {
         throw new Error("No pending request from this user");
       }
 
-      // Remove request records from both users
       await Promise.all([
         User.updateOne(
           { username },
@@ -463,23 +446,13 @@ export const rejectFriendRequest = async (req, res) => {
   }
 };
 
-// Remove friend with proper authorization and mutual removal
 export const removeFriend = async (req, res) => {
+  const session = await User.startSession();
+  
   try {
     const { username, friendUsername } = req.params;
 
-    // Verify authorization
-    if (req.user.username !== username) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to remove friends for this user"
-      });
-    }
-
-    const session = await User.startSession();
-    session.startTransaction();
-
-    try {
+    await session.withTransaction(async () => {
       const [user, friend] = await Promise.all([
         User.findOne({ username }).session(session),
         User.findOne({ username: friendUsername }).session(session)
@@ -489,12 +462,13 @@ export const removeFriend = async (req, res) => {
         throw new Error("User or friend not found");
       }
 
-      // friendship exists
-      if (!user.friends.includes(friendUsername)) {
-        throw new Error("Not friends with this user");
+      const areFriends = user.friends.includes(friendUsername) && 
+                        friend.friends.includes(username);
+                        
+      if (!areFriends) {
+        throw new Error("Users are not friends");
       }
 
-      // Remove friendship from both
       await Promise.all([
         User.updateOne(
           { username },
@@ -505,28 +479,23 @@ export const removeFriend = async (req, res) => {
           { $pull: { friends: username } }
         ).session(session)
       ]);
+    });
 
-      await session.commitTransaction();
-      res.status(200).json({
-        success: true,
-        message: "Friend removed successfully"
-      });
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
-    }
+    res.status(200).json({
+      success: true,
+      message: "Friend removed successfully"
+    });
   } catch (error) {
     console.error('Friend removal error:', error);
     res.status(500).json({
       success: false,
       message: error.message || "Could not remove friend"
     });
+  } finally {
+    await session.endSession();
   }
 };
 
-// Get friends list with proper authorization
 export const getFriendsList = async (req, res) => {
   try {
     const { username } = req.params;
@@ -534,7 +503,6 @@ export const getFriendsList = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    // Verify authorization
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -550,7 +518,6 @@ export const getFriendsList = async (req, res) => {
       });
     }
 
-    // Check if requesting user has permission to view friends list
     const canViewFriends = req.user.username === username || 
                           user.friends.includes(req.user.username);
     
@@ -561,11 +528,9 @@ export const getFriendsList = async (req, res) => {
       });
     }
 
-    // Get paginated friends list
     const friendsCount = user.friends.length;
     const paginatedFriends = user.friends.slice(skip, skip + limit);
 
-    // Get friend details
     const friendDetails = await User.find(
       { username: { $in: paginatedFriends } }
     ).select('username -_id');
@@ -590,7 +555,6 @@ export const getFriendsList = async (req, res) => {
   }
 };
 
-// Refresh token endpoint
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -603,10 +567,8 @@ export const refreshToken = async (req, res) => {
     }
 
     try {
-      // Verify refresh token
       const decoded = jwt.verify(refreshToken, jwtConfig.refreshSecret);
       
-      // Generate new access token
       const accessToken = jwt.sign(
         { username: decoded.username },
         jwtConfig.secret,
@@ -618,7 +580,6 @@ export const refreshToken = async (req, res) => {
         accessToken
       });
     } catch (err) {
-      // Clear invalid refresh token
       res.clearCookie('refreshToken');
       throw new Error('Invalid refresh token');
     }

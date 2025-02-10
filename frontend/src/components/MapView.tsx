@@ -33,7 +33,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     zoom: 12,
   });
   const navigate = useNavigate();
-
+  const [allPins, setAllPins] = useState<Pin[]>([]);
+  
   const eventHandlers = useEvents(pins, setPins, setCurrentPlaceId);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         const res = await api.get(`/pins`, {
           params: { username: thisUser },
         });
+        setAllPins(res.data.data);
         setPins(res.data.data);
       } catch (err) {
         console.error("Error fetching pins:", err);
@@ -54,7 +56,8 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   }, [thisUser, friendshipRefresh]);
 
   const handleNewPin = (newPin: Pin) => {
-    setPins((prev) => [...prev, newPin]);
+    setAllPins(prev => [...prev, newPin]);
+    setPins(prev => [...prev, newPin]);
     setNewEvent(null);
   };
 
@@ -78,8 +81,37 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   };
   const handleFilterChange = (filter: "all" | "day" | "week" | "month") => {
     setTimeFilter(filter);
-    // TODO: Implement filtering logic for the pins
   };
+
+  useEffect(() => {
+    console.log('Filter changed:', timeFilter);
+    console.log('All pins:', allPins);
+    
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(startOfDay); // Start from beginning of today
+    startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay()); // Go back to last Sunday
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    setPins(allPins.filter(pin => {
+      const eventDate = new Date(pin.date);
+      const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+      
+      switch (timeFilter) {
+        case "day":
+          return eventDate >= startOfDay && eventDate < endOfDay;
+        case "week":
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 7);
+          return eventDate >= startOfWeek && eventDate < endOfWeek;
+        case "month":
+          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+          return eventDate >= startOfMonth && eventDate <= endOfMonth;
+        default:
+          return true;
+      }
+    }));
+  }, [timeFilter, allPins]);
 
   const handleLocationSelect = (lat: number, long: number) => {
     setViewport((prev) => ({
@@ -147,7 +179,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
                 thisUser={thisUser}
                 pins={pins}
                 showProfile={showProfile}
-                updatePinDate={eventHandlers.updatePinDate} // Pass the event handlers
+                updatePinDate={eventHandlers.updatePinDate}
               />
             </div>
           </div>
