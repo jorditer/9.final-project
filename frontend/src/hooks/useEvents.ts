@@ -4,13 +4,12 @@ import Pin from "../interfaces/Pin";
 export const useEvents = (
   pins: Pin[], 
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>,
-  setCurrentPlaceId: (id: string | null) => void
+  thisUser: string | null
 ) => {
   const handleDelete = async (pinId: string) => {
     try {
       await api.delete(`/pins/${pinId}`);
       setPins(pins.filter((pin) => pin._id !== pinId));
-      setCurrentPlaceId(null);
     } catch (err) {
       console.error("Error deleting event:", err);
     }

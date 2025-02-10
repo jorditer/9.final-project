@@ -35,7 +35,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   const navigate = useNavigate();
   const [allPins, setAllPins] = useState<Pin[]>([]);
   
-  const eventHandlers = useEvents(pins, setPins, setCurrentPlaceId);
+  const eventHandlers = useEvents(pins, setPins, thisUser);
 
   useEffect(() => {
     const getPins = async () => {
@@ -175,12 +175,10 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
               }`}
             >
               <Profile
-                onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)}
-                setPins={setPins}
-                setCurrentPlaceId={setCurrentPlaceId}
                 eventsUser={eventsUser}
                 thisUser={thisUser}
                 pins={pins}
+                setPins={setPins}
                 updatePinDate={eventHandlers.updatePinDate}
               />
             </div>

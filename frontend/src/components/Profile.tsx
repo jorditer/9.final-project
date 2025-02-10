@@ -6,26 +6,22 @@ import { useFriendStatus } from "../hooks/useFriendStatus";
 import { useEvents } from "../hooks/useEvents";
 
 interface ProfileProps {
-  thisUser: string | null;
   eventsUser: string | null;
+  thisUser: string | null;
   pins: Pin[];
   setPins: React.Dispatch<React.SetStateAction<Pin[]>>;
-  setCurrentPlaceId: (id: string | null) => void;
-  onFriendshipChange: () => void;
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 
 const Profile: React.FC<ProfileProps> = ({
-  onFriendshipChange,
   thisUser,
   eventsUser,
   pins,
   updatePinDate,
   setPins,
-  setCurrentPlaceId,
 }) => {
   const { friendStatus, setFriendStatus } = useFriendStatus(thisUser, eventsUser);
-  const { handleDelete } = useEvents(pins, setPins, setCurrentPlaceId);
+  const { handleDelete } = useEvents(pins, setPins, thisUser);
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
   
   return (
@@ -38,7 +34,7 @@ const Profile: React.FC<ProfileProps> = ({
             isMobile={true}
             thisUser={thisUser}
             eventsUser={eventsUser}
-            onFriendshipChange={onFriendshipChange}
+            onFriendshipChange={() => {}}
             friendStatus={friendStatus}
             setFriendStatus={setFriendStatus}
           />
@@ -49,14 +45,14 @@ const Profile: React.FC<ProfileProps> = ({
           <UserInfo
             thisUser={thisUser}
             eventsUser={eventsUser}
-            onFriendshipChange={onFriendshipChange}
+            onFriendshipChange={() => {}}
             friendStatus={friendStatus}
             setFriendStatus={setFriendStatus}
           />
           <span className="font-semibold text-center text-3xl -mb-2">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && (
             <Connect 
-              onFriendshipChange={onFriendshipChange} 
+              onFriendshipChange={() => {}} 
               thisUser={thisUser} 
               eventsUser={eventsUser}
               friendStatus={friendStatus}
