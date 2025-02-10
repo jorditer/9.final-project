@@ -92,6 +92,21 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   return (
     <div className="h-lvh w-lvw">
+    <div className="fixed top-16 left-0 right-0 px-4 z-10">
+      <SearchBar
+        setShowProfile={setShowProfile}
+        setEventsUser={setEventsUser}
+        onLocationSelect={handleLocationSelect}
+      />
+    </div>
+      <Header
+        thisUser={thisUser}
+        handleLogout={handleLogout}
+        setEventsUser={setEventsUser}
+        setShowProfile={setShowProfile}
+        // onLocationSelect={handleLocationSelect}
+        onFilterChange={handleFilterChange}
+      />
       <Map
         style={{ width: "100%", height: "100%" }}
         {...viewport}
@@ -101,14 +116,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
       >
-      <Header
-        thisUser={thisUser}
-        handleLogout={handleLogout}
-        setEventsUser={setEventsUser}
-        setShowProfile={setShowProfile}
-        // onLocationSelect={handleLocationSelect}
-        onFilterChange={handleFilterChange}
-      />
         <Request onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)} thisUser={thisUser} />
         {/* Profile Container with Arrow */}
         <div className={`z-20 mb-[60px] sm:mb-0 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${showProfile ? "" : "pointer-events-none"}`}>
@@ -175,13 +182,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
           setShowProfile={setShowProfile}
           handleLogout={handleLogout}
         /> */}
-        <div className="fixed top-16 left-0 right-0 px-4 z-10">
-          <SearchBar
-            setShowProfile={setShowProfile}
-            setEventsUser={setEventsUser}
-            onLocationSelect={handleLocationSelect}
-          />
-        </div>
       </Map>
     </div>
   );

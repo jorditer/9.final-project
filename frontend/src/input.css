@@ -6,7 +6,14 @@ input:-webkit-autofill.input-error,
 input:-webkit-autofill:hover.input-error,
 input:-webkit-autofill:focus.input-error {
   -webkit-box-shadow: 0 0 0px 1000px #FFF4F2 inset;
-    /* @apply bg-red-100 border-red-900; */
+  /* @apply bg-red-100 border-red-900; */
+}
+.input-error {
+  background-color: #FFF4F2;
+}
+
+input:not(.input-error):not([type="submit"]):not([id="user"]) {
+  background-color: rgb(232, 240, 254);
 }
 
 label {
@@ -52,6 +59,3 @@ small {
   }
   
 }
-/* .input-error {
-  @apply bg-red-100 !important border-red-900 ;
-} */

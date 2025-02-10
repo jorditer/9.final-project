@@ -50,7 +50,7 @@ const User: React.FC<UserProps> = ({ thisUser, handleLogout, setEventsUser, setS
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2.5 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="z-50 absolute right-0 mt-2.5 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
           <div className="py-1">
             <button
               onClick={handleViewProfile}

@@ -554,6 +554,40 @@ video {
   display: none;
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 input:not([type="submit"]):not([placeholder="Search"]):not([type="datetime-local"]):not([class~="noclass"]),
   textarea {
   margin-top: 0.4rem;
@@ -743,8 +777,8 @@ h1 {
   inset: 0px;
 }
 
-.-right-\[4\.5px\] {
-  right: -4.5px;
+.-right-\[4\.1px\] {
+  right: -4.1px;
 }
 
 .-top-12 {
@@ -811,36 +845,28 @@ h1 {
   top: 100%;
 }
 
-.-right-\[4px\] {
-  right: -4px;
-}
-
-.-right-\[4\.2px\] {
-  right: -4.2px;
-}
-
-.-right-\[4\.3px\] {
-  right: -4.3px;
-}
-
-.-right-\[4\.1px\] {
-  right: -4.1px;
-}
-
-.-right-\[4\.15px\] {
-  right: -4.15px;
-}
-
-.-right-\[4\.4px\] {
-  right: -4.4px;
-}
-
 .z-10 {
   z-index: 10;
 }
 
 .z-20 {
   z-index: 20;
+}
+
+.z-30 {
+  z-index: 30;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
+.z-\[5\] {
+  z-index: 5;
+}
+
+.z-50 {
+  z-index: 50;
 }
 
 .-mx-3 {
@@ -931,6 +957,18 @@ h1 {
 
 .mt-3 {
   margin-top: 0.75rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.mr-10 {
+  margin-right: 2.5rem;
+}
+
+.mr-6 {
+  margin-right: 1.5rem;
 }
 
 .line-clamp-2 {
@@ -1076,10 +1114,6 @@ h1 {
 
 .w-lvw {
   width: 100lvw;
-}
-
-.w-1 {
-  width: 0.25rem;
 }
 
 .min-w-0 {
@@ -1390,6 +1424,11 @@ h1 {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
 }
 
+.bg-dark {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 155 102 / var(--tw-bg-opacity, 1));
+}
+
 .bg-gray-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
@@ -1456,9 +1495,9 @@ h1 {
   background-color: rgb(133 77 14 / var(--tw-bg-opacity, 1));
 }
 
-.bg-dark {
+.bg-tertiary {
   --tw-bg-opacity: 1;
-  background-color: rgb(249 155 102 / var(--tw-bg-opacity, 1));
+  background-color: rgb(255 190 152 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-40 {
@@ -1567,6 +1606,11 @@ h1 {
   padding-bottom: 2px;
 }
 
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -1581,6 +1625,22 @@ h1 {
 
 .ps-3 {
   padding-inline-start: 0.75rem;
+}
+
+.pe-4 {
+  padding-inline-end: 1rem;
+}
+
+.pe-6 {
+  padding-inline-end: 1.5rem;
+}
+
+.pr-6 {
+  padding-right: 1.5rem;
+}
+
+.pe-10 {
+  padding-inline-end: 2.5rem;
 }
 
 .text-left {
@@ -1652,6 +1712,10 @@ h1 {
 
 .leading-tight {
   line-height: 1.25;
+}
+
+.leading-normal {
+  line-height: 1.5;
 }
 
 .text-accept {
@@ -1834,6 +1898,14 @@ input:-webkit-autofill:focus.input-error {
   /* @apply bg-red-100 border-red-900; */
 }
 
+.input-error {
+  background-color: #FFF4F2;
+}
+
+input:not(.input-error):not([type="submit"]):not([id="user"]) {
+  background-color: rgb(232, 240, 254);
+}
+
 label {
   padding-top: 0.125rem;
   padding-inline-start: 0.125rem;
@@ -1862,10 +1934,6 @@ small {
 .mapboxgl-popup-content {
   padding: 0 !important;
 }
-
-/* .input-error {
-  @apply bg-red-100 !important border-red-900 ;
-} */
 
 .hover\:bg-accept:hover {
   --tw-bg-opacity: 1;
@@ -2042,6 +2110,14 @@ small {
   .sm\:w-1\/2 {
     width: 50%;
   }
+
+  .sm\:pe-0 {
+    padding-inline-end: 0px;
+  }
+
+  .sm\:pe-4 {
+    padding-inline-end: 1rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -2069,6 +2145,14 @@ small {
     grid-template-columns: 1.5fr 2fr 160px;
   }
 
+  .md\:grid-cols-\[1\.5fr\2c 2fr\2c 200px\] {
+    grid-template-columns: 1.5fr 2fr 200px;
+  }
+
+  .md\:grid-cols-\[1\.5fr\2c 2fr\2c 220px\] {
+    grid-template-columns: 1.5fr 2fr 220px;
+  }
+
   .md\:flex-row {
     flex-direction: row;
   }
@@ -2081,6 +2165,14 @@ small {
 @media (min-width: 1024px) {
   .lg\:grid-cols-\[1\.5fr\2c 2fr\2c 1fr\] {
     grid-template-columns: 1.5fr 2fr 1fr;
+  }
+
+  .lg\:grid-cols-\[1\.5fr\2c 2fr\2c 220px\] {
+    grid-template-columns: 1.5fr 2fr 220px;
+  }
+
+  .lg\:grid-cols-\[1\.5fr\2c 2fr\2c 180px\] {
+    grid-template-columns: 1.5fr 2fr 180px;
   }
 }
 

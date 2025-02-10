@@ -61,7 +61,7 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
         console.log("username")
         console.log("username" + JSON.stringify(fieldErrors))
       } else if (err.response.data.message === "Email is already registered") {
-        setFieldErrors(prev => ({ ...prev, email: true }));
+        setFieldErrors(() => ({ username: false, email: true }));
         console.log("email")
         console.log("email" + JSON.stringify(fieldErrors))
       }
@@ -78,7 +78,7 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
       {/* Modal */}
       <div className="z-20 absolute top-1/2 left-1/2 p-2 -translate-x-1/2 -translate-y-1/2  bg-white w-2/3 sm:w-1/2 md:w-4/12">
         <div className="logo p-4 text-base">
-          <h2 className="text-4xl pb-2 font-bold">Sign up</h2>
+          <h2 className="text-4xl pb-2 font-bold bg">Sign up</h2>
           <figcaption className="text-sm text-gray-500 pb-2">
             Already registered?{" "}
             <a 

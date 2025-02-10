@@ -60,12 +60,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
       {/* Event Content Container */}
       <div className="flex flex-col space-y-2">
         {/* Desktop layout - hidden on mobile, shows on md screens and up */}
-        <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,1fr] items-center">
-          <div>
+        <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,180px] items-center">
+        <div>
             <h4 className="text-lg font-semibold">{event.title}</h4>
             <p className="text-sm text-gray-600">{event.location}</p>
           </div>
-          <p className="text-sm text-gray-700 line-clamp-2">{event.description}</p>
+          <p className="text-sm text-gray-700 line-clam">{event.description}</p>
           <div className="w-full">
             <Time
               pin={event}
@@ -79,9 +79,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
         <div className="grid grid-cols-[2fr,1fr] gap-4 md:hidden">
           <div className="flex flex-col min-w-0">
             <h4
-              className={`text-lg font-semibold ${
-                thisUser !== event.username ? "cursor-pointer hover:text-blue-600" : ""
-              }`}
+              className={`text-lg font-semibold $`}
             >
               {event.title}
             </h4>
