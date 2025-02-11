@@ -46,9 +46,6 @@ const Time: React.FC<TimeProps> = ({ pin, isOwner, updatePinDate }) => {
     }, 0);
   }, [isOwner]);
 
-  const hoverRef = useRef(false);
-
-
   const cancelEdit = useCallback(() => {
     setEditState({
       isEditing: false,

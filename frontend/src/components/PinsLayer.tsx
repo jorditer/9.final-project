@@ -115,7 +115,8 @@ const PinsLayer = ({
                 <div className="bg-secondary border-b">
                   <div className="flex items-center p-3">
                     <div className="relative flex items-center group">
-                      <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words text-nowrap me-1.5">
+                      <h2   data-testid="pin-title"
+ className="text-lg font-semibold text-gray-900 leading-tight break-words text-nowrap me-1.5">
                         {pin.title}
                       </h2>
                       {pin.username === thisUser && (
