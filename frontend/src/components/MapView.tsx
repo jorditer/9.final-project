@@ -84,9 +84,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   };
 
   useEffect(() => {
-    console.log('Filter changed:', timeFilter);
-    console.log('All pins:', allPins);
-    
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const startOfWeek = new Date(startOfDay);

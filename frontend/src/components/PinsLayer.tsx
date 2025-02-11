@@ -9,7 +9,7 @@ import AssistantsDisplay from "./AssistantsDisplay";
 import EditModal from "./EditModal";
 import api from "../services/api";
 import DeleteConfirm from "./DeleteConfirm";
-import { useFriends } from '../context/FriendsContext';
+import { useFriends } from "../context/FriendsContext";
 
 interface PinsLayerProps {
   pins: Pin[];
@@ -84,9 +84,10 @@ const PinsLayer = ({
     window.open(url, "_blank");
   };
 
-  const filteredPins = useMemo(() => 
-    pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username))
-  , [pins, thisUser, friendsList]);
+  const filteredPins = useMemo(
+    () => pins.filter((pin) => pin.username === thisUser || friendsList.includes(pin.username)),
+    [pins, thisUser, friendsList]
+  );
 
   return (
     <div className="pins-layer">
@@ -110,45 +111,45 @@ const PinsLayer = ({
               anchor="left"
               className="custom-popup"
             >
-             {pin.username === thisUser && (
-  <div className="absolute -right-[1px] top-4 z-20">
-    <button
-      onClick={() => setShowDeleteConfirm(pin._id)}
-      className="inline-flex items-center justify-center rounded-full p-1 hover:bg-hoverDelete transition-colors"
-      title="Delete event"
-    >
-      <Trash2 className="w-4 h-4 text-red-500" />
-    </button>
-    {showDeleteConfirm === pin._id && (
-      <DeleteConfirm
-        id={pin._id}
-        showConfirm={showDeleteConfirm}
-        setShowConfirm={setShowDeleteConfirm}
-        onDelete={eventHandlers.handleDelete}
-      />
-    )}
-  </div>
-)}
               <div className="flex flex-col space-y-4 max-w-[300px]">
                 <div className="bg-secondary border-b">
                   <div className="flex items-center p-3">
                     <div className="relative flex items-center group">
-                      <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words text-nowrap">
+                      <h2 className="text-lg font-semibold text-gray-900 leading-tight break-words text-nowrap me-1.5">
                         {pin.title}
                       </h2>
                       {pin.username === thisUser && (
-                        <div
-                          className={`text-gray-600 ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-4 ${
-                            editingTitle === pin._id ? "opacity-100" : ""
-                          }`}
-                          onClick={() => setEditingTitle(pin._id)}
-                        >
-                          <Pencil size={16} />
+                        <div className="flex items-center">
+                          <div
+                            className={`text-gray-600 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity ${
+                              editingTitle === pin._id ? "opacity-100" : ""
+                            }`}
+                            onClick={() => setEditingTitle(pin._id)}
+                          >
+                            <Pencil size={16} />
+                          </div>
+                          <div
+                            className={`me-1.5 text-red-500 opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-hoverDelete rounded-full p-1 transition-opacity ${
+                              showDeleteConfirm === pin._id ? "opacity-100" : ""
+                            }`}
+                            onClick={() => setShowDeleteConfirm(pin._id)}
+                          >
+                            <Trash2 size={16} />
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
+
+                {showDeleteConfirm === pin._id && (
+                  <DeleteConfirm
+                    id={pin._id}
+                    showConfirm={showDeleteConfirm}
+                    setShowConfirm={setShowDeleteConfirm}
+                    onDelete={eventHandlers.handleDelete}
+                  />
+                )}
 
                 {editingTitle === pin._id && (
                   <EditModal
@@ -204,9 +205,7 @@ const PinsLayer = ({
 
                   {pin.description && (
                     <div className="relative flex items-center group">
-                      <div className="text-sm text-gray-600 leading-relaxed break-words">
-                        {pin.description}
-                      </div>
+                      <div className="text-sm text-gray-600 leading-relaxed break-words">{pin.description}</div>
                       {pin.username === thisUser && (
                         <div
                           className={`text-gray-600 ml-1.5 opacity-0 group-hover:opacity-100 cursor-pointer hover:text-dark transition-opacity me-2 ${

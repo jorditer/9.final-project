@@ -89,7 +89,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
             }}
             className={`p-1.5 rounded transition-colors ${
               searchMode === 'places' 
-                ? 'bg-primary text-black' 
+                ? 'bg-primary // Import Pencil icon text-black' 
                 : 'hover:bg-secondary'
             }`}
             title="Search Places"

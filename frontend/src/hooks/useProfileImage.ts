@@ -1,4 +1,3 @@
-// useProfileImage.ts
 import { useState } from 'react';
 import { supabase } from '../config/supabase.config';
 import { useProfileImages } from '../context/ProfileImagesContext';
@@ -7,34 +6,57 @@ export const useProfileImage = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { invalidateCache, updateCache } = useProfileImages();
 
+  const deleteExistingImages = async (username: string) => {
+    try {
+      const { data: files, error: listError } = await supabase.storage
+        .from('profiles')
+        .list('avatars');
+
+      if (listError) throw listError;
+
+      const userFiles = files?.filter(file => 
+        file.name.startsWith(`${username}.`)
+      );
+      
+      if (userFiles && userFiles.length > 0) {
+        const filePaths = userFiles.map(file => `avatars/${file.name}`);
+        
+        const { error: deleteError } = await supabase.storage
+          .from('profiles')
+          .remove(filePaths);
+
+        if (deleteError) throw deleteError;
+      }
+    } catch (err) {
+      console.error('Error deleting existing images:', err);
+      throw err;
+    }
+  };
+
   const uploadProfileImage = async (file: File, username: string) => {
     setIsUploading(true);
     try {
-      // Prepare the new filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${username}.${fileExt}`;
-      
-      // Invalidate cache before upload
       invalidateCache(username);
 
-      // Upload new file with upsert
+      await deleteExistingImages(username);
+
+      const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+      const fileName = `${username}.${fileExt}`;
+      
       const { error: uploadError } = await supabase.storage
         .from('profiles')
         .upload(`avatars/${fileName}`, file, {
-          upsert: true  // This will automatically replace any existing file
+          upsert: false  // We don't need upsert since we manually deleted old files
         });
 
       if (uploadError) throw uploadError;
 
-      // Get the public URL immediately after successful upload
       const { data: { publicUrl } } = supabase.storage
         .from('profiles')
         .getPublicUrl(`avatars/${fileName}`);
 
-      // Add cache-busting parameter
       const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
       
-      // Update cache with new URL
       updateCache(username, urlWithTimestamp);
       
       return true;
