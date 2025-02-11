@@ -65,19 +65,20 @@ function App() {
   return (
     <BrowserRouter>
       <FriendsProvider thisUser={thisUser}>
-        <Routes>
-          <Route path="/login" element={<Login setThisUser={setThisUser} />} />
-          <Route path="/signup" element={<Register setThisUser={setThisUser} />} />
-          <Route path="/" element={
-            <ProtectedRoute>
-              <ProfileImagesProvider>
-                <div className="h-lvh w-lvw relative">
-                  <MapView thisUser={thisUser} onLogout={handleLogout} />
-                </div>
-              </ProfileImagesProvider>
-            </ProtectedRoute>
-          } />
-        </Routes>
+        <ProfileImagesProvider>
+          <div className="h-lvh w-lvw relative">
+            <MapView thisUser={thisUser} onLogout={handleLogout} />
+            <Routes>
+              <Route path="/login" element={<Login setThisUser={setThisUser} />} />
+              <Route path="/signup" element={<Register setThisUser={setThisUser} />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <></>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </div>
+        </ProfileImagesProvider>
       </FriendsProvider>
     </BrowserRouter>
   );
