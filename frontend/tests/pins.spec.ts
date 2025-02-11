@@ -45,25 +45,36 @@ test.describe('Pin Management', () => {
 
     await page.waitForLoadState('networkidle');
     
-    // await page.click('.mapboxgl-map', { position });
-    // await page.waitForSelector('.relative.flex.items-center.group');
-    // await page.hover('.relative.flex.items-center.group');
-
-    // await page.hover('.custom-popup h2');
-    // await page.click('.text-red-500');
-    // await page.click('button[title="Confirm"]');
-
-    // await page.waitForResponse(
-    //   response => 
-    //     response.url().includes('/pins') && 
-    //     response.request().method() === 'DELETE' &&
-    //     response.status() === 200,
-    //   { timeout: 5000 }
-    // );
-
     // Click at the same position where we created the pin
     await page.click('.mapboxgl-map', { position });
     
+    // Wait a moment for any animations/state updates
+    await page.waitForTimeout(1000);
+    
+    // Debug: Check what's in the DOM after waiting
+    const popupExists = await page.evaluate(() => {
+        console.log('Looking for popup...');
+        const popup = document.querySelector('.mapboxgl-popup');
+        console.log('Popup found:', popup);
+        return !!popup;
+    });
+    console.log('Popup exists:', popupExists);
+    
+    // Continue with deletion if popup exists
+    if (popupExists) {
+        await page.hover('.custom-popup h2');
+        await page.click('.text-red-500');
+        await page.click('button[title="Confirm"]');
+        
+        await page.waitForResponse(
+            response => 
+                response.url().includes('/pins') && 
+                response.request().method() === 'DELETE' &&
+                response.status() === 200,
+            { timeout: 5000 }
+        );
+    }
+
     // Debug: log all classes present in the popup
     const classes = await page.evaluate(() => {
         const elements = document.querySelectorAll('*');
