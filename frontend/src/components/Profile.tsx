@@ -79,7 +79,7 @@ const Profile: React.FC<ProfileProps> = ({
                 />
               ))}
               {userEvents.length === 0 && (
-                <p className="text-gray-500 text-center">No events created yet :(</p>
+                <p className="text-gray-500 text-center">{friendStatus === "connected" ? "No events created yet :(" : "You can't see the events if you are not connected!"}</p>
               )}
             </div>
           </div>
