@@ -14,6 +14,6 @@ requiredEnvVars.forEach(varName => {
 export const jwtConfig = {
   secret: process.env.JWT_SECRET,
   refreshSecret: process.env.REFRESH_TOKEN_SECRET,
-  accessTokenExpiry: '15m',
+  accessTokenExpiry: '45m',
   refreshTokenExpiry: '7d'
 };

@@ -99,7 +99,7 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
         </div>
       </div>
 
-      {/* Only show Going/Join text if user is not the owner */}
+      {/* show Going/Join text if the user is not the owner */}
       {thisUser && !isEventOwner && (
         <span className={`
           text-sm ml-2 transition-colors duration-200
@@ -112,7 +112,7 @@ const AssistantsDisplay = ({setPins, thisUser, p}: AssistantsDisplayProps) => {
         </span>
       )}
       
-      {/* Show static "Owner" text if user is the owner */}
+      {/* Show "Owner" if user is the owner */}
       {isEventOwner && (
         <span className="text-sm ml-2 text-gray-500">
           Owner

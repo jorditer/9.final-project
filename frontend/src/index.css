@@ -658,14 +658,6 @@ input[type="submit"]:active {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
-button {
-  /* react-mapbox-gl closing button */
-  margin: 0.25rem;
-  display: flex;
-  padding-left: 7px;
-  padding-right: 7px;
-}
-
 button[class~=login] {
   border-radius: 0.75rem;
   border-width: 1px;
@@ -725,10 +717,6 @@ h1 {
 
 .visible {
   visibility: visible;
-}
-
-.static {
-  position: static;
 }
 
 .fixed {
