@@ -40,16 +40,19 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   useEffect(() => {
     const getPins = async () => {
       try {
+        console.log('Current friendshipRefresh value:', friendshipRefresh);
+        console.log('Fetching pins for user:', thisUser);
         const res = await api.get(`/pins`, {
           params: { username: thisUser },
         });
+        console.log('New pins data:', res.data.data);
         setAllPins(res.data.data);
         setPins(res.data.data);
       } catch (err) {
         console.error("Error fetching pins:", err);
       }
     };
-
+  
     if (thisUser) {
       getPins();
     }
@@ -139,6 +142,7 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         setShowProfile={setShowProfile}
         onFilterChange={handleFilterChange}
       />
+        <Request onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)} thisUser={thisUser} />
       <Map
         style={{ width: "100%", height: "100%" }}
         {...viewport}
@@ -148,7 +152,6 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         onDblClick={handleAddEvent}
       >
-        <Request onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)} thisUser={thisUser} />
         {/* Profile Container with Arrow */}
         <div className={`z-20 mb-[60px] sm:mb-0 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${showProfile ? "" : "pointer-events-none"}`}>
           <div

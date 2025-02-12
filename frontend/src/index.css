@@ -723,6 +723,10 @@ h1 {
   pointer-events: auto;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .static {
   position: static;
 }
@@ -1807,7 +1811,7 @@ h1 {
   /* Increased font size */
   padding: 4px 8px !important;
   /* Increased padding for larger hit area */
-  margin: 2px !important;
+  margin: 0px !important;
   /* Added margin for spacing */
   line-height: 20px !important;
   /* Adjusted line height */

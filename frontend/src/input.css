@@ -5,7 +5,7 @@
 .mapboxgl-popup-close-button {
   font-size: 24px !important;  /* Increased font size */
   padding: 4px 8px !important; /* Increased padding for larger hit area */
-  margin: 2px !important;      /* Added margin for spacing */
+  margin: 0px !important;      /* Added margin for spacing */
   line-height: 20px !important; /* Adjusted line height */
   color: #666 !important;      /* More visible color */
   font-weight: normal !important;

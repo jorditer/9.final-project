@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { useFriends } from "../context/FriendsContext";
 
 interface RequestProps {
   thisUser: string | null;
@@ -9,6 +10,9 @@ interface RequestProps {
 const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
   const [pendingRequests, setPendingRequests] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
+  const { refreshFriends } = useFriends(); // Add this
+
+  
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
@@ -34,6 +38,7 @@ const Request: React.FC<RequestProps> = ({ onFriendshipChange, thisUser }) => {
       setPendingRequests(updatedRequests);
       setShowPopup(updatedRequests.length > 0);
       onFriendshipChange();
+      refreshFriends();
     } catch (err) {
       console.error("Error accepting friend request:", err);
     }
