@@ -47,7 +47,7 @@ const Profile: React.FC<ProfileProps> = ({ thisUser, eventsUser, pins, updatePin
             friendStatus={friendStatus}
             setFriendStatus={setFriendStatus}
           />
-          <span className="font-semibold text-center text-3xl -mb-2">{eventsUser || thisUser}</span>
+          <span className="font-semibold text-center text-3xl mb-0.5">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && (
             <Connect
               onFriendshipChange={() => {}}

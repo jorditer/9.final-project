@@ -85,19 +85,15 @@ const PinsLayer = ({
   };
 
   const filteredPins = useMemo(() => {
-    console.log('Recalculating filteredPins');
-    console.log('Current pins:', pins);
-    console.log('Current friendsList:', friendsList);
     return pins.filter((pin) => {
       const isVisible = pin.username === thisUser || friendsList.includes(pin.username);
-      console.log(`Pin ${pin._id} by ${pin.username} visible:`, isVisible);
       return isVisible;
     });
   }, [pins, thisUser, friendsList, friendshipRefresh]);
 
-  useEffect(() => {
-    console.log('PinsLayer received new friendshipRefresh:', friendshipRefresh);
-  }, [friendshipRefresh]);
+  // useEffect(() => {
+  //   console.log('PinsLayer received new friendshipRefresh:', friendshipRefresh);
+  // }, [friendshipRefresh]);
 
   return (
     <div className="pins-layer">

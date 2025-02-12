@@ -46,12 +46,9 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   useEffect(() => {
     const getPins = async () => {
       try {
-        console.log("Current friendshipRefresh value:", friendshipRefresh);
-        console.log("Fetching pins for user:", thisUser);
         const res = await api.get(`/pins`, {
           params: { username: thisUser },
         });
-        console.log("New pins data:", res.data.data);
         setAllPins(res.data.data);
         setPins(res.data.data);
       } catch (err) {

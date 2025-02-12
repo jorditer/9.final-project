@@ -31,6 +31,7 @@ function App() {
     } finally {
       authService.clearAuth();
       setThisUser(null);
+      window.location.reload();
     }
   };
 

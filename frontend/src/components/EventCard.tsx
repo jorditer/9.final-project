@@ -19,10 +19,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
 <div className="group bg-secondary p-4 rounded-lg relative border-2 border-dark hover:shadow-md transition-all">
       {/* Delete button with confirmation - only shows for events owned by current user */}
       {thisUser === event.username && (
-  <div className="absolute -right-0.5 -top-0.5">
+  <div className="absolute right-0.5 top-0.5">
     <button
       onClick={() => setShowDeleteConfirm(event._id)}
-      className="p-1.5 rounded-full hover:bg-hoverDelete transition-colors opacity-0 group-hover:opacity-100"
+      className="p-1 rounded-full hover:bg-hoverDelete transition-colors opacity-0 group-hover:opacity-100"
       title="Delete event"
     >
       <Trash2 className="w-4 h-4 text-red-500" />
@@ -43,7 +43,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, thisUser, onDelete, update
         {/* Desktop layout - hidden on mobile, shows on md screens and up */}
         <div className="hidden md:grid md:grid-cols-[1.5fr,2fr,160px] lg:grid-cols-[1.5fr,2fr,180px] items-center">
         <div>
-            <h4 className="text-lg font-semibold">{event.title}</h4>
+            <h4 className="text-lg font-semibold text-nowrap">{event.title}</h4>
             <p className="text-sm text-gray-600">{event.location}</p>
           </div>
           <p className="text-sm text-gray-700 line-clam">{event.description}</p>

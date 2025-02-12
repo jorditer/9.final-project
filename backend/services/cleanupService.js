@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 
 // Delete expired pins
 const deleteExpiredPins = async (minutesThreshold = 30) => {
-  // If we're connected to MongoDB
   if (mongoose.connection.readyState !== 1) {
     console.error('MongoDB connection not ready. Skipping cleanup.');
     return;

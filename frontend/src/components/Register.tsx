@@ -58,14 +58,9 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
       setErrorMessage(err.response.data.message);
      if (err.response.data.message === "Username is already taken") {
         setFieldErrors(prev => ({ ...prev, username: true }));
-        console.log("username")
-        console.log("username" + JSON.stringify(fieldErrors))
       } else if (err.response.data.message === "Email is already registered") {
         setFieldErrors(() => ({ username: false, email: true }));
-        console.log("email")
-        console.log("email" + JSON.stringify(fieldErrors))
       }
-      console.log(errorMessage)
       setError(true);
     }
   }
