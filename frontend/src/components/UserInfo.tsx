@@ -67,35 +67,37 @@ const UserInfo: React.FC<UserInfoProps> = ({
   return (
     <div className="flex items-center gap-3">
       <div 
-        className="relative"
+        className="relative w-fit"
         onMouseEnter={() => isOwnProfile && setShowEditOverlay(true)}
         onMouseLeave={() => isOwnProfile && setShowEditOverlay(false)}
       >
-        <img
-          className={`transition duration-300 ease-in-out ${
-            isMobile ? 'size-12 min-w-12' : 'size-40 -mt-1 lg:size-42'
-          } object-cover rounded-full ${
-            isUploading ? 'opacity-50' : 'opacity-100'
-          }`}
-          src={finalImageUrl}
-          alt="user-image"
-          onClick={handleImageClick}
-        />
-        {/* Edit Overlay */}
-        {showEditOverlay && isOwnProfile && !isUploading && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
+        <div className="relative">
+          <img
+            className={`transition duration-300 ease-in-out ${
+              isMobile ? 'size-12 min-w-12' : 'size-40 lg:size-42'
+            } object-cover rounded-full ${
+              isUploading ? 'opacity-50' : 'opacity-100'
+            }`}
+            src={finalImageUrl}
+            alt="user-image"
             onClick={handleImageClick}
-          >
-            <Pencil className="w-6 h-6 text-white" />
-          </div>
-        )}
-        {/* Loading Spinner */}
-        {isUploading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
-          </div>
-        )}
+          />
+          {/* Edit Overlay */}
+          {showEditOverlay && isOwnProfile && !isUploading && (
+            <div 
+              className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
+              onClick={handleImageClick}
+            >
+              <Pencil className="w-6 h-6 text-white" />
+            </div>
+          )}
+          {/* Loading Spinner */}
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+            </div>
+          )}
+        </div>
       </div>
       {isMobile && <span className="font-semibold text-lg">{eventsUser || thisUser}</span>}
       {isMobile && thisUser && eventsUser && thisUser !== eventsUser && (

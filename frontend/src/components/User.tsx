@@ -33,6 +33,7 @@ const User: React.FC<UserProps> = ({ thisUser, handleLogout, setEventsUser, setS
 
   const handleLogoutClick = () => {
     setIsDropdownOpen(false);
+    setShowProfile(false);
     handleLogout();
   };
 

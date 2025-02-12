@@ -13,17 +13,11 @@ interface ProfileProps {
   updatePinDate: (pinId: string, date: Date) => Promise<Pin>;
 }
 
-const Profile: React.FC<ProfileProps> = ({
-  thisUser,
-  eventsUser,
-  pins,
-  updatePinDate,
-  setPins,
-}) => {
+const Profile: React.FC<ProfileProps> = ({ thisUser, eventsUser, pins, updatePinDate, setPins }) => {
   const { friendStatus, setFriendStatus } = useFriendStatus(thisUser, eventsUser);
   const { handleDelete } = useEvents(pins, setPins, thisUser);
   const userEvents = pins.filter((pin) => pin.username === eventsUser);
-  
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex flex-col md:flex-row h-full">
@@ -51,9 +45,9 @@ const Profile: React.FC<ProfileProps> = ({
           />
           <span className="font-semibold text-center text-3xl -mb-2">{eventsUser || thisUser}</span>
           {thisUser && eventsUser && thisUser !== eventsUser && (
-            <Connect 
-              onFriendshipChange={() => {}} 
-              thisUser={thisUser} 
+            <Connect
+              onFriendshipChange={() => {}}
+              thisUser={thisUser}
               eventsUser={eventsUser}
               friendStatus={friendStatus}
               setFriendStatus={setFriendStatus}
@@ -79,7 +73,11 @@ const Profile: React.FC<ProfileProps> = ({
                 />
               ))}
               {userEvents.length === 0 && (
-                <p className="text-gray-500 text-center">{friendStatus === "connected" ? "No events created yet :(" : "You can't see the events if you are not connected!"}</p>
+                <p className="text-gray-500 text-center">
+                  {thisUser === eventsUser || friendStatus === "connected"
+                    ? "No events created yet :("
+                    : "You can't see the events if you are not connected!"}
+                </p>
               )}
             </div>
           </div>

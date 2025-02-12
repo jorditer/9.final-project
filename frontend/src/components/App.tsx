@@ -43,25 +43,6 @@ function App() {
     return <>{children}</>;
   };
 
-  const AuthOverlay = () => {
-    const location = useLocation();
-    const showOverlay = location.pathname === '/login' || location.pathname === '/signup';
-    
-    if (!showOverlay) return null;
-    if (authService.isAuthenticated() && showOverlay) {
-      return <Navigate to="/" replace />;
-    }
-    
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-10">
-        <Routes>
-          <Route path="/login" element={<Login setThisUser={setThisUser} />} />
-          <Route path="/signup" element={<Register setThisUser={setThisUser} />} />
-        </Routes>
-      </div>
-    );
-  };
-
   return (
     <BrowserRouter>
       <FriendsProvider thisUser={thisUser}>

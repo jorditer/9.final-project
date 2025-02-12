@@ -130,7 +130,7 @@ const PinsLayer = ({
                             <Pencil size={16} />
                           </div>
                           <div
-                            className={`me-1.5 text-red-500 opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-hoverDelete rounded-full p-1 transition-opacity ${
+                            className={`me-2.5 text-red-500 opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-hoverDelete rounded-full p-1 transition-opacity ${
                               showDeleteConfirm === pin._id ? "opacity-100" : ""
                             }`}
                             onClick={() => setShowDeleteConfirm(pin._id)}

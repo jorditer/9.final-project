@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+.mapboxgl-popup-close-button {
+  font-size: 24px !important;  /* Increased font size */
+  padding: 4px 8px !important; /* Increased padding for larger hit area */
+  margin: 2px !important;      /* Added margin for spacing */
+  line-height: 20px !important; /* Adjusted line height */
+  color: #666 !important;      /* More visible color */
+  font-weight: normal !important;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.mapboxgl-popup-close-button:hover {
+  opacity: 1;
+  background-color: transparent !important;
+  color: #333 !important;
+}
+
 input:-webkit-autofill.input-error,
 input:-webkit-autofill:hover.input-error,
 input:-webkit-autofill:focus.input-error {
@@ -12,7 +29,7 @@ input:-webkit-autofill:focus.input-error {
   background-color: #FFF4F2;
 }
 
-input:not(.input-error):not([type="submit"]):not([id="user"]) {
+input:not(.input-error):not([type="submit"]):not([id="user"]):not(.noclass) {
   background-color: rgb(232, 240, 254);
 }
 
