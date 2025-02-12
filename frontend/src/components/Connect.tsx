@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import api from '../services/api'; // Import our API service
+import { useFriends } from '../context/FriendsContext';
 
 interface ConnectProps {
   thisUser: string;
@@ -17,6 +18,8 @@ const Connect: React.FC<ConnectProps> = ({
   setFriendStatus
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const { refreshFriends } = useFriends(); // Add this hook
+
 
   const handleFriendAction = async () => {
     if (isProcessing || friendStatus === "pending") return;
@@ -24,9 +27,9 @@ const Connect: React.FC<ConnectProps> = ({
     try {
       setIsProcessing(true);
       if (friendStatus === "connected") {
-        // Disconnect case
         await api.delete(`/users/${thisUser}/friends/${eventsUser}`);
         setFriendStatus("connect");
+        refreshFriends();
       } else if (friendStatus === "connect") {
         // Connect case - send friend request
         await api.post(`/users/${thisUser}/friends/request/${eventsUser}`);

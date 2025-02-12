@@ -1,4 +1,5 @@
 import Connect from "./Connect";
+import { useMemo } from "react";
 import Pin from "../interfaces/Pin";
 import UserInfo from "./UserInfo";
 import EventCard from "./EventCard";
@@ -16,7 +17,10 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ thisUser, eventsUser, pins, updatePinDate, setPins }) => {
   const { friendStatus, setFriendStatus } = useFriendStatus(thisUser, eventsUser);
   const { handleDelete } = useEvents(pins, setPins, thisUser);
-  const userEvents = pins.filter((pin) => pin.username === eventsUser);
+  const userEvents = useMemo(() => {
+    const canSeeEvents = thisUser === eventsUser || friendStatus === "connected";
+    return canSeeEvents ? pins.filter((pin) => pin.username === eventsUser) : [];
+  }, [pins, eventsUser, thisUser, friendStatus]);
 
   return (
     <div className="h-full flex flex-col">
