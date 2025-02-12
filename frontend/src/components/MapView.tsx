@@ -20,6 +20,7 @@ interface MapViewProps {
 }
 
 function MapView({ thisUser, onLogout }: MapViewProps) {
+  const [showRequests, setShowRequests] = useState(false);
   const [timeFilter, setTimeFilter] = useState<"all" | "day" | "week" | "month">("all");
   const [pins, setPins] = useState<Pin[]>([]);
   const [currentPlaceId, setCurrentPlaceId] = useState<string | null>(null);
@@ -34,33 +35,38 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
   });
   const navigate = useNavigate();
   const [allPins, setAllPins] = useState<Pin[]>([]);
-  
+  const [refreshCounter, setRefreshCounter] = useState(0);  // Add this
+
+  const refreshRequests = () => {
+    setRefreshCounter(prev => prev + 1);  // Just increment a counter to trigger refresh
+  };
+
   const eventHandlers = useEvents(pins, setPins, thisUser);
 
   useEffect(() => {
     const getPins = async () => {
       try {
-        console.log('Current friendshipRefresh value:', friendshipRefresh);
-        console.log('Fetching pins for user:', thisUser);
+        console.log("Current friendshipRefresh value:", friendshipRefresh);
+        console.log("Fetching pins for user:", thisUser);
         const res = await api.get(`/pins`, {
           params: { username: thisUser },
         });
-        console.log('New pins data:', res.data.data);
+        console.log("New pins data:", res.data.data);
         setAllPins(res.data.data);
         setPins(res.data.data);
       } catch (err) {
         console.error("Error fetching pins:", err);
       }
     };
-  
+
     if (thisUser) {
       getPins();
     }
   }, [thisUser, friendshipRefresh]);
 
   const handleNewPin = (newPin: Pin) => {
-    setAllPins(prev => [...prev, newPin]);
-    setPins(prev => [...prev, newPin]);
+    setAllPins((prev) => [...prev, newPin]);
+    setPins((prev) => [...prev, newPin]);
     setNewEvent(null);
   };
 
@@ -101,20 +107,22 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     const endOfMonthTime = endOfMonth.getTime();
 
-    setPins(allPins.filter(pin => {
-      const eventTime = new Date(pin.date).getTime();
-      
-      switch (timeFilter) {
-        case "day":
-          return eventTime >= startOfDayTime && eventTime < endOfDayTime;
-        case "week":
-          return eventTime >= startOfWeekTime && eventTime < endOfWeekTime;
-        case "month":
-          return eventTime >= startOfMonthTime && eventTime <= endOfMonthTime;
-        default:
-          return true;
-      }
-    }));
+    setPins(
+      allPins.filter((pin) => {
+        const eventTime = new Date(pin.date).getTime();
+
+        switch (timeFilter) {
+          case "day":
+            return eventTime >= startOfDayTime && eventTime < endOfDayTime;
+          case "week":
+            return eventTime >= startOfWeekTime && eventTime < endOfWeekTime;
+          case "month":
+            return eventTime >= startOfMonthTime && eventTime <= endOfMonthTime;
+          default:
+            return true;
+        }
+      })
+    );
   }, [timeFilter, allPins]);
 
   const handleLocationSelect = (lat: number, long: number) => {
@@ -128,21 +136,30 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
 
   return (
     <div className="h-lvh w-lvw">
-    <div className="fixed top-16 left-0 right-0 px-4 z-10">
-      <SearchBar
-        setShowProfile={setShowProfile}
-        setEventsUser={setEventsUser}
-        onLocationSelect={handleLocationSelect}
-      />
-    </div>
+      <div className="fixed top-16 left-0 right-0 px-4 z-10">
+        <SearchBar
+          setShowProfile={setShowProfile}
+          setEventsUser={setEventsUser}
+          onLocationSelect={handleLocationSelect}
+        />
+      </div>
       <Header
         thisUser={thisUser}
         handleLogout={handleLogout}
         setEventsUser={setEventsUser}
         setShowProfile={setShowProfile}
         onFilterChange={handleFilterChange}
+        setShowRequests={setShowRequests}
+        refreshRequests={refreshRequests}
+
       />
-        <Request onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)} thisUser={thisUser} />
+      <Request
+        show={showRequests}
+        setShow={setShowRequests}
+        onFriendshipChange={() => setFriendshipRefresh((prev) => prev + 1)}
+        thisUser={thisUser}
+        refreshRequests={refreshRequests} 
+      />
       <Map
         style={{ width: "100%", height: "100%" }}
         {...viewport}
@@ -153,7 +170,11 @@ function MapView({ thisUser, onLogout }: MapViewProps) {
         onDblClick={handleAddEvent}
       >
         {/* Profile Container with Arrow */}
-        <div className={`z-20 mb-[60px] sm:mb-0 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${showProfile ? "" : "pointer-events-none"}`}>
+        <div
+          className={`z-20 mb-[60px] sm:mb-0 fixed mx-2 bottom-1 w-[calc(100%-1rem)] ${
+            showProfile ? "" : "pointer-events-none"
+          }`}
+        >
           <div
             className={`relative transition-all duration-700 transform ${
               showProfile ? "translate-y-0" : "translate-y-[calc(100%_+_0.25rem)]"

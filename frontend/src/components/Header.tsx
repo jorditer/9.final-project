@@ -8,6 +8,8 @@ interface HeaderProps {
   setEventsUser: (username: string) => void;
   setShowProfile: (showProfile: boolean) => void;
   onFilterChange: (filter: 'all' | 'day' | 'week' | 'month') => void;
+  setShowRequests: (show: boolean) => void;  // Add this
+  refreshRequests: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -16,6 +18,8 @@ const Header: React.FC<HeaderProps> = ({
   setEventsUser,
   setShowProfile,
   onFilterChange,
+  setShowRequests,
+  refreshRequests,
 }) => {
   const [timeFilter, setTimeFilter] = useState<'all' | 'day' | 'week' | 'month'>('all');
 
@@ -84,6 +88,8 @@ const Header: React.FC<HeaderProps> = ({
             handleLogout={handleLogout}
             setEventsUser={setEventsUser}
             setShowProfile={setShowProfile}
+            setShowRequests={setShowRequests}
+            refreshRequests={refreshRequests} 
           />
         </div>
       </div>
