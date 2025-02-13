@@ -54,8 +54,6 @@ function App() {
     return <>{children}</>;
   };
 
-  // If we're on a login-related route, show the background map
-
                            return (
                             <BrowserRouter>
                               <FriendsProvider thisUser={thisUser}>
