@@ -38,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({
             <h1 className="text-3xl font-bold">EventPin</h1>
             
             {/* Desktop Filters */}
-            <div className="hidden sm:flex bg-secondary/80 p-1 pe-2 rounded-lg">
+            <div className="hidden sm:flex bg-secondary/80 p-1 pe-2 rounded-lg gap-1">
               <button
                 onClick={() => handleFilterChange('all')}
                 className={`px-3 py-1 rounded-md text-sm transition-colors ${

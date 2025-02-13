@@ -715,10 +715,6 @@ h1 {
   pointer-events: auto;
 }
 
-.visible {
-  visibility: visible;
-}
-
 .fixed {
   position: fixed;
 }
