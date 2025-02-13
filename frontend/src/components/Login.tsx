@@ -7,7 +7,8 @@ import { useNavigate } from "react-router";
 import { authService } from "../services/auth";
 
 interface LoginProps {
-  setThisUser: (user: string | null) => void;
+  setThisUser: (username: string) => void;
+
 }
 
 const Login: FC<LoginProps> = ({ setThisUser }) => {
@@ -38,7 +39,7 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
       setSuccess(true);
       
       // Finally navigate
-      navigate('/', { replace: true }); // Using replace to prevent back navigation to login
+      navigate('/', { replace: true });
       
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {

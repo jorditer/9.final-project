@@ -10,14 +10,15 @@ import { FriendsProvider } from "../context/FriendsContext";
 
 function App() {
   const [thisUser, setThisUser] = useState<string | null>(authService.getUser());
+  const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated());
 
   const handleLogout = async () => {
     try {
       const token = authService.getToken();
       if (!token) {
-        // If no token, just clean up local state
         authService.clearAuth();
         setThisUser(null);
+        setIsAuthenticated(false);
         return;
       }
   
@@ -31,14 +32,19 @@ function App() {
     } finally {
       authService.clearAuth();
       setThisUser(null);
-      window.location.reload();
+      setIsAuthenticated(false);
     }
+  };
+
+  const handleLogin = (username: string) => {
+    setThisUser(username);
+    setIsAuthenticated(true);
   };
 
   const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
     
-    if (!authService.isAuthenticated() && location.pathname === '/') {
+    if (!isAuthenticated && location.pathname === '/') {
       return <Navigate to="/login" replace />;
     }
     return <>{children}</>;
@@ -49,10 +55,10 @@ function App() {
       <FriendsProvider thisUser={thisUser}>
         <ProfileImagesProvider>
           <div className="h-lvh w-lvw relative">
-            <MapView thisUser={thisUser} onLogout={handleLogout} />
+            {isAuthenticated && <MapView thisUser={thisUser} onLogout={handleLogout} />}
             <Routes>
-              <Route path="/login" element={<Login setThisUser={setThisUser} />} />
-              <Route path="/signup" element={<Register setThisUser={setThisUser} />} />
+              <Route path="/login" element={<Login setThisUser={handleLogin} />} />
+              <Route path="/signup" element={<Register setThisUser={handleLogin} />} />
               <Route path="/" element={
                 <ProtectedRoute>
                   <></>

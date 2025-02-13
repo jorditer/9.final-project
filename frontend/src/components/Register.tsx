@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { authService } from "../services/auth";
 
 interface RegisterProps {
-  setThisUser: (user: string | null) => void;
+  setThisUser: (username: string) => void;
 }
 
 const Register: FC<RegisterProps> = ({ setThisUser }) => {
@@ -43,12 +43,12 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
   
     try {
       const response = await api.post("/users/register", newUser);
-
       const { accessToken, username } = response.data.data;
-      localStorage.setItem('accessToken', accessToken);
-      myStorage.setItem("user", username);
       
+      // Store authentication data
       authService.setAuth(accessToken, username);
+      
+      // Update app state
       setThisUser(username);
       setError(false);
       setSuccess(true);
@@ -56,14 +56,14 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
       navigate('/');
     } catch (err: any) {
       setErrorMessage(err.response.data.message);
-     if (err.response.data.message === "Username is already taken") {
+      if (err.response.data.message === "Username is already taken") {
         setFieldErrors(prev => ({ ...prev, username: true }));
       } else if (err.response.data.message === "Email is already registered") {
         setFieldErrors(() => ({ username: false, email: true }));
       }
       setError(true);
     }
-  }
+  };
   
   return (
     <>
