@@ -40,7 +40,7 @@ export const getAllUsers = async (req, res) => {
   try {
     // Implement pagination to prevent large data dumps
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
 
     const users = await User.find({})
@@ -500,7 +500,7 @@ export const getFriendsList = async (req, res) => {
   try {
     const { username } = req.params;
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
 
     if (!req.user) {

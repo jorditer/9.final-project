@@ -30,15 +30,12 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
       const res = await api.post("/users/login", newUser);
       const { accessToken, username } = res.data;
 
-      // First store the authentication data
       authService.setAuth(accessToken, username);
       
-      // Then update the app state
       setThisUser(username);
       setError(false);
       setSuccess(true);
       
-      // Finally navigate
       navigate('/', { replace: true });
       
     } catch (err) {
@@ -66,7 +63,7 @@ const Login: FC<LoginProps> = ({ setThisUser }) => {
             <label className="" htmlFor="username">
               Username
             </label>
-            <input className="mb-1 py-1" name="username" id="username" onChange={handleChange} type="text" required />
+            <input className="mb-1 py-1" name="username" id="username" maxLength={14} onChange={handleChange} type="text" required />
             <label className="mt-1" htmlFor="password">
               Password
             </label>

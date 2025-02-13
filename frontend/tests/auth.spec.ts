@@ -16,7 +16,7 @@ test.describe('Authentication', () => {
     await page.click('input[type="submit"]');
     
     await expect(page).toHaveURL('http://localhost:5173/');
-    await expect(page.locator('.mapboxgl-map')).toBeVisible();
+    await expect(page.locator('.mapboxgl-map').first()).toBeVisible();
   });
 
   test('should show error on invalid credentials', async ({ page }) => {

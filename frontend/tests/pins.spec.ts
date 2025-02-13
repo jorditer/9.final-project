@@ -20,7 +20,7 @@ test.describe('Pin Management', () => {
     await page.waitForLoadState('networkidle');
     
     await page.waitForTimeout(2000);
-    await page.dblclick('.mapboxgl-map', { position: testPosition });
+    await page.dblclick('.mapboxgl-map', { position: testPosition, force: true });
     
     await page.waitForSelector('input[name="title"]');
     await page.fill('input[name="title"]', testTitle);

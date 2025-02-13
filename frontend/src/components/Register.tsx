@@ -94,7 +94,7 @@ const Register: FC<RegisterProps> = ({ setThisUser }) => {
               onChange={handleChange} 
               type="text" 
               required 
-
+              maxLength={14}
               />
             <label className="" htmlFor="email">
               Email

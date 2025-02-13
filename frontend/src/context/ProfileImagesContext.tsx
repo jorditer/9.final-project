@@ -1,4 +1,3 @@
-// ProfileImagesContext.tsx
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { supabase } from '../config/supabase.config';
 

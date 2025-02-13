@@ -52,6 +52,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         await uploadProfileImage(file, thisUser);
         
         URL.revokeObjectURL(tempUrl);
+        setShowEditOverlay(false);
       } catch (err) {
         console.error("Upload failed:", err);
         setTempImageUrl(null);

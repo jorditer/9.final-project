@@ -101,6 +101,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
         {/* Search Input and Results Dropdown */}
         <div className="relative">
           <input
+          autoComplete="off"
             id="user"
             type="text"
             value={inputValue}
@@ -133,6 +134,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setEventsUser, setShowProfile, on
               {/* Place Results */}
               {searchMode === 'places' && places.map((place) => (
                 <button
+                
                   key={place.id}
                   onClick={() => {
                     if (onLocationSelect) {
